@@ -2,16 +2,16 @@
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 
 /**
- * Dummy Payments Blocks integration
+ * Vibe Payments Blocks integration
  *
- * @since 1.0.3
+ * @since 1.0.0
  */
-final class WC_Gateway_Dummy_Blocks_Support extends AbstractPaymentMethodType {
+final class WC_Gateway_Vibe_Blocks_Support extends AbstractPaymentMethodType {
 
 	/**
 	 * The gateway instance.
 	 *
-	 * @var WC_Gateway_Dummy
+	 * @var WC_Gateway_Vibe
 	 */
 	private $gateway;
 
@@ -20,13 +20,13 @@ final class WC_Gateway_Dummy_Blocks_Support extends AbstractPaymentMethodType {
 	 *
 	 * @var string
 	 */
-	protected $name = 'dummy';
+	protected $name = 'vibe';
 
 	/**
 	 * Initializes the payment method type.
 	 */
 	public function initialize() {
-		$this->settings = get_option( 'woocommerce_dummy_settings', [] );
+		$this->settings = get_option( 'woocommerce_vibe_settings', [] );
 		$gateways       = WC()->payment_gateways->payment_gateways();
 		$this->gateway  = $gateways[ $this->name ];
 	}
@@ -47,17 +47,17 @@ final class WC_Gateway_Dummy_Blocks_Support extends AbstractPaymentMethodType {
 	 */
 	public function get_payment_method_script_handles() {
 		$script_path       = '/assets/js/frontend/blocks.js';
-		$script_asset_path = WC_Dummy_Payments::plugin_abspath() . 'assets/js/frontend/blocks.asset.php';
+		$script_asset_path = WC_Vibe_Payments::plugin_abspath() . 'assets/js/frontend/blocks.asset.php';
 		$script_asset      = file_exists( $script_asset_path )
 			? require( $script_asset_path )
 			: array(
 				'dependencies' => array(),
-				'version'      => '1.2.0'
+				'version'      => '1.0.0'
 			);
-		$script_url        = WC_Dummy_Payments::plugin_url() . $script_path;
+		$script_url        = WC_Vibe_Payments::plugin_url() . $script_path;
 
 		wp_register_script(
-			'wc-dummy-payments-blocks',
+			'wc-vibe-payments-blocks',
 			$script_url,
 			$script_asset[ 'dependencies' ],
 			$script_asset[ 'version' ],
@@ -65,10 +65,10 @@ final class WC_Gateway_Dummy_Blocks_Support extends AbstractPaymentMethodType {
 		);
 
 		if ( function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( 'wc-dummy-payments-blocks', 'woocommerce-gateway-dummy', WC_Dummy_Payments::plugin_abspath() . 'languages/' );
+			wp_set_script_translations( 'wc-vibe-payments-blocks', 'woocommerce-gateway-vibe', WC_Vibe_Payments::plugin_abspath() . 'languages/' );
 		}
 
-		return [ 'wc-dummy-payments-blocks' ];
+		return [ 'wc-vibe-payments-blocks' ];
 	}
 
 	/**
@@ -80,7 +80,7 @@ final class WC_Gateway_Dummy_Blocks_Support extends AbstractPaymentMethodType {
 		return [
 			'title'       => $this->get_setting( 'title' ),
 			'description' => $this->get_setting( 'description' ),
-			'supports'    => array_filter( $this->gateway->supports, [ $this->gateway, 'supports' ] )
+			'supports'    => array_filter( $this->gateway->supports, [ $this->gateway, 'supports' ] ),
 		];
 	}
-}
+} 

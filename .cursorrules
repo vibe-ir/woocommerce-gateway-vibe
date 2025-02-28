@@ -1,0 +1,67 @@
+{
+    "name": "WordPress and WooCommerce Plugin Development Rules",
+    "description": "Guidelines for developing WordPress and WooCommerce plugins with Cursor AI",
+    "rules": [
+      {
+        "name": "Follow WordPress PHP Coding Standards",
+        "description": "Ensure all PHP code adheres to WordPress PHP coding standards",
+        "tags": ["php", "wordpress", "coding-standards"]
+      },
+      {
+        "name": "Use Secure Coding Practices",
+        "description": "Sanitize and validate all user inputs to prevent security vulnerabilities",
+        "tags": ["security", "sanitize", "validate"]
+      },
+      {
+        "name": "Implement WordPress Hooks",
+        "description": "Use WordPress actions and filters to modify or extend WordPress behavior",
+        "tags": ["hooks", "actions", "filters"]
+      },
+      {
+        "name": "Optimize Performance",
+        "description": "Use transients for caching and optimize database queries",
+        "tags": ["performance", "transients", "wp_query"]
+      },
+      {
+        "name": "Follow WordPress Plugin Structure",
+        "description": "Organize plugin files and folders according to WordPress plugin structure guidelines",
+        "tags": ["plugin-structure", "organization"]
+      },
+      {
+        "name": "Use Namespaces and Prefixes",
+        "description": "Use unique namespaces and prefixes for functions, classes, and variables to avoid conflicts",
+        "tags": ["namespaces", "prefixes", "conflict-avoidance"]
+      },
+      {
+        "name": "Enable WP_DEBUG Mode During Development",
+        "description": "Detect and fix errors early by enabling WP_DEBUG mode during development",
+        "tags": ["debugging", "wp_debug"]
+      },
+      {
+        "name": "Document Code Clearly",
+        "description": "Write clear, concise comments and documentation for all functions and classes",
+        "tags": ["documentation", "comments"]
+      },
+      {
+        "name": "Follow WooCommerce Coding Standards",
+        "description": "Adhere to WooCommerce-specific coding standards for consistency and compatibility",
+        "tags": ["woocommerce", "coding-standards", "compatibility"]
+      },
+      {
+        "name": "Use WooCommerce Hooks and APIs",
+        "description": "Utilize WooCommerce actions and filters to extend WooCommerce functionality",
+        "tags": ["woocommerce-hooks", "woocommerce-apis"]
+      },
+      {
+        "name": "Ensure High-Performance Order Storage (HPOS) Compatibility",
+        "description": "Make sure your plugin is compatible with WooCommerce's HPOS for better performance",
+        "tags": ["hpos", "performance", "woocommerce"]
+      },
+      {
+        "name": "Test WooCommerce Plugin Thoroughly",
+        "description": "Test your plugin with WP_DEBUG mode, Query Monitor, and PHPUnit for robustness",
+        "tags": ["testing", "debugging", "woocommerce"]
+      }
+    ]
+  }
+  

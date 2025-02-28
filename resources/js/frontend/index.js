@@ -1,46 +1,38 @@
-
-import { sprintf, __ } from '@wordpress/i18n';
 import { registerPaymentMethod } from '@woocommerce/blocks-registry';
-import { decodeEntities } from '@wordpress/html-entities';
+import { __ } from '@wordpress/i18n';
 import { getSetting } from '@woocommerce/settings';
+import { decodeEntities } from '@wordpress/html-entities';
 
-const settings = getSetting( 'dummy_data', {} );
+const settings = getSetting('vibe_data', {});
 
-const defaultLabel = __(
-	'Dummy Payments',
-	'woo-gutenberg-products-block'
-);
-
-const label = decodeEntities( settings.title ) || defaultLabel;
 /**
  * Content component
  */
 const Content = () => {
-	return decodeEntities( settings.description || '' );
-};
-/**
- * Label component
- *
- * @param {*} props Props from payment API.
- */
-const Label = ( props ) => {
-	const { PaymentMethodLabel } = props.components;
-	return <PaymentMethodLabel text={ label } />;
+	return <div dangerouslySetInnerHTML={{ __html: decodeEntities(settings.description || '') }} />;
 };
 
 /**
- * Dummy payment method config object.
+ * Label component
  */
-const Dummy = {
-	name: "dummy",
+const Label = (props) => {
+	const { PaymentMethodLabel } = props.components;
+	return <PaymentMethodLabel text={decodeEntities(settings.title || __('Vibe Payment', 'woocommerce-gateway-vibe'))} />;
+};
+
+/**
+ * Vibe payment method config
+ */
+const vibePaymentMethod = {
+	name: 'vibe',
 	label: <Label />,
 	content: <Content />,
 	edit: <Content />,
 	canMakePayment: () => true,
-	ariaLabel: label,
+	ariaLabel: decodeEntities(settings.title || __('Vibe Payment', 'woocommerce-gateway-vibe')),
 	supports: {
-		features: settings.supports,
+		features: settings.supports || [],
 	},
 };
 
-registerPaymentMethod( Dummy );
+registerPaymentMethod(vibePaymentMethod);
