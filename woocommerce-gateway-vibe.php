@@ -38,6 +38,8 @@ class WC_Vibe_Payments
 	 */
 	public static function init()
 	{
+		// Load plugin text domain
+		add_action('init', array(__CLASS__, 'load_plugin_textdomain'));
 
 		// Vibe Payments gateway class.
 		add_action('plugins_loaded', array(__CLASS__, 'includes'), 0);
@@ -47,6 +49,17 @@ class WC_Vibe_Payments
 
 		// Registers WooCommerce Blocks integration.
 		add_action('woocommerce_blocks_loaded', array(__CLASS__, 'woocommerce_gateway_vibe_woocommerce_block_support'));
+	}
+
+	/**
+	 * Load the plugin text domain for translation.
+	 */
+	public static function load_plugin_textdomain() {
+		load_plugin_textdomain(
+			'woocommerce-gateway-vibe',
+			false,
+			dirname(plugin_basename(__FILE__)) . '/i18n/languages/'
+		);
 	}
 
 	/**

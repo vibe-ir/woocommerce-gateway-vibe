@@ -1,108 +1,125 @@
-# Copyright (C) 2024 Vibe
+# Copyright (C) 2025 Vibe
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce Vibe Payment Gateway 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woocommerce-gateway-vibe\n"
+"Report-Msgid-Bugs-To: https://woocommerce.com/my-account/create-a-ticket/\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-02-28T00:00:00+00:00\n"
+"POT-Creation-Date: 2025-03-11T02:04:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"language-team: LANGUAGE <EMAIL@ADDRESS>\n"
 "X-Domain: woocommerce-gateway-vibe\n"
 
 #. Plugin Name of the plugin
+#: woocommerce-gateway-vibe.php
 msgid "WooCommerce Vibe Payment Gateway"
 msgstr ""
 
 #. Plugin URI of the plugin
+#. Author URI of the plugin
+#: woocommerce-gateway-vibe.php
 msgid "https://vibe.ir"
 msgstr ""
 
 #. Description of the plugin
+#: woocommerce-gateway-vibe.php
 msgid "Adds the Vibe Payment gateway to your WooCommerce website."
 msgstr ""
 
 #. Author of the plugin
+#: woocommerce-gateway-vibe.php
 msgid "Vibe"
 msgstr ""
 
-#. Author URI of the plugin
-msgid "https://vibe.ir"
+#: includes/class-wc-gateway-vibe.php:69
+#: includes/class-wc-gateway-vibe.php:142
+msgctxt "Vibe payment method"
+msgid "Vibe Payment"
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:57
+#: includes/class-wc-gateway-vibe.php:70
 msgid "Allows payments through Vibe Payment Gateway."
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:87
+#: includes/class-wc-gateway-vibe.php:133
 msgid "Enable/Disable"
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:89
+#: includes/class-wc-gateway-vibe.php:135
 msgid "Enable Vibe Payments"
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:93
+#: includes/class-wc-gateway-vibe.php:139
 msgid "Title"
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:95
+#: includes/class-wc-gateway-vibe.php:141
 msgid "This controls the title which the user sees during checkout."
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:100
+#: includes/class-wc-gateway-vibe.php:146
 msgid "Description"
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:102
+#: includes/class-wc-gateway-vibe.php:148
 msgid "Payment method description that the customer will see on your checkout."
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:104
+#: includes/class-wc-gateway-vibe.php:149
 msgid "Pay with Vibe Payment Gateway."
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:107
+#: includes/class-wc-gateway-vibe.php:153
 msgid "Merchant API Key"
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:109
+#: includes/class-wc-gateway-vibe.php:155
 msgid "Enter your Vibe Payment Gateway Merchant API Key."
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:143
+#: includes/class-wc-gateway-vibe.php:224
 msgid "Unknown error occurred while processing the payment."
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:147
+#: includes/class-wc-gateway-vibe.php:229
+#: includes/class-wc-gateway-vibe.php:313
 msgid "Invalid response from Vibe Payment Gateway."
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:159
+#: includes/class-wc-gateway-vibe.php:243
 msgid "Vibe Payment Gateway error: "
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:228
+#: includes/class-wc-gateway-vibe.php:313
+#: includes/class-wc-gateway-vibe.php:328
 msgid "Payment Error"
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:239
+#: includes/class-wc-gateway-vibe.php:328
 msgid "Order not found."
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:243
+#. translators: %s: Reference ID from Vibe Payment Gateway
+#: includes/class-wc-gateway-vibe.php:334
 msgid "Vibe payment completed. Reference ID: %s"
 msgstr ""
 
-#: includes/class-wc-gateway-vibe.php:257
+#: includes/class-wc-gateway-vibe.php:348
+#: includes/class-wc-gateway-vibe.php:351
 msgid "Payment failed or was declined."
 msgstr ""
 
-#: assets/js/frontend/blocks.js:22
-#: assets/js/frontend/blocks.js:35
+#. translators: %1$s: Gateway name, %2$s: WooCommerce payment settings URL
+#: includes/class-wc-gateway-vibe.php:429
+msgid "%1$s has been disabled because it must be the first payment option. Please reorder your payment gateways <a href=\"%2$s\">here</a> to make %1$s the first option."
+msgstr ""
+
+#: assets/frontend/blocks.js:22
+#: assets/frontend/blocks.js:43
 msgid "Vibe Payment"
-msgstr "" 
+msgstr ""

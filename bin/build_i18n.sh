@@ -15,7 +15,7 @@ UNDERLINE_START='\e[4m'
 UNDERLINE_STOP='\e[0m'
 
 # Substitute JS source references with build references.
-for T in `find languages -name "*.pot"`
+for T in `find i18n/languages -name "*.pot"`
 	do
 		echo -e "\n${GREY}${UNDERLINE_START}Fixing references for: ${T}${UNDERLINE_STOP}${NC}"
 		sed \

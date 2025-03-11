@@ -17,7 +17,18 @@ const Content = () => {
  */
 const Label = (props) => {
 	const { PaymentMethodLabel } = props.components;
-	return <PaymentMethodLabel text={decodeEntities(settings.title || __('Vibe Payment', 'woocommerce-gateway-vibe'))} />;
+	return (
+		<div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+			<PaymentMethodLabel text={decodeEntities(settings.title || __('Vibe Payment', 'woocommerce-gateway-vibe'))} />
+			{settings.logo && (
+				<img
+					src={settings.logo}
+					alt="Vibe Payment"
+					style={{ height: '40px', width: 'auto' }}
+				/>
+			)}
+		</div>
+	);
 };
 
 /**

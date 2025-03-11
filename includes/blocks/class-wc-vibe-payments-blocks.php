@@ -65,7 +65,11 @@ final class WC_Gateway_Vibe_Blocks_Support extends AbstractPaymentMethodType {
 		);
 
 		if ( function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( 'wc-vibe-payments-blocks', 'woocommerce-gateway-vibe', WC_Vibe_Payments::plugin_abspath() . 'languages/' );
+			wp_set_script_translations( 
+				'wc-vibe-payments-blocks', 
+				'woocommerce-gateway-vibe',
+				WC_Vibe_Payments::plugin_abspath() . 'i18n/languages'
+			);
 		}
 
 		return [ 'wc-vibe-payments-blocks' ];
@@ -81,6 +85,7 @@ final class WC_Gateway_Vibe_Blocks_Support extends AbstractPaymentMethodType {
 			'title'       => $this->get_setting( 'title' ),
 			'description' => $this->get_setting( 'description' ),
 			'supports'    => array_filter( $this->gateway->supports, [ $this->gateway, 'supports' ] ),
+			'logo'        => plugins_url( 'assets/images/vibe-logo.svg', dirname( dirname( __FILE__ ) ) ),
 		];
 	}
 } 
