@@ -46,6 +46,18 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	public $id = 'vibe';
 
 	/**
+	 * Logger instance.
+	 * @var WC_Logger
+	 */
+	private $logger = null;
+
+	/**
+	 * Debug mode.
+	 * @var bool
+	 */
+	private $debug_mode = false;
+
+	/**
 	 * Constructor for the gateway.
 	 */
 	public function __construct()
@@ -77,6 +89,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 		$this->title       = $this->get_option('title');
 		$this->description = $this->get_option('description');
 		$this->api_key     = $this->get_option('api_key');
+		$this->debug_mode  = 'yes' === $this->get_option('debug_mode', 'no');
 
 		// Add custom styling for the logo
 		add_action('wp_head', array($this, 'add_logo_styles'));
@@ -156,6 +169,13 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 				'default'     => '',
 				'desc_tip'    => true,
 			),
+			'debug_mode' => array(
+				'title'       => __('Debug Mode', 'woocommerce-gateway-vibe'),
+				'type'        => 'checkbox',
+				'label'       => __('Enable logging for debugging', 'woocommerce-gateway-vibe'),
+				'default'     => 'no',
+				'description' => __('Log payment gateway events to help troubleshoot issues.', 'woocommerce-gateway-vibe'),
+			),
 		);
 	}
 
@@ -169,10 +189,13 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	{
 		$order = wc_get_order($order_id);
 
+		$this->log('Processing payment for order ' . $order_id);
+
 		// Create order in Vibe Payment Gateway
 		$response = $this->create_vibe_order($order);
 
 		if (is_wp_error($response)) {
+			$this->log('Error creating Vibe order: ' . $response->get_error_message());
 			wc_add_notice($response->get_error_message(), 'error');
 			return array(
 				'result' => 'failure',
@@ -181,6 +204,12 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 
 		// Store order ID in session for later retrieval
 		WC()->session->set('vibe_order_id', $order_id);
+		
+		// Store the payment URL in order meta
+		$order->update_meta_data('_vibe_payment_url', $response['payment_url']);
+		$order->save();
+
+		$this->log('Customer redirected to Vibe payment page for order ' . $order_id);
 
 		// Redirect to Vibe Payment Gateway
 		return array(
@@ -200,6 +229,8 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 		// Prepare cart data
 		$cart_data = $this->prepare_cart_data($order);
 
+		$this->log('Creating Vibe order with data: ' . wp_json_encode($cart_data));
+
 		// Make API request
 		$response = wp_remote_post(
 			$this->api_endpoint,
@@ -214,18 +245,23 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 		);
 
 		if (is_wp_error($response)) {
+			$this->log('API Error: ' . $response->get_error_message());
 			return $response;
 		}
 
 		$body = wp_remote_retrieve_body($response);
 		$data = json_decode($body, true);
 
+		$this->log('Vibe API response: ' . wp_json_encode($data));
+
 		if (wp_remote_retrieve_response_code($response) !== 200) {
 			$error_message = isset($data['detail']) ? $this->format_error_message($data['detail']) : __('Unknown error occurred while processing the payment.', 'woocommerce-gateway-vibe');
+			$this->log('Error response: ' . $error_message);
 			return new WP_Error('vibe_api_error', $error_message);
 		}
 
 		if (! isset($data['payment_url'])) {
+			$this->log('Invalid response: Missing payment_url');
 			return new WP_Error('vibe_api_error', __('Invalid response from Vibe Payment Gateway.', 'woocommerce-gateway-vibe'));
 		}
 
@@ -286,8 +322,14 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 		// Calculate tax
 		$tax = (int) wc_format_decimal($order->get_total_tax(), 0);
 
-		// Generate callback URL
-		$callback_url = add_query_arg('wc-api', 'wc_gateway_vibe', home_url('/'));
+		// Generate callback URL with order ID
+		$callback_url = add_query_arg(
+			array(
+				'wc-api' => 'wc_gateway_vibe',
+				'order_id' => $order->get_id()
+			),
+			home_url('/')
+		);
 
 		// Prepare data
 		$data = array(
@@ -309,47 +351,91 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	 */
 	public function check_payment_response()
 	{
-		if (! isset($_GET['result']) || ! isset($_GET['ref_id'])) {
-			wp_die(__('Invalid response from Vibe Payment Gateway.', 'woocommerce-gateway-vibe'), __('Payment Error', 'woocommerce-gateway-vibe'), array('response' => 500));
-		}
-
-		$result = sanitize_text_field(wp_unslash($_GET['result']));
-		$ref_id = sanitize_text_field(wp_unslash($_GET['ref_id']));
-
-		// Verify payment
-		$verified = $this->verify_payment($ref_id);
-
-		if ($verified) {
-			// Get order from session
+		// Get order ID from query string if available
+		$order_id = isset($_GET['order_id']) ? absint($_GET['order_id']) : null;
+		
+		// Fallback to session if needed
+		if (!$order_id) {
 			$order_id = WC()->session->get('vibe_order_id');
-			$order = wc_get_order($order_id);
-
-			if (! $order) {
-				wp_die(__('Order not found.', 'woocommerce-gateway-vibe'), __('Payment Error', 'woocommerce-gateway-vibe'), array('response' => 500));
-			}
-
-			// Mark order as complete
-			$order->payment_complete();
-			/* translators: %s: Reference ID from Vibe Payment Gateway */
-			$order->add_order_note(sprintf(__('Vibe payment completed. Reference ID: %s', 'woocommerce-gateway-vibe'), $ref_id));
-
-			// Empty cart
-			WC()->cart->empty_cart();
-
-			// Redirect to thank you page
+		}
+		
+		// Get reference ID
+		$ref_id = isset($_GET['ref_id']) ? sanitize_text_field(wp_unslash($_GET['ref_id'])) : '';
+		$result = isset($_GET['result']) ? sanitize_text_field(wp_unslash($_GET['result'])) : '';
+		
+		$this->log('Payment callback received. Order ID: ' . $order_id . ', Ref ID: ' . $ref_id . ', Result: ' . $result);
+		
+		if (!$order_id || !$ref_id) {
+			$this->log('Missing order ID or reference ID in callback');
+			wp_die(
+				__('Invalid payment response. Missing required parameters.', 'woocommerce-gateway-vibe'), 
+				__('Payment Error', 'woocommerce-gateway-vibe'), 
+				array('response' => 400)
+			);
+		}
+		
+		// Get order
+		$order = wc_get_order($order_id);
+		if (!$order) {
+			$this->log('Order not found: ' . $order_id);
+			wp_die(
+				__('Order not found.', 'woocommerce-gateway-vibe'), 
+				__('Payment Error', 'woocommerce-gateway-vibe'), 
+				array('response' => 404)
+			);
+		}
+		
+		// Prevent duplicate processing
+		if ($order->is_paid()) {
+			$this->log('Order already paid: ' . $order_id);
 			wp_redirect($this->get_return_url($order));
 			exit;
+		}
+		
+		// Verify payment
+		$verification_result = $this->verify_payment($ref_id);
+		
+		if ($verification_result) {
+			// Store reference ID
+			$order->update_meta_data('_vibe_reference_id', $ref_id);
+			$order->save();
+			
+			// Complete payment
+			$order->payment_complete($ref_id);
+			
+			// Add note
+			/* translators: %s: Reference ID from Vibe Payment Gateway */
+			$order->add_order_note(sprintf(__('Payment completed via Vibe. Reference ID: %s', 'woocommerce-gateway-vibe'), $ref_id));
+			
+			// Empty cart
+			WC()->cart->empty_cart();
+			
+			// Show success message with processing page
+			echo '<div style="text-align: center; padding: 50px 0;">';
+			echo '<h1>' . esc_html__('Payment Successful', 'woocommerce-gateway-vibe') . '</h1>';
+			echo '<p>' . esc_html__('Your payment has been processed successfully. Redirecting to order confirmation...', 'woocommerce-gateway-vibe') . '</p>';
+			echo '</div>';
+			echo '<script>setTimeout(function() { window.location = "' . esc_url($this->get_return_url($order)) . '"; }, 2000);</script>';
+			
+			$this->log('Payment successful for order: ' . $order_id . ' with reference: ' . $ref_id);
+			exit;
 		} else {
-			// Get order from session
-			$order_id = WC()->session->get('vibe_order_id');
-			$order = wc_get_order($order_id);
-
-			if ($order) {
-				$order->update_status('failed', __('Payment failed or was declined.', 'woocommerce-gateway-vibe'));
-			}
-
-			wc_add_notice(__('Payment failed or was declined.', 'woocommerce-gateway-vibe'), 'error');
-			wp_redirect(wc_get_checkout_url());
+			// Log failure
+			$this->log('Payment verification failed for order: ' . $order_id);
+			
+			// Update order status
+			$order->update_status(
+				'failed', 
+				__('Payment failed or was declined.', 'woocommerce-gateway-vibe')
+			);
+			
+			// Show error message with processing page
+			echo '<div style="text-align: center; padding: 50px 0;">';
+			echo '<h1>' . esc_html__('Payment Failed', 'woocommerce-gateway-vibe') . '</h1>';
+			echo '<p>' . esc_html__('Your payment could not be processed. Redirecting to checkout...', 'woocommerce-gateway-vibe') . '</p>';
+			echo '</div>';
+			echo '<script>setTimeout(function() { window.location = "' . esc_url(wc_get_checkout_url()) . '"; }, 2000);</script>';
+			
 			exit;
 		}
 	}
@@ -362,6 +448,8 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	 */
 	protected function verify_payment($ref_id)
 	{
+		$this->log('Verifying payment with ref_id: ' . $ref_id);
+		
 		$response = wp_remote_post(
 			$this->verify_endpoint,
 			array(
@@ -375,17 +463,35 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 		);
 
 		if (is_wp_error($response)) {
+			$this->log('Verification error: ' . $response->get_error_message());
 			return false;
 		}
 
 		$body = wp_remote_retrieve_body($response);
 		$data = json_decode($body, true);
+		
+		$this->log('Verification response: ' . wp_json_encode($data));
 
 		if (wp_remote_retrieve_response_code($response) !== 200) {
+			$this->log('Verification failed with status code: ' . wp_remote_retrieve_response_code($response));
 			return false;
 		}
 
 		return isset($data['status']) && $data['status'] === true;
+	}
+
+	/**
+	 * Log debug messages.
+	 *
+	 * @param string $message
+	 */
+	private function log($message) {
+		if ($this->debug_mode) {
+			if (empty($this->logger)) {
+				$this->logger = wc_get_logger();
+			}
+			$this->logger->info($message, array('source' => 'vibe-payment'));
+		}
 	}
 
 	/**
