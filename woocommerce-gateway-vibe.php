@@ -4,7 +4,7 @@
  * Plugin Name: WooCommerce Vibe Payment Gateway
  * Plugin URI: https://vibe.ir
  * Description: Adds the Vibe Payment gateway to your WooCommerce website.
- * Version: 1.0.0
+ * Version: 1.0.1
  *
  * Author: Vibe
  * Author URI: https://vibe.ir
@@ -24,6 +24,12 @@
 if (! defined('ABSPATH')) {
 	exit;
 }
+
+// Define plugin constants
+define('WC_VIBE_VERSION', '1.0.1');
+define('WC_VIBE_PLUGIN_FILE', __FILE__);
+define('WC_VIBE_PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('WC_VIBE_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 /**
  * WC Vibe Payment gateway plugin class.
@@ -49,6 +55,9 @@ class WC_Vibe_Payments
 
 		// Registers WooCommerce Blocks integration.
 		add_action('woocommerce_blocks_loaded', array(__CLASS__, 'woocommerce_gateway_vibe_woocommerce_block_support'));
+		
+		// Initialize the tracker if WooCommerce is active
+		add_action('plugins_loaded', array(__CLASS__, 'init_tracker'), 20);
 	}
 
 	/**
@@ -91,6 +100,17 @@ class WC_Vibe_Payments
 			require_once 'includes/class-wc-vibe-api-settings.php';
 		}
 	}
+	
+	/**
+	 * Initialize the tracker.
+	 */
+	public static function init_tracker() {
+		// Only load the tracker if WooCommerce is active
+		if (class_exists('WC_Payment_Gateway')) {
+			require_once 'includes/class-wc-vibe-tracker.php';
+			WC_Vibe_Tracker::init();
+		}
+	}
 
 	/**
 	 * Plugin url.
@@ -131,3 +151,19 @@ class WC_Vibe_Payments
 }
 
 WC_Vibe_Payments::init();
+
+// Register uninstall hook to clean up tracking data
+register_uninstall_hook(__FILE__, 'wc_vibe_uninstall');
+
+/**
+ * Clean up when the plugin is uninstalled.
+ */
+function wc_vibe_uninstall() {
+	// Only load the tracker class if it doesn't exist yet
+	if (!class_exists('WC_Vibe_Tracker')) {
+		require_once 'includes/class-wc-vibe-tracker.php';
+	}
+	
+	// Clean up tracker data
+	WC_Vibe_Tracker::cleanup();
+}
