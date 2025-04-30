@@ -62,13 +62,6 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	 */
 	public function __construct()
 	{
-		// Set gateway position to first
-		add_filter('woocommerce_payment_gateways_order', array($this, 'set_gateway_order'), 1);
-		
-		// Check gateway position and handle accordingly
-		add_action('admin_init', array($this, 'check_gateway_position'));
-		add_action('admin_notices', array($this, 'display_position_notice'));
-
 		$this->icon               = apply_filters('woocommerce_vibe_gateway_icon', plugins_url('assets/images/vibe-logo.svg', dirname(__FILE__)));
 		$this->has_fields         = false;
 		$this->supports           = array(
@@ -521,121 +514,6 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 			}
 			$this->logger->info($message, array('source' => 'vibe-payment'));
 		}
-	}
-
-	/**
-	 * Check if Vibe gateway is the first payment option.
-	 */
-	public function check_gateway_position() {
-		if (!is_admin()) {
-			return;
-		}
-
-		// Skip check if we've already shown the notice recently
-		if (get_transient('wc_gateway_vibe_position_check_cooldown')) {
-			return;
-		}
-
-		// Get all available gateways
-		$available_gateways = WC()->payment_gateways->get_available_payment_gateways();
-		
-		if (empty($available_gateways)) {
-			return;
-		}
-
-		// Get the first gateway
-		reset($available_gateways);
-		$first_gateway = key($available_gateways);
-
-		// If Vibe is not the first gateway, disable it
-		if ($first_gateway !== $this->id) {
-			$this->update_option('enabled', 'no');
-			
-			// Set a flag to show the notice, but only if we haven't shown it before
-			if (!get_option('wc_gateway_vibe_position_warning_shown')) {
-				update_option('wc_gateway_vibe_position_warning', true);
-				update_option('wc_gateway_vibe_position_warning_shown', true);
-			}
-			
-			// Set a cooldown to prevent checking too frequently
-			set_transient('wc_gateway_vibe_position_check_cooldown', true, DAY_IN_SECONDS);
-		} else {
-			// If it's now the first gateway, remove all warnings and flags
-			delete_option('wc_gateway_vibe_position_warning');
-			delete_option('wc_gateway_vibe_position_warning_shown');
-			delete_transient('wc_gateway_vibe_position_check_cooldown');
-		}
-	}
-
-	/**
-	 * Display admin notice if Vibe is not the first payment option.
-	 */
-	public function display_position_notice() {
-		if (!is_admin() || !get_option('wc_gateway_vibe_position_warning')) {
-			return;
-		}
-
-		$message = sprintf(
-			/* translators: %1$s: Gateway name, %2$s: WooCommerce payment settings URL */
-			__('%1$s has been disabled because it must be the first payment option. Please reorder your payment gateways <a href="%2$s">here</a> to make %1$s the first option.', 'woocommerce-gateway-vibe'),
-			'Vibe Payment',
-			admin_url('admin.php?page=wc-settings&tab=checkout')
-		);
-
-		echo '<div class="notice notice-error is-dismissible"><p>' . wp_kses_post($message) . '</p></div>';
-		
-		// Add a dismiss button handler
-		?>
-		<script type="text/javascript">
-		jQuery(document).ready(function($) {
-			$(document).on('click', '.notice-error.is-dismissible .notice-dismiss', function() {
-				$.ajax({
-					url: ajaxurl,
-					data: {
-						action: 'dismiss_vibe_position_notice',
-						nonce: '<?php echo wp_create_nonce('dismiss_vibe_position_notice'); ?>'
-					}
-				});
-			});
-		});
-		</script>
-		<?php
-		
-		// Add AJAX handler for dismiss button
-		add_action('wp_ajax_dismiss_vibe_position_notice', array($this, 'dismiss_position_notice'));
-	}
-	
-	/**
-	 * AJAX handler to dismiss the position notice.
-	 */
-	public function dismiss_position_notice() {
-		// Verify nonce
-		if (!isset($_REQUEST['nonce']) || !wp_verify_nonce($_REQUEST['nonce'], 'dismiss_vibe_position_notice')) {
-			wp_die(__('Security check failed.', 'woocommerce-gateway-vibe'));
-		}
-		
-		// Remove the warning flag
-		delete_option('wc_gateway_vibe_position_warning');
-		
-		wp_die();
-	}
-
-	/**
-	 * Set the gateway order to first position.
-	 *
-	 * @param array $ordered_gateways Ordered payment gateways.
-	 * @return array
-	 */
-	public function set_gateway_order($ordered_gateways) {
-		// Remove vibe from current position if it exists
-		if (($key = array_search($this->id, $ordered_gateways)) !== false) {
-			unset($ordered_gateways[$key]);
-		}
-		
-		// Add vibe to the beginning of the array
-		array_unshift($ordered_gateways, $this->id);
-		
-		return $ordered_gateways;
 	}
 
 	/**
