@@ -62,9 +62,6 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	 */
 	public function __construct()
 	{
-		// Load plugin textdomain
-		add_action('init', array($this, 'load_plugin_textdomain'));
-
 		// Set gateway position to first
 		add_filter('woocommerce_payment_gateways_order', array($this, 'set_gateway_order'), 1);
 		
@@ -78,7 +75,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 			'products'
 		);
 
-		$this->method_title       = _x('Vibe Payment', 'Vibe payment method', 'woocommerce-gateway-vibe');
+		$this->method_title       = __('Vibe Payment', 'woocommerce-gateway-vibe');
 		$this->method_description = __('Allows payments through Vibe Payment Gateway.', 'woocommerce-gateway-vibe');
 
 		// Load the settings.
@@ -97,20 +94,8 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 
 		// Actions.
 		add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
-
-		// Payment listener/API hook
+		add_action('woocommerce_thankyou_' . $this->id, array($this, 'thankyou_page'));
 		add_action('woocommerce_api_wc_gateway_vibe', array($this, 'check_payment_response'));
-	}
-
-	/**
-	 * Load translations.
-	 */
-	public function load_plugin_textdomain() {
-		load_plugin_textdomain(
-			'woocommerce-gateway-vibe',
-			false,
-			dirname(dirname(plugin_basename(__FILE__))) . '/i18n/languages/'
-		);
 	}
 
 	/**
@@ -121,7 +106,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 ?>
 		<style type="text/css">
 			.payment_method_vibe img {
-				max-height: 40px;
+				max-height: 30px;
 				width: auto;
 			}
 
@@ -129,7 +114,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 				float: right;
 				border: 0;
 				padding: 0;
-				max-height: 40px;
+				max-height: 30px;
 			}
 		</style>
 <?php
@@ -152,7 +137,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 				'title'       => __('Title', 'woocommerce-gateway-vibe'),
 				'type'        => 'text',
 				'description' => __('This controls the title which the user sees during checkout.', 'woocommerce-gateway-vibe'),
-				'default'     => _x('Vibe Payment', 'Vibe payment method', 'woocommerce-gateway-vibe'),
+				'default'     => __('Vibe Payment', 'woocommerce-gateway-vibe'),
 				'desc_tip'    => true,
 			),
 			'description' => array(
@@ -228,8 +213,12 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	{
 		// Prepare cart data
 		$cart_data = $this->prepare_cart_data($order);
+		
+		// Get the UUID we'll use for the API
+		$uuid = $order->get_meta('_vibe_uuid_order_id');
 
-		$this->log('Creating Vibe order with data: ' . wp_json_encode($cart_data));
+		$this->log('Creating Vibe order with UUID: ' . $uuid . ' for WC order: ' . $order->get_id());
+		$this->log('API request data: ' . wp_json_encode($cart_data));
 
 		// Make API request
 		$response = wp_remote_post(
@@ -252,7 +241,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 		$body = wp_remote_retrieve_body($response);
 		$data = json_decode($body, true);
 
-		$this->log('Vibe API response: ' . wp_json_encode($data));
+		$this->log('Vibe API response for order ' . $order->get_id() . ' (UUID: ' . $uuid . '): ' . wp_json_encode($data));
 
 		if (wp_remote_retrieve_response_code($response) !== 200) {
 			$error_message = isset($data['detail']) ? $this->format_error_message($data['detail']) : __('Unknown error occurred while processing the payment.', 'woocommerce-gateway-vibe');
@@ -289,6 +278,19 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 		}
 
 		return $message;
+	}
+
+	/**
+	 * Generate UUID v4.
+	 *
+	 * @return string
+	 */
+	protected function generate_uuid_v4() {
+		$data = random_bytes(16);
+		$data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Set version to 0100 (UUID v4)
+		$data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Set bits 6-7 to 10
+		
+		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 
 	/**
@@ -331,6 +333,15 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 			home_url('/')
 		);
 
+		// Generate a UUID v4 for the API order_id
+		$uuid = $this->generate_uuid_v4();
+		
+		// Store the UUID in the order meta data for reference
+		$order->update_meta_data('_vibe_uuid_order_id', $uuid);
+		$order->save();
+		
+		$this->log('Generated UUID v4 for order ' . $order->get_id() . ': ' . $uuid);
+
 		// Prepare data
 		$data = array(
 			'callback_url' => $callback_url,
@@ -340,7 +351,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 				'items'        => $items,
 				'tax'          => $tax,
 			),
-			'order_id'     => (string) $order->get_id(),
+			'order_id'     => $uuid, // Use UUID v4 instead of WC order ID
 		);
 
 		return $data;
@@ -374,8 +385,25 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 			);
 		}
 		
-		// Get order
+		// Get order by WooCommerce order ID
 		$order = wc_get_order($order_id);
+		
+		if (!$order) {
+			$this->log('Order not found by standard ID: ' . $order_id . '. Attempting to find by UUID.');
+			
+			// Try to find the order by UUID meta
+			$orders = wc_get_orders(array(
+				'meta_key'   => '_vibe_uuid_order_id',
+				'meta_value' => $order_id,
+				'limit'      => 1,
+			));
+			
+			if (!empty($orders)) {
+				$order = $orders[0];
+				$this->log('Found order by UUID: ' . $order->get_id());
+			}
+		}
+		
 		if (!$order) {
 			$this->log('Order not found: ' . $order_id);
 			wp_die(
@@ -387,7 +415,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 		
 		// Prevent duplicate processing
 		if ($order->is_paid()) {
-			$this->log('Order already paid: ' . $order_id);
+			$this->log('Order already paid: ' . $order->get_id());
 			wp_redirect($this->get_return_url($order));
 			exit;
 		}
@@ -403,9 +431,10 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 			// Complete payment
 			$order->payment_complete($ref_id);
 			
-			// Add note
-			/* translators: %s: Reference ID from Vibe Payment Gateway */
-			$order->add_order_note(sprintf(__('Payment completed via Vibe. Reference ID: %s', 'woocommerce-gateway-vibe'), $ref_id));
+			// Add note with both reference ID and UUID
+			$uuid = $order->get_meta('_vibe_uuid_order_id');
+			/* translators: %1$s: Reference ID from Vibe Payment Gateway, %2$s: UUID v4 used for the order */
+			$order->add_order_note(sprintf(__('Payment completed via Vibe. Reference ID: %1$s, UUID: %2$s', 'woocommerce-gateway-vibe'), $ref_id, $uuid));
 			
 			// Empty cart
 			WC()->cart->empty_cart();
@@ -417,11 +446,11 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 			echo '</div>';
 			echo '<script>setTimeout(function() { window.location = "' . esc_url($this->get_return_url($order)) . '"; }, 2000);</script>';
 			
-			$this->log('Payment successful for order: ' . $order_id . ' with reference: ' . $ref_id);
+			$this->log('Payment successful for order: ' . $order->get_id() . ' with reference: ' . $ref_id);
 			exit;
 		} else {
 			// Log failure
-			$this->log('Payment verification failed for order: ' . $order_id);
+			$this->log('Payment verification failed for order: ' . $order->get_id());
 			
 			// Update order status
 			$order->update_status(
@@ -607,5 +636,24 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 		array_unshift($ordered_gateways, $this->id);
 		
 		return $ordered_gateways;
+	}
+
+	/**
+	 * Override parent get_option to apply translations to certain fields.
+	 *
+	 * @param string $key Option key.
+	 * @param mixed  $empty_value Value when empty.
+	 * @return string The translated option value.
+	 */
+	public function get_option($key, $empty_value = null)
+	{
+		$value = parent::get_option($key, $empty_value);
+		
+		// Apply translations to specific fields
+		if ('title' === $key || 'description' === $key) {
+			$value = __($value, 'woocommerce-gateway-vibe');
+		}
+		
+		return $value;
 	}
 }

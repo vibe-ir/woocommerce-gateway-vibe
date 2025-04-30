@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-11T21:36:02+00:00\n"
+"POT-Creation-Date: 2025-03-13T14:07:06+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "language-team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -151,6 +151,168 @@ msgstr ""
 
 #: includes/class-wc-gateway-vibe.php:585
 msgid "Security check failed."
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:74
+msgid "Vibe API"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:96
+msgid "API Endpoints"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:97
+msgid "Use these endpoints to access your product information. Click the copy button to copy the URL to your clipboard."
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:103
+msgid "Product List Endpoint"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:109
+#: includes/class-wc-vibe-api-settings.php:128
+msgid "Copy"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:113
+msgid "Endpoint for retrieving a list of products. Supports pagination with page and size parameters."
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:116
+#: includes/class-wc-vibe-api-settings.php:135
+msgid "Example:"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:122
+msgid "Product Details Endpoint"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:132
+msgid "Endpoint for retrieving details of a specific product. Replace {product_id} with the actual product ID."
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:141
+msgid "Share Endpoints"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:145
+msgid "Share via Email"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:148
+msgid "Share these endpoints with your integration partner via email."
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:211
+msgid "Copied!"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:219
+msgid "Vibe API Endpoints"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:220
+msgid "Here are the API endpoints for accessing our product information:"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:221
+msgid "Product List Endpoint:"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:223
+msgid "Product Details Endpoint:"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:227
+msgid "Note: API authentication is enabled. You will need to include the following API key in the X-Vibe-API-Key header of your requests:"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:260
+msgid "Vibe Product Information Collection API"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:262
+msgid "Configure the settings for the Vibe Product Information Collection API."
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:266
+msgid "Enable API Authentication"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:268
+msgid "Enable API key authentication for the Vibe Product Information Collection API."
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:273
+msgid "API Key"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:275
+msgid "API key for authenticating requests to the Vibe Product Information Collection API. This key must be included in the X-Vibe-API-Key header of API requests."
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:283
+msgid "Generate New API Key"
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:285
+msgid "Check this box and save changes to generate a new API key. Warning: This will invalidate the existing key."
+msgstr ""
+
+#: includes/class-wc-vibe-api-settings.php:332
+msgid "API Settings"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:115
+msgid "Vibe Payment Gateway Warning:"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:116
+msgid "The WordPress REST API appears to be disabled on your site. The Vibe Product Information Collection API requires the WordPress REST API to function properly. Please enable the REST API or check with your hosting provider."
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:120
+msgid "Check Permalink Settings"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:123
+msgid "Learn More About REST API"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:144
+msgid "Page number"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:151
+msgid "Number of products per page"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:171
+msgid "Product ID"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:190
+msgid "WooCommerce is not active"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:202
+msgid "API key is required. Please include the X-Vibe-API-Key header in your request."
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:214
+msgid "Invalid API key."
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:240
+msgid "Required WooCommerce function is missing"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:279
+msgid "Required WooCommerce functions are missing"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:286
+msgid "Product not found"
 msgstr ""
 
 #: assets/frontend/blocks.js:22

@@ -38,8 +38,8 @@ class WC_Vibe_Payments
 	 */
 	public static function init()
 	{
-		// Load plugin text domain
-		add_action('init', array(__CLASS__, 'load_plugin_textdomain'));
+		// Load plugin text domain - move this before plugins_loaded
+		self::load_plugin_textdomain();
 
 		// Vibe Payments gateway class.
 		add_action('plugins_loaded', array(__CLASS__, 'includes'), 0);
@@ -83,6 +83,12 @@ class WC_Vibe_Payments
 		// Make the WC_Gateway_Vibe class available.
 		if (class_exists('WC_Payment_Gateway')) {
 			require_once 'includes/class-wc-gateway-vibe.php';
+			
+			// Include the API class for product information collection.
+			require_once 'includes/class-wc-vibe-api.php';
+			
+			// Include the API settings class.
+			require_once 'includes/class-wc-vibe-api-settings.php';
 		}
 	}
 
