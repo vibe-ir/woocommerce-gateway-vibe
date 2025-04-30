@@ -152,6 +152,22 @@ class WC_Vibe_Payments
 
 WC_Vibe_Payments::init();
 
+// Register activation hook to set activation flag
+register_activation_hook(__FILE__, 'wc_vibe_set_activation_flag');
+
+/**
+ * Set the activation flag when the plugin is activated.
+ * The tracker will check for this flag and send the activation event.
+ */
+function wc_vibe_set_activation_flag() {
+    // Set the activation flag to pending
+    update_option('wc_vibe_activation_pending', 'pending');
+    
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('[Vibe Tracker] Activation hook executed - flag set to pending');
+    }
+}
+
 // Register uninstall hook to clean up tracking data
 register_uninstall_hook(__FILE__, 'wc_vibe_uninstall');
 
