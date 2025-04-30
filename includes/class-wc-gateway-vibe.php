@@ -182,7 +182,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 
 		// Store order ID in session for later retrieval
 		WC()->session->set('vibe_order_id', $order_id);
-		
+
 		// Store the payment URL in order meta
 		$order->update_meta_data('_vibe_payment_url', $response['payment_url']);
 		$order->save();
@@ -206,7 +206,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	{
 		// Prepare cart data
 		$cart_data = $this->prepare_cart_data($order);
-		
+
 		// Get the UUID we'll use for the API
 		$uuid = $order->get_meta('_vibe_uuid_order_id');
 
@@ -278,11 +278,12 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	 *
 	 * @return string
 	 */
-	protected function generate_uuid_v4() {
+	protected function generate_uuid_v4()
+	{
 		$data = random_bytes(16);
 		$data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Set version to 0100 (UUID v4)
 		$data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Set bits 6-7 to 10
-		
+
 		return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 	}
 
@@ -297,11 +298,25 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 		$items = array();
 		$goods_amount = 0;
 
+		// Get the store currency
+		$currency = get_woocommerce_currency();
+		// Flag to track if we need to convert IRT to IRR
+		$currency_needs_conversion = ($currency === 'IRT');
+
+		// Add a debug log for currency
+		$this->log('Store currency: ' . $currency . '. Conversion to IRR needed: ' . ($currency_needs_conversion ? 'Yes' : 'No'));
+
 		// Add line items
 		foreach ($order->get_items() as $item_id => $item) {
 			$product = $item->get_product();
 			$price = $order->get_line_subtotal($item, false, false);
 			$discount = $order->get_line_subtotal($item, false, false) - $order->get_line_total($item, false, false);
+
+			// Convert IRT to IRR if needed (1 Toman = 10 Rials)
+			if ($currency_needs_conversion) {
+				$price = $price * 10;
+				$discount = $discount * 10;
+			}
 
 			$items[] = array(
 				'id'       => $product ? (string) $product->get_id() : (string) $item_id,
@@ -316,6 +331,9 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 
 		// Calculate tax
 		$tax = (int) wc_format_decimal($order->get_total_tax(), 0);
+		if ($currency_needs_conversion) {
+			$tax = $tax * 10;
+		}
 
 		// Generate callback URL with order ID
 		$callback_url = add_query_arg(
@@ -328,17 +346,24 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 
 		// Generate a UUID v4 for the API order_id
 		$uuid = $this->generate_uuid_v4();
-		
+
 		// Store the UUID in the order meta data for reference
 		$order->update_meta_data('_vibe_uuid_order_id', $uuid);
 		$order->save();
-		
+
 		$this->log('Generated UUID v4 for order ' . $order->get_id() . ': ' . $uuid);
+
+		// Get the total and convert if needed
+		$total = $order->get_total();
+		if ($currency_needs_conversion) {
+			$total = $total * 10;
+			$this->log('Converted order total from IRT to IRR: ' . $total);
+		}
 
 		// Prepare data
 		$data = array(
 			'callback_url' => $callback_url,
-			'cart_amount'  => (int) wc_format_decimal($order->get_total(), 0),
+			'cart_amount'  => (int) wc_format_decimal($total, 0),
 			'data'         => array(
 				'goods_amount' => (int) wc_format_decimal($goods_amount, 0),
 				'items'        => $items,
@@ -357,107 +382,107 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	{
 		// Get order ID from query string if available
 		$order_id = isset($_GET['order_id']) ? absint($_GET['order_id']) : null;
-		
+
 		// Fallback to session if needed
 		if (!$order_id) {
 			$order_id = WC()->session->get('vibe_order_id');
 		}
-		
+
 		// Get reference ID
 		$ref_id = isset($_GET['ref_id']) ? sanitize_text_field(wp_unslash($_GET['ref_id'])) : '';
 		$result = isset($_GET['result']) ? sanitize_text_field(wp_unslash($_GET['result'])) : '';
-		
+
 		$this->log('Payment callback received. Order ID: ' . $order_id . ', Ref ID: ' . $ref_id . ', Result: ' . $result);
-		
+
 		if (!$order_id || !$ref_id) {
 			$this->log('Missing order ID or reference ID in callback');
 			wp_die(
-				__('Invalid payment response. Missing required parameters.', 'woocommerce-gateway-vibe'), 
-				__('Payment Error', 'woocommerce-gateway-vibe'), 
+				__('Invalid payment response. Missing required parameters.', 'woocommerce-gateway-vibe'),
+				__('Payment Error', 'woocommerce-gateway-vibe'),
 				array('response' => 400)
 			);
 		}
-		
+
 		// Get order by WooCommerce order ID
 		$order = wc_get_order($order_id);
-		
+
 		if (!$order) {
 			$this->log('Order not found by standard ID: ' . $order_id . '. Attempting to find by UUID.');
-			
+
 			// Try to find the order by UUID meta
 			$orders = wc_get_orders(array(
 				'meta_key'   => '_vibe_uuid_order_id',
 				'meta_value' => $order_id,
 				'limit'      => 1,
 			));
-			
+
 			if (!empty($orders)) {
 				$order = $orders[0];
 				$this->log('Found order by UUID: ' . $order->get_id());
 			}
 		}
-		
+
 		if (!$order) {
 			$this->log('Order not found: ' . $order_id);
 			wp_die(
-				__('Order not found.', 'woocommerce-gateway-vibe'), 
-				__('Payment Error', 'woocommerce-gateway-vibe'), 
+				__('Order not found.', 'woocommerce-gateway-vibe'),
+				__('Payment Error', 'woocommerce-gateway-vibe'),
 				array('response' => 404)
 			);
 		}
-		
+
 		// Prevent duplicate processing
 		if ($order->is_paid()) {
 			$this->log('Order already paid: ' . $order->get_id());
 			wp_redirect($this->get_return_url($order));
 			exit;
 		}
-		
+
 		// Verify payment
 		$verification_result = $this->verify_payment($ref_id);
-		
+
 		if ($verification_result) {
 			// Store reference ID
 			$order->update_meta_data('_vibe_reference_id', $ref_id);
 			$order->save();
-			
+
 			// Complete payment
 			$order->payment_complete($ref_id);
-			
+
 			// Add note with both reference ID and UUID
 			$uuid = $order->get_meta('_vibe_uuid_order_id');
 			/* translators: %1$s: Reference ID from Vibe Payment Gateway, %2$s: UUID v4 used for the order */
 			$order->add_order_note(sprintf(__('Payment completed via Vibe. Reference ID: %1$s, UUID: %2$s', 'woocommerce-gateway-vibe'), $ref_id, $uuid));
-			
+
 			// Empty cart
 			WC()->cart->empty_cart();
-			
+
 			// Show success message with processing page
 			echo '<div style="text-align: center; padding: 50px 0;">';
 			echo '<h1>' . esc_html__('Payment Successful', 'woocommerce-gateway-vibe') . '</h1>';
 			echo '<p>' . esc_html__('Your payment has been processed successfully. Redirecting to order confirmation...', 'woocommerce-gateway-vibe') . '</p>';
 			echo '</div>';
 			echo '<script>setTimeout(function() { window.location = "' . esc_url($this->get_return_url($order)) . '"; }, 2000);</script>';
-			
+
 			$this->log('Payment successful for order: ' . $order->get_id() . ' with reference: ' . $ref_id);
 			exit;
 		} else {
 			// Log failure
 			$this->log('Payment verification failed for order: ' . $order->get_id());
-			
+
 			// Update order status
 			$order->update_status(
-				'failed', 
+				'failed',
 				__('Payment failed or was declined.', 'woocommerce-gateway-vibe')
 			);
-			
+
 			// Show error message with processing page
 			echo '<div style="text-align: center; padding: 50px 0;">';
 			echo '<h1>' . esc_html__('Payment Failed', 'woocommerce-gateway-vibe') . '</h1>';
 			echo '<p>' . esc_html__('Your payment could not be processed. Redirecting to checkout...', 'woocommerce-gateway-vibe') . '</p>';
 			echo '</div>';
 			echo '<script>setTimeout(function() { window.location = "' . esc_url(wc_get_checkout_url()) . '"; }, 2000);</script>';
-			
+
 			exit;
 		}
 	}
@@ -471,7 +496,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	protected function verify_payment($ref_id)
 	{
 		$this->log('Verifying payment with ref_id: ' . $ref_id);
-		
+
 		$response = wp_remote_post(
 			$this->verify_endpoint,
 			array(
@@ -491,7 +516,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 
 		$body = wp_remote_retrieve_body($response);
 		$data = json_decode($body, true);
-		
+
 		$this->log('Verification response: ' . wp_json_encode($data));
 
 		if (wp_remote_retrieve_response_code($response) !== 200) {
@@ -507,7 +532,8 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	 *
 	 * @param string $message
 	 */
-	private function log($message) {
+	private function log($message)
+	{
 		if ($this->debug_mode) {
 			if (empty($this->logger)) {
 				$this->logger = wc_get_logger();
@@ -526,12 +552,12 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	public function get_option($key, $empty_value = null)
 	{
 		$value = parent::get_option($key, $empty_value);
-		
+
 		// Apply translations to specific fields
 		if ('title' === $key || 'description' === $key) {
 			$value = __($value, 'woocommerce-gateway-vibe');
 		}
-		
+
 		return $value;
 	}
 }
