@@ -1,0 +1,619 @@
+/**
+ * Vibe Dynamic Pricing Frontend Styles
+ *
+ * Styles for dynamic pricing display elements and interactions.
+ *
+ * @package WooCommerce Vibe Payment Gateway
+ * @since 1.1.0
+ */
+
+/* Dynamic Price Container */
+.vibe-dynamic-price-container {
+  display: inline-block;
+  position: relative;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.vibe-dynamic-price-container.vibe-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.vibe-dynamic-price-container.vibe-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: vibe-spin 1s linear infinite;
+}
+
+@keyframes vibe-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Price Elements */
+.vibe-dynamic-price-new {
+  font-weight: bold;
+  color: #27ae60;
+  font-size: 1.1em;
+}
+
+.vibe-dynamic-price-original {
+  margin-left: 5px;
+  text-decoration: line-through;
+  color: #999;
+  font-size: 0.9em;
+}
+
+/* Two-line layout */
+.vibe-dynamic-price-container.vibe-layout-two-line
+  .vibe-dynamic-price-original {
+  display: block;
+  margin-left: 0;
+  margin-top: 2px;
+}
+
+/* Original price first layout */
+.vibe-dynamic-price-container.vibe-order-original-first
+  .vibe-dynamic-price-original {
+  margin-left: 0;
+  margin-right: 5px;
+}
+
+/* Pricing Badge */
+.vibe-pricing-badge {
+  display: inline-block;
+  background-color: #e74c3c;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.8em;
+  margin-right: 5px;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  vertical-align: top;
+}
+
+.vibe-pricing-badge.vibe-badge-success {
+  background-color: #27ae60;
+}
+
+.vibe-pricing-badge.vibe-badge-warning {
+  background-color: #f39c12;
+}
+
+.vibe-pricing-badge.vibe-badge-info {
+  background-color: #3498db;
+}
+
+/* Context-specific styling */
+.vibe-context-shop .vibe-dynamic-price-container {
+  font-size: inherit;
+}
+
+.vibe-context-single .vibe-dynamic-price-container {
+  font-size: 1.2em;
+}
+
+.vibe-context-cart .vibe-pricing-badge {
+  display: none;
+}
+
+.vibe-context-checkout .vibe-dynamic-price-container {
+  font-size: 1em;
+}
+
+/* Loading State */
+.vibe-price-loading {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 5px;
+  z-index: 10000;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.vibe-price-loading::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff30;
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: vibe-spin 1s linear infinite;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/* Dynamic Pricing Notices */
+.vibe-dynamic-pricing-notice {
+  padding: 10px 15px;
+  margin: 10px 0;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.vibe-dynamic-pricing-notice.vibe-notice-info {
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  color: #0c5460;
+}
+
+.vibe-dynamic-pricing-notice.vibe-notice-success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.vibe-dynamic-pricing-notice.vibe-notice-warning {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  color: #856404;
+}
+
+.vibe-dynamic-pricing-notice.vibe-notice-error {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+/* Product Grid Enhancements */
+.woocommerce ul.products li.product .vibe-dynamic-price-container {
+  margin-top: 5px;
+}
+
+.woocommerce ul.products li.product .vibe-pricing-badge {
+  font-size: 0.7em;
+  padding: 1px 4px;
+}
+
+/* Single Product Enhancements */
+.single-product .summary .vibe-dynamic-price-container {
+  margin: 10px 0;
+}
+
+.single-product .summary .vibe-pricing-badge {
+  margin-bottom: 5px;
+}
+
+/* Cart and Checkout Enhancements */
+.woocommerce-cart .vibe-dynamic-price-container,
+.woocommerce-checkout .vibe-dynamic-price-container {
+  white-space: nowrap;
+}
+
+.woocommerce table.cart .vibe-dynamic-price-container {
+  display: block;
+  text-align: right;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .vibe-dynamic-price-container {
+    font-size: 0.9em;
+  }
+
+  .vibe-pricing-badge {
+    font-size: 0.7em;
+    padding: 1px 4px;
+    margin-right: 3px;
+  }
+
+  .vibe-dynamic-price-new {
+    font-size: 1em;
+  }
+
+  .vibe-dynamic-price-original {
+    font-size: 0.8em;
+    margin-left: 3px;
+  }
+
+  .vibe-price-loading {
+    padding: 10px 15px;
+    font-size: 12px;
+  }
+
+  /* Force two-line layout on mobile for better readability */
+  .vibe-dynamic-price-container .vibe-dynamic-price-original {
+    display: block;
+    margin-left: 0;
+    margin-top: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vibe-dynamic-price-container {
+    font-size: 0.85em;
+  }
+
+  .vibe-pricing-badge {
+    font-size: 0.65em;
+    padding: 1px 3px;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .vibe-dynamic-price-new {
+    color: #000;
+    font-weight: 900;
+  }
+
+  .vibe-dynamic-price-original {
+    color: #666;
+  }
+
+  .vibe-pricing-badge {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .vibe-dynamic-price-container.vibe-loading::after,
+  .vibe-price-loading::before {
+    animation: none;
+  }
+
+  .vibe-dynamic-pricing-notice {
+    transition: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .vibe-pricing-badge {
+    background-color: transparent !important;
+    color: #000 !important;
+    border: 1px solid #000;
+  }
+
+  .vibe-dynamic-price-container.vibe-loading::after,
+  .vibe-price-loading {
+    display: none !important;
+  }
+}
+
+/* Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+  .vibe-dynamic-pricing-notice.vibe-notice-info {
+    background-color: #1a2332;
+    border-color: #2d3748;
+    color: #90cdf4;
+  }
+
+  .vibe-dynamic-pricing-notice.vibe-notice-success {
+    background-color: #1a2e1a;
+    border-color: #2d5a2d;
+    color: #9ae6b4;
+  }
+
+  .vibe-dynamic-pricing-notice.vibe-notice-warning {
+    background-color: #2d1f00;
+    border-color: #5a3d00;
+    color: #fbd38d;
+  }
+
+  .vibe-dynamic-pricing-notice.vibe-notice-error {
+    background-color: #2d1618;
+    border-color: #5a2d32;
+    color: #feb2b2;
+  }
+}
+
+/* WooCommerce Theme Compatibility */
+.woocommerce .vibe-dynamic-price-container,
+.woocommerce-page .vibe-dynamic-price-container {
+  font-family: inherit;
+}
+
+/* Storefront Theme Compatibility */
+.storefront .vibe-dynamic-price-container {
+  font-family: inherit;
+}
+
+/* Astra Theme Compatibility */
+.ast-woocommerce .vibe-dynamic-price-container {
+  font-family: inherit;
+}
+
+/* OceanWP Theme Compatibility */
+.oceanwp .vibe-dynamic-price-container {
+  font-family: inherit;
+}
+
+/* Animation for price changes */
+.vibe-dynamic-price-container {
+  transition: all 0.3s ease;
+}
+
+.vibe-dynamic-price-new,
+.vibe-dynamic-price-original {
+  transition:
+    color 0.3s ease,
+    font-size 0.3s ease;
+}
+
+.vibe-pricing-badge {
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.vibe-pricing-badge:hover {
+  transform: scale(1.05);
+}
+
+/* Frontend Dynamic Pricing Styles */
+
+/* Loading state for checkout */
+.woocommerce-checkout-review-order-table.processing {
+  position: relative;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.woocommerce-checkout-review-order-table.processing::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #007cba;
+  border-radius: 50%;
+  animation: vibe-spin 1s linear infinite;
+  z-index: 999;
+}
+
+.wc_payment_methods.processing {
+  position: relative;
+  opacity: 0.7;
+}
+
+.wc_payment_methods.processing::before {
+  content: "بروزرسانی قیمت‌ها...";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #007cba;
+  z-index: 10;
+  border-radius: 4px;
+  border: 2px solid #007cba;
+}
+
+/* Disable payment methods during update */
+.wc_payment_methods.processing input[type="radio"] {
+  pointer-events: none;
+}
+
+/* Price update notices */
+.vibe-price-update-notice {
+  padding: 12px 16px;
+  margin: 16px 0;
+  border-radius: 6px;
+  font-weight: 500;
+  animation: vibe-slide-down 0.3s ease-out;
+  position: relative;
+  border-left: 4px solid;
+}
+
+.vibe-notice-success {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #28a745;
+  border-left-color: #28a745;
+}
+
+.vibe-notice-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #dc3545;
+  border-left-color: #dc3545;
+}
+
+.vibe-notice-info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border-color: #17a2b8;
+  border-left-color: #17a2b8;
+}
+
+@keyframes vibe-slide-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dynamic price display */
+.vibe-dynamic-price {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.vibe-original-price {
+  text-decoration: line-through;
+  color: #999;
+  margin-right: 5px;
+}
+
+.vibe-price-badge {
+  background: #e74c3c;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.8em;
+  margin-left: 5px;
+}
+
+/* Payment method selection feedback */
+.payment_methods .payment_method_vibe {
+  border: 2px solid transparent;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 5px 0;
+  transition: all 0.3s ease;
+  background: rgba(231, 76, 60, 0.05);
+}
+
+.payment_methods .payment_method_vibe:hover {
+  background: rgba(231, 76, 60, 0.1);
+  border-color: rgba(231, 76, 60, 0.2);
+}
+
+.payment_methods .payment_method_vibe input:checked ~ label {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.payment_methods .payment_method_vibe input:checked {
+  accent-color: #e74c3c;
+}
+
+.payment_methods .payment_method_vibe input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Enhanced checkout experience */
+.woocommerce-checkout-payment {
+  position: relative;
+}
+
+/* Pulse effect for active Vibe payment */
+.payment_methods .payment_method_vibe input:checked ~ label::after {
+  content: "🎯";
+  margin-left: 8px;
+  animation: vibe-pulse 2s infinite;
+}
+
+@keyframes vibe-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Loading spinner improvements */
+.vibe-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #e74c3c;
+  border-radius: 50%;
+  animation: vibe-spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+/* Better visual hierarchy */
+.woocommerce-checkout-review-order {
+  position: relative;
+}
+
+/* Notice positioning */
+.vibe-price-update-notice {
+  z-index: 999;
+  position: relative;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .vibe-price-badge {
+    display: block;
+    margin: 5px 0;
+  }
+
+  .vibe-dynamic-price {
+    display: block;
+    margin: 5px 0;
+  }
+
+  .payment_methods .payment_method_vibe {
+    padding: 8px;
+    margin: 3px 0;
+  }
+
+  .wc_payment_methods.processing::before {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .vibe-price-update-notice {
+    margin: 12px 0;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Enhanced visual feedback */
+.vibe-price-highlight {
+  background: linear-gradient(120deg, #a8e6cf 0%, #dcedc1 100%);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+  animation: vibe-highlight-pulse 2s ease-in-out;
+}
+
+@keyframes vibe-highlight-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Payment method transitions */
+.wc_payment_methods input[type="radio"]:disabled + label {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.wc_payment_methods li {
+  transition:
+    opacity 0.3s ease,
+    transform 0.2s ease;
+}
+
+.wc_payment_methods.processing li {
+  transform: translateY(1px);
+}

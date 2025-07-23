@@ -4,729 +4,728 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce Vibe Payment Gateway 1.1.0\n"
 "Report-Msgid-Bugs-To: https://woocommerce.com/my-account/create-a-ticket/\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2025-06-23T09:59:03+00:00\n"
+"PO-Revision-Date: 2025-06-23 13:54+0330\n"
+"Last-Translator: Persian Translator <translator@example.com>\n"
+"Language-Team: Persian <fa@li.org>\n"
+"Language: fa_IR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-06-23T09:59:03+00:00\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
-"language-team: LANGUAGE <EMAIL@ADDRESS>\n"
+"Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
+"X-Generator: Poedit 3.5\n"
 "X-Domain: woocommerce-gateway-vibe\n"
 
 #. Plugin Name of the plugin
 #: woocommerce-gateway-vibe.php
 msgid "WooCommerce Vibe Payment Gateway"
-msgstr ""
+msgstr "درگاه پرداخت وایب ووکامرس"
 
 #. Plugin URI of the plugin
 #. Author URI of the plugin
 #: woocommerce-gateway-vibe.php
 msgid "https://vibe.ir"
-msgstr ""
+msgstr "https://vibe.ir"
 
 #. Description of the plugin
 #: woocommerce-gateway-vibe.php
 msgid "Adds the Vibe Payment gateway to your WooCommerce website with dynamic pricing based on referrer detection."
-msgstr ""
+msgstr "درگاه پرداخت وایب را به وب‌سایت ووکامرس شما اضافه می‌کند با قیمت‌گذاری پویا بر اساس تشخیص منبع ارجاع."
 
 #. Author of the plugin
 #: woocommerce-gateway-vibe.php
 msgid "Vibe"
-msgstr ""
+msgstr "وایب"
 
-#: includes/class-wc-gateway-vibe.php:71
-#: includes/class-wc-gateway-vibe.php:133
-#: resources/js/frontend/index.js:22
-#: resources/js/frontend/index.js:43
+#: includes/class-wc-gateway-vibe.php:71 includes/class-wc-gateway-vibe.php:133
+#: resources/js/frontend/index.js:22 resources/js/frontend/index.js:43
 msgid "Vibe Payment"
-msgstr ""
+msgstr "پرداخت وایب"
 
 #: includes/class-wc-gateway-vibe.php:72
 msgid "Allows payments through Vibe Payment Gateway."
-msgstr ""
+msgstr "امکان پرداخت از طریق درگاه پرداخت وایب را فراهم می‌کند."
 
 #: includes/class-wc-gateway-vibe.php:124
 msgid "Enable/Disable"
-msgstr ""
+msgstr "فعال/غیرفعال"
 
 #: includes/class-wc-gateway-vibe.php:126
 msgid "Enable Vibe Payments"
-msgstr ""
+msgstr "فعال‌سازی پرداخت‌های وایب"
 
 #: includes/class-wc-gateway-vibe.php:130
 msgid "Title"
-msgstr ""
+msgstr "عنوان"
 
 #: includes/class-wc-gateway-vibe.php:132
 msgid "This controls the title which the user sees during checkout."
-msgstr ""
+msgstr "این گزینه عنوانی را که کاربر در هنگام تسویه حساب می‌بیند کنترل می‌کند."
 
 #: includes/class-wc-gateway-vibe.php:137
 #: includes/class-wc-vibe-admin-interface.php:349
 msgid "Description"
-msgstr ""
+msgstr "توضیحات"
 
 #: includes/class-wc-gateway-vibe.php:139
 msgid "Payment method description that the customer will see on your checkout."
-msgstr ""
+msgstr "توضیحات روش پرداخت که مشتری در صفحه تسویه حساب خواهد دید."
 
 #: includes/class-wc-gateway-vibe.php:140
 msgid "Pay with Vibe Payment Gateway."
-msgstr ""
+msgstr "پرداخت با درگاه پرداخت وایب."
 
 #: includes/class-wc-gateway-vibe.php:144
 msgid "Merchant API Key"
-msgstr ""
+msgstr "کلید API پذیرنده"
 
 #: includes/class-wc-gateway-vibe.php:146
 msgid "Enter your Vibe Payment Gateway Merchant API Key."
-msgstr ""
+msgstr "کلید API پذیرنده درگاه پرداخت وایب خود را وارد کنید."
 
 #: includes/class-wc-gateway-vibe.php:151
 msgid "Debug Mode"
-msgstr ""
+msgstr "حالت اشکال‌زدایی"
 
 #: includes/class-wc-gateway-vibe.php:153
 msgid "Enable logging for debugging"
-msgstr ""
+msgstr "فعال‌سازی ثبت رویدادها برای اشکال‌زدایی"
 
 #: includes/class-wc-gateway-vibe.php:155
 msgid "Log payment gateway events to help troubleshoot issues."
-msgstr ""
+msgstr "ثبت رویدادهای درگاه پرداخت برای کمک به حل مشکلات."
 
 #: includes/class-wc-gateway-vibe.php:240
 msgid "Unknown error occurred while processing the payment."
-msgstr ""
+msgstr "خطای نامشخصی در هنگام پردازش پرداخت رخ داد."
 
 #: includes/class-wc-gateway-vibe.php:247
 msgid "Invalid response from Vibe Payment Gateway."
-msgstr ""
+msgstr "پاسخ نامعتبر از درگاه پرداخت وایب."
 
 #: includes/class-wc-gateway-vibe.php:261
 msgid "Vibe Payment Gateway error: "
-msgstr ""
+msgstr "خطای درگاه پرداخت وایب: "
 
 #: includes/class-wc-gateway-vibe.php:400
 msgid "Invalid payment response. Missing required parameters."
-msgstr ""
+msgstr "پاسخ پرداخت نامعتبر. پارامترهای ضروری موجود نیست."
 
 #: includes/class-wc-gateway-vibe.php:401
 #: includes/class-wc-gateway-vibe.php:429
 msgid "Payment Error"
-msgstr ""
+msgstr "خطای پرداخت"
 
 #: includes/class-wc-gateway-vibe.php:428
 msgid "Order not found."
-msgstr ""
+msgstr "سفارش یافت نشد."
 
 #. translators: %1$s: Reference ID from Vibe Payment Gateway, %2$s: UUID v4 used for the order
 #: includes/class-wc-gateway-vibe.php:455
 msgid "Payment completed via Vibe. Reference ID: %1$s, UUID: %2$s"
-msgstr ""
+msgstr "پرداخت از طریق وایب تکمیل شد. شناسه مرجع: %1$s، UUID: %2$s"
 
 #: includes/class-wc-gateway-vibe.php:462
 msgid "Payment Successful"
-msgstr ""
+msgstr "پرداخت موفق"
 
 #: includes/class-wc-gateway-vibe.php:463
 msgid "Your payment has been processed successfully. Redirecting to order confirmation..."
-msgstr ""
+msgstr "پرداخت شما با موفقیت پردازش شد. در حال هدایت به تایید سفارش..."
 
 #: includes/class-wc-gateway-vibe.php:476
 msgid "Payment failed or was declined."
-msgstr ""
+msgstr "پرداخت ناموفق بود یا رد شد."
 
 #: includes/class-wc-gateway-vibe.php:481
 msgid "Payment Failed"
-msgstr ""
+msgstr "پرداخت ناموفق"
 
 #: includes/class-wc-gateway-vibe.php:482
 msgid "Your payment could not be processed. Redirecting to checkout..."
-msgstr ""
+msgstr "پرداخت شما قابل پردازش نبود. در حال هدایت به صفحه تسویه حساب..."
 
 #: includes/class-wc-vibe-admin-interface.php:85
 #: includes/class-wc-vibe-admin-interface.php:131
 msgid "Vibe Dynamic Pricing"
-msgstr ""
+msgstr "قیمت‌گذاری پویای وایب"
 
 #: includes/class-wc-vibe-admin-interface.php:86
 msgid "Vibe Pricing"
-msgstr ""
+msgstr "قیمت‌گذاری وایب"
 
 #: includes/class-wc-vibe-admin-interface.php:97
 #: includes/class-wc-vibe-admin-interface.php:135
 msgid "Pricing Rules"
-msgstr ""
+msgstr "قوانین قیمت‌گذاری"
 
 #: includes/class-wc-vibe-admin-interface.php:98
 msgid "Rules"
-msgstr ""
+msgstr "قوانین"
 
 #: includes/class-wc-vibe-admin-interface.php:106
 #: includes/class-wc-vibe-admin-interface.php:591
 msgid "Display Settings"
-msgstr ""
+msgstr "تنظیمات نمایش"
 
 #: includes/class-wc-vibe-admin-interface.php:107
 msgid "Display"
-msgstr ""
+msgstr "نمایش"
 
 #: includes/class-wc-vibe-admin-interface.php:115
 #: includes/class-wc-vibe-admin-interface.php:116
 #: includes/class-wc-vibe-admin-interface.php:1086
 msgid "Performance"
-msgstr ""
+msgstr "عملکرد"
 
 #: includes/class-wc-vibe-admin-interface.php:138
 msgid "Add Rule"
-msgstr ""
+msgstr "افزودن قانون"
 
 #: includes/class-wc-vibe-admin-interface.php:170
 msgid "Bulk Actions"
-msgstr ""
+msgstr "عملیات گروهی"
 
 #: includes/class-wc-vibe-admin-interface.php:171
 #: includes/class-wc-vibe-admin-interface.php:304
 msgid "Enable"
-msgstr ""
+msgstr "فعال"
 
 #: includes/class-wc-vibe-admin-interface.php:172
 #: includes/class-wc-vibe-admin-interface.php:304
 msgid "Disable"
-msgstr ""
+msgstr "غیرفعال"
 
 #: includes/class-wc-vibe-admin-interface.php:173
 #: includes/class-wc-vibe-admin-interface.php:309
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #: includes/class-wc-vibe-admin-interface.php:175
 msgid "Apply"
-msgstr ""
+msgstr "اعمال"
 
 #: includes/class-wc-vibe-admin-interface.php:179
 msgid "Add New Rule"
-msgstr ""
+msgstr "افزودن قانون جدید"
 
 #: includes/class-wc-vibe-admin-interface.php:190
 #: includes/class-wc-vibe-admin-interface.php:339
 msgid "Rule Name"
-msgstr ""
+msgstr "نام قانون"
 
 #: includes/class-wc-vibe-admin-interface.php:191
 #: includes/class-wc-vibe-admin-interface.php:359
 msgid "Priority"
-msgstr ""
+msgstr "اولویت"
 
 #: includes/class-wc-vibe-admin-interface.php:192
 #: includes/class-wc-vibe-admin-interface.php:377
 msgid "Product Targeting"
-msgstr ""
+msgstr "هدف‌گیری محصول"
 
 #: includes/class-wc-vibe-admin-interface.php:193
 #: includes/class-wc-vibe-admin-interface.php:504
 msgid "Price Adjustment"
-msgstr ""
+msgstr "تعدیل قیمت"
 
 #: includes/class-wc-vibe-admin-interface.php:194
 #: includes/class-wc-vibe-admin-interface.php:554
 msgid "Status"
-msgstr ""
+msgstr "وضعیت"
 
 #: includes/class-wc-vibe-admin-interface.php:195
 msgid "Actions"
-msgstr ""
+msgstr "عملیات"
 
 #: includes/class-wc-vibe-admin-interface.php:202
 msgid "No pricing rules found."
-msgstr ""
+msgstr "هیچ قانون قیمت‌گذاری یافت نشد."
 
 #: includes/class-wc-vibe-admin-interface.php:203
 msgid "Create your first rule"
-msgstr ""
+msgstr "اولین قانون خود را ایجاد کنید"
 
 #: includes/class-wc-vibe-admin-interface.php:232
 #: includes/class-wc-vibe-admin-interface.php:270
 #: includes/class-wc-vibe-admin-interface.php:387
 msgid "All Products"
-msgstr ""
+msgstr "تمام محصولات"
 
 #: includes/class-wc-vibe-admin-interface.php:236
 #: includes/class-wc-vibe-admin-interface.php:393
 msgid "Specific Products"
-msgstr ""
+msgstr "محصولات خاص"
 
 #. translators: %d: number of products selected for the pricing rule
 #: includes/class-wc-vibe-admin-interface.php:238
 msgid "%d product"
 msgid_plural "%d products"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d محصول"
+msgstr[1] "%d محصول"
 
 #: includes/class-wc-vibe-admin-interface.php:243
 msgid "Categories"
-msgstr ""
+msgstr "دسته‌بندی‌ها"
 
 #. translators: %d: number of categories selected for the pricing rule
 #: includes/class-wc-vibe-admin-interface.php:245
 msgid "%d category"
 msgid_plural "%d categories"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d دسته‌بندی"
+msgstr[1] "%d دسته‌بندی"
 
 #: includes/class-wc-vibe-admin-interface.php:250
 msgid "Tags"
-msgstr ""
+msgstr "برچسب‌ها"
 
 #. translators: %d: number of tags selected for the pricing rule
 #: includes/class-wc-vibe-admin-interface.php:252
 msgid "%d tag"
 msgid_plural "%d tags"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d برچسب"
+msgstr[1] "%d برچسب"
 
 #: includes/class-wc-vibe-admin-interface.php:255
 #: includes/class-wc-vibe-admin-interface.php:468
 msgid "Price Range"
-msgstr ""
+msgstr "محدوده قیمت"
 
 #: includes/class-wc-vibe-admin-interface.php:267
 #: includes/class-wc-vibe-admin-interface.php:485
 msgid "Complex Logic"
-msgstr ""
+msgstr "منطق پیچیده"
 
 #: includes/class-wc-vibe-admin-interface.php:296
 msgid "Active"
-msgstr ""
+msgstr "فعال"
 
 #: includes/class-wc-vibe-admin-interface.php:296
 msgid "Inactive"
-msgstr ""
+msgstr "غیرفعال"
 
 #: includes/class-wc-vibe-admin-interface.php:301
 msgid "Edit"
-msgstr ""
+msgstr "ویرایش"
 
 #: includes/class-wc-vibe-admin-interface.php:308
 msgid "Are you sure you want to delete this rule?"
-msgstr ""
+msgstr "آیا مطمئن هستید که می‌خواهید این قانون را حذف کنید؟"
 
 #: includes/class-wc-vibe-admin-interface.php:343
 msgid "A descriptive name for this pricing rule."
-msgstr ""
+msgstr "نام توصیفی برای این قانون قیمت‌گذاری."
 
 #: includes/class-wc-vibe-admin-interface.php:353
 msgid "Optional description of what this rule does."
-msgstr ""
+msgstr "توضیحات اختیاری از کارکرد این قانون."
 
 #: includes/class-wc-vibe-admin-interface.php:363
 msgid "Higher priority rules are applied first. Use 0 for lowest priority."
-msgstr ""
+msgstr "قوانین با اولویت بالاتر ابتدا اعمال می‌شوند. از 0 برای کمترین اولویت استفاده کنید."
 
 #: includes/class-wc-vibe-admin-interface.php:368
 msgid "Referrer Requirements"
-msgstr ""
+msgstr "الزامات منبع ارجاع"
 
 #: includes/class-wc-vibe-admin-interface.php:370
 msgid "Automatically applies to vibe.ir and all subdomains (*.vibe.ir)"
-msgstr ""
+msgstr "به‌طور خودکار برای vibe.ir و تمام زیردامنه‌ها (*.vibe.ir) اعمال می‌شود"
 
 #: includes/class-wc-vibe-admin-interface.php:371
 msgid "This rule will only apply to visitors coming from vibe.ir or any of its subdomains."
-msgstr ""
+msgstr "این قانون فقط برای بازدیدکنندگانی که از vibe.ir یا زیردامنه‌های آن می‌آیند اعمال خواهد شد."
 
 #: includes/class-wc-vibe-admin-interface.php:408
 msgid "Hold Ctrl/Cmd to select multiple products."
-msgstr ""
+msgstr "برای انتخاب چندین محصول کلید Ctrl/Cmd را نگه دارید."
 
 #: includes/class-wc-vibe-admin-interface.php:414
 msgid "Product Categories"
-msgstr ""
+msgstr "دسته‌بندی‌های محصول"
 
 #: includes/class-wc-vibe-admin-interface.php:431
 #: includes/class-wc-vibe-admin-interface.php:458
 msgid "Logic:"
-msgstr ""
+msgstr "منطق:"
 
 #: includes/class-wc-vibe-admin-interface.php:433
 msgid "Any of selected categories (OR)"
-msgstr ""
+msgstr "هر یک از دسته‌بندی‌های انتخابی (یا)"
 
 #: includes/class-wc-vibe-admin-interface.php:434
 msgid "All selected categories (AND)"
-msgstr ""
+msgstr "تمام دسته‌بندی‌های انتخابی (و)"
 
 #: includes/class-wc-vibe-admin-interface.php:441
 msgid "Product Tags"
-msgstr ""
+msgstr "برچسب‌های محصول"
 
 #: includes/class-wc-vibe-admin-interface.php:460
 msgid "Any of selected tags (OR)"
-msgstr ""
+msgstr "هر یک از برچسب‌های انتخابی (یا)"
 
 #: includes/class-wc-vibe-admin-interface.php:461
 msgid "All selected tags (AND)"
-msgstr ""
+msgstr "تمام برچسب‌های انتخابی (و)"
 
 #: includes/class-wc-vibe-admin-interface.php:475
 msgid "Minimum Price:"
-msgstr ""
+msgstr "حداقل قیمت:"
 
 #: includes/class-wc-vibe-admin-interface.php:477
 msgid "Maximum Price:"
-msgstr ""
+msgstr "حداکثر قیمت:"
 
 #: includes/class-wc-vibe-admin-interface.php:479
 msgid "Leave empty for no limit. Applies to products within this price range."
-msgstr ""
+msgstr "برای عدم محدودیت خالی بگذارید. برای محصولات در این محدوده قیمت اعمال می‌شود."
 
 #: includes/class-wc-vibe-admin-interface.php:489
 msgid "Build complex conditions like: ((Category A AND Tag X) OR (Category B AND Tag Y)) AND Price > $50"
-msgstr ""
+msgstr "شرایط پیچیده بسازید مانند: ((دسته A و برچسب X) یا (دسته B و برچسب Y)) و قیمت > 50 دلار"
 
 #: includes/class-wc-vibe-admin-interface.php:494
 msgid "Syntax: category:slug, tag:slug, price > amount, price < amount, price = amount. Use AND, OR, parentheses for grouping."
-msgstr ""
+msgstr "نحو: category:slug، tag:slug، price > amount، price < amount، price = amount. از AND، OR، پرانتز برای گروه‌بندی استفاده کنید."
 
 #: includes/class-wc-vibe-admin-interface.php:513
 msgid "Percentage Adjustment"
-msgstr ""
+msgstr "تعدیل درصدی"
 
 #: includes/class-wc-vibe-admin-interface.php:514
 msgid "Fixed Amount Addition/Subtraction"
-msgstr ""
+msgstr "اضافه/کم کردن مبلغ ثابت"
 
 #: includes/class-wc-vibe-admin-interface.php:515
 msgid "Fixed Price Override"
-msgstr ""
+msgstr "تنظیم قیمت ثابت"
 
 #: includes/class-wc-vibe-admin-interface.php:520
 msgid "Price Adjustment Types:"
-msgstr ""
+msgstr "انواع تعدیل قیمت:"
 
 #: includes/class-wc-vibe-admin-interface.php:522
 msgid "Percentage:"
-msgstr ""
+msgstr "درصدی:"
 
 #: includes/class-wc-vibe-admin-interface.php:522
 msgid "+10 = 10% increase, -5 = 5% decrease from original price"
-msgstr ""
+msgstr "+10 = افزایش 10 درصدی، -5 = کاهش 5 درصدی از قیمت اصلی"
 
 #: includes/class-wc-vibe-admin-interface.php:523
 msgid "Fixed Amount:"
-msgstr ""
+msgstr "مبلغ ثابت:"
 
 #: includes/class-wc-vibe-admin-interface.php:523
 msgid "+10 = add $10, -5 = subtract $5 from original price"
-msgstr ""
+msgstr "+10 = اضافه کردن 10 دلار، -5 = کم کردن 5 دلار از قیمت اصلی"
 
 #: includes/class-wc-vibe-admin-interface.php:524
 msgid "Fixed Price:"
-msgstr ""
+msgstr "قیمت ثابت:"
 
 #: includes/class-wc-vibe-admin-interface.php:524
 msgid "25 = set price to exactly $25 regardless of original price"
-msgstr ""
+msgstr "25 = تنظیم قیمت دقیقاً 25 دلار صرف‌نظر از قیمت اصلی"
 
 #: includes/class-wc-vibe-admin-interface.php:531
 msgid "Discount Integration"
-msgstr ""
+msgstr "یکپارچه‌سازی تخفیف"
 
 #: includes/class-wc-vibe-admin-interface.php:536
 msgid "Apply with existing WooCommerce discounts"
-msgstr ""
+msgstr "اعمال همراه با تخفیف‌های موجود ووکامرس"
 
 #: includes/class-wc-vibe-admin-interface.php:541
 msgid "Ignore existing discounts (replace them)"
-msgstr ""
+msgstr "نادیده گرفتن تخفیف‌های موجود (جایگزینی آن‌ها)"
 
 #: includes/class-wc-vibe-admin-interface.php:546
 msgid "Apply before other discounts"
-msgstr ""
+msgstr "اعمال قبل از سایر تخفیف‌ها"
 
 #: includes/class-wc-vibe-admin-interface.php:548
 msgid "Choose how this rule interacts with existing WooCommerce coupons and discounts."
-msgstr ""
+msgstr "انتخاب کنید این قانون چگونه با کوپن‌ها و تخفیف‌های موجود ووکامرس تعامل کند."
 
 #: includes/class-wc-vibe-admin-interface.php:559
 msgid "Enable this rule"
-msgstr ""
+msgstr "فعال‌سازی این قانون"
 
 #: includes/class-wc-vibe-admin-interface.php:566
 msgid "Update Rule"
-msgstr ""
+msgstr "به‌روزرسانی قانون"
 
 #: includes/class-wc-vibe-admin-interface.php:566
 msgid "Create Rule"
-msgstr ""
+msgstr "ایجاد قانون"
 
 #: includes/class-wc-vibe-admin-interface.php:567
 msgid "Cancel"
-msgstr ""
+msgstr "لغو"
 
 #: includes/class-wc-vibe-admin-interface.php:592
 msgid "Configure how dynamic prices are displayed to customers."
-msgstr ""
+msgstr "نحوه نمایش قیمت‌های پویا به مشتریان را پیکربندی کنید."
 
 #: includes/class-wc-vibe-admin-interface.php:621
 msgid "Enable Dynamic Pricing"
-msgstr ""
+msgstr "فعال‌سازی قیمت‌گذاری پویا"
 
 #: includes/class-wc-vibe-admin-interface.php:625
 msgid "Enable dynamic pricing functionality"
-msgstr ""
+msgstr "فعال‌سازی عملکرد قیمت‌گذاری پویا"
 
 #: includes/class-wc-vibe-admin-interface.php:627
 msgid "Master switch to enable or disable all dynamic pricing features."
-msgstr ""
+msgstr "کلید اصلی برای فعال یا غیرفعال کردن تمام ویژگی‌های قیمت‌گذاری پویا."
 
 #: includes/class-wc-vibe-admin-interface.php:632
 msgid "Apply Pricing Based On"
-msgstr ""
+msgstr "اعمال قیمت‌گذاری بر اساس"
 
 #: includes/class-wc-vibe-admin-interface.php:637
 msgid "Referrer OR Payment Gateway (Recommended)"
-msgstr ""
+msgstr "منبع ارجاع یا درگاه پرداخت (پیشنهادی)"
 
 #: includes/class-wc-vibe-admin-interface.php:640
 msgid "Apply dynamic pricing when visitors come from vibe.ir OR when they select Vibe payment gateway. This provides the best coverage while preventing double pricing application."
-msgstr ""
+msgstr "قیمت‌گذاری پویا را زمانی اعمال کنید که بازدیدکنندگان از vibe.ir بیایند یا درگاه پرداخت وایب را انتخاب کنند. این بهترین پوشش را فراهم می‌کند و از اعمال دوگانه قیمت‌گذاری جلوگیری می‌کند."
 
 #: includes/class-wc-vibe-admin-interface.php:645
 msgid "Payment Gateway Only"
-msgstr ""
+msgstr "فقط درگاه پرداخت"
 
 #: includes/class-wc-vibe-admin-interface.php:648
 msgid "Apply dynamic pricing only when customers select Vibe payment gateway during checkout, with referrer fallback on product pages."
-msgstr ""
+msgstr "قیمت‌گذاری پویا را فقط زمانی اعمال کنید که مشتریان در هنگام تسویه حساب درگاه پرداخت وایب را انتخاب کنند، با پشتیبان منبع ارجاع در صفحات محصول."
 
 #: includes/class-wc-vibe-admin-interface.php:653
 msgid "Referrer Detection Only (Legacy)"
-msgstr ""
+msgstr "فقط تشخیص منبع ارجاع (قدیمی)"
 
 #: includes/class-wc-vibe-admin-interface.php:656
 msgid "Apply pricing only when visitors come from vibe.ir domains. Less reliable as referrer information can be lost during navigation."
-msgstr ""
+msgstr "قیمت‌گذاری را فقط زمانی اعمال کنید که بازدیدکنندگان از دامنه‌های vibe.ir بیایند. کمتر قابل اعتماد چون اطلاعات منبع ارجاع ممکن است در طول مرور از بین برود."
 
 #: includes/class-wc-vibe-admin-interface.php:661
 msgid "Always Apply (All Visitors)"
-msgstr ""
+msgstr "همیشه اعمال (تمام بازدیدکنندگان)"
 
 #: includes/class-wc-vibe-admin-interface.php:664
 msgid "Apply dynamic pricing to all visitors regardless of referrer or payment method. Use with caution as this affects all customers."
-msgstr ""
+msgstr "قیمت‌گذاری پویا را برای تمام بازدیدکنندگان صرف‌نظر از منبع ارجاع یا روش پرداخت اعمال کنید. با احتیاط استفاده کنید چون این بر تمام مشتریان تأثیر می‌گذارد."
 
 #: includes/class-wc-vibe-admin-interface.php:670
 msgid "Emergency Disable"
-msgstr ""
+msgstr "غیرفعال‌سازی اضطراری"
 
 #: includes/class-wc-vibe-admin-interface.php:674
 msgid "Disable all dynamic pricing"
-msgstr ""
+msgstr "غیرفعال کردن تمام قیمت‌گذاری پویا"
 
 #: includes/class-wc-vibe-admin-interface.php:676
 msgid "Use this to quickly disable all dynamic pricing functionality in case of issues."
-msgstr ""
+msgstr "از این گزینه برای غیرفعال کردن سریع تمام عملکرد قیمت‌گذاری پویا در صورت بروز مشکل استفاده کنید."
 
 #: includes/class-wc-vibe-admin-interface.php:681
 msgid "Show Both Prices"
-msgstr ""
+msgstr "نمایش هر دو قیمت"
 
 #: includes/class-wc-vibe-admin-interface.php:685
 msgid "Show both original and dynamic prices"
-msgstr ""
+msgstr "نمایش قیمت اصلی و پویا"
 
 #: includes/class-wc-vibe-admin-interface.php:687
 msgid "When enabled, both the new dynamic price and original price will be displayed."
-msgstr ""
+msgstr "زمانی که فعال باشد، هم قیمت پویای جدید و هم قیمت اصلی نمایش داده خواهد شد."
 
 #: includes/class-wc-vibe-admin-interface.php:692
 msgid "Price Order"
-msgstr ""
+msgstr "ترتیب قیمت"
 
 #: includes/class-wc-vibe-admin-interface.php:695
 msgid "Dynamic Price First"
-msgstr ""
+msgstr "ابتدا قیمت پویا"
 
 #: includes/class-wc-vibe-admin-interface.php:696
 msgid "Original Price First"
-msgstr ""
+msgstr "ابتدا قیمت اصلی"
 
 #: includes/class-wc-vibe-admin-interface.php:698
 msgid "Choose which price to display first when showing both prices."
-msgstr ""
+msgstr "انتخاب کنید هنگام نمایش هر دو قیمت، کدام قیمت ابتدا نمایش داده شود."
 
 #: includes/class-wc-vibe-admin-interface.php:703
 msgid "Display Layout"
-msgstr ""
+msgstr "چیدمان نمایش"
 
 #: includes/class-wc-vibe-admin-interface.php:707
 msgid "Inline (side by side)"
-msgstr ""
+msgstr "درخط (کنار هم)"
 
 #: includes/class-wc-vibe-admin-interface.php:712
 msgid "Two lines (stacked)"
-msgstr ""
+msgstr "دو خط (روی هم)"
 
 #: includes/class-wc-vibe-admin-interface.php:714
 msgid "Choose how to display both prices when enabled."
-msgstr ""
+msgstr "انتخاب کنید هنگام فعال بودن، هر دو قیمت چگونه نمایش داده شوند."
 
 #: includes/class-wc-vibe-admin-interface.php:719
 msgid "Original Price Style"
-msgstr ""
+msgstr "سبک قیمت اصلی"
 
 #: includes/class-wc-vibe-admin-interface.php:723
 msgid "Strike through original price"
-msgstr ""
+msgstr "خط زدن روی قیمت اصلی"
 
 #: includes/class-wc-vibe-admin-interface.php:725
 msgid "Apply line-through style to the original price to show it as a discount."
-msgstr ""
+msgstr "سبک خط زدن روی قیمت اصلی را اعمال کنید تا آن را به عنوان تخفیف نشان دهد."
 
 #: includes/class-wc-vibe-admin-interface.php:730
 msgid "Font Sizes"
-msgstr ""
+msgstr "اندازه‌های فونت"
 
 #: includes/class-wc-vibe-admin-interface.php:732
 msgid "Dynamic Price Font Size:"
-msgstr ""
+msgstr "اندازه فونت قیمت پویا:"
 
 #: includes/class-wc-vibe-admin-interface.php:735
 msgid "Original Price Font Size:"
-msgstr ""
+msgstr "اندازه فونت قیمت اصلی:"
 
 #: includes/class-wc-vibe-admin-interface.php:737
 msgid "Set font sizes using CSS units (%, px, em). Examples: 100%, 14px, 1.2em"
-msgstr ""
+msgstr "اندازه فونت را با استفاده از واحدهای CSS (%, px, em) تنظیم کنید. مثال‌ها: 100%، 14px، 1.2em"
 
 #: includes/class-wc-vibe-admin-interface.php:742
 msgid "Price Prefixes & Suffixes"
-msgstr ""
+msgstr "پیشوند و پسوند قیمت"
 
 #: includes/class-wc-vibe-admin-interface.php:749
 msgid "Dynamic Price"
-msgstr ""
+msgstr "قیمت پویا"
 
 #: includes/class-wc-vibe-admin-interface.php:750
 msgid "Special pricing for Vibe users"
-msgstr ""
+msgstr "قیمت‌گذاری ویژه برای کاربران وایب"
 
 #: includes/class-wc-vibe-admin-interface.php:754
 #: includes/class-wc-vibe-admin-interface.php:778
 msgid "Prefix"
-msgstr ""
+msgstr "پیشوند"
 
 #: includes/class-wc-vibe-admin-interface.php:756
 msgid "e.g., Special Price:"
-msgstr ""
+msgstr "مثلاً، قیمت ویژه:"
 
 #: includes/class-wc-vibe-admin-interface.php:761
 #: includes/class-wc-vibe-admin-interface.php:785
 msgid "Suffix"
-msgstr ""
+msgstr "پسوند"
 
 #: includes/class-wc-vibe-admin-interface.php:763
 msgid "e.g., (Save 10%)"
-msgstr ""
+msgstr "مثلاً، (10% صرفه‌جویی)"
 
 #: includes/class-wc-vibe-admin-interface.php:773
 msgid "Original Price"
-msgstr ""
+msgstr "قیمت اصلی"
 
 #: includes/class-wc-vibe-admin-interface.php:774
 msgid "Standard pricing for reference"
-msgstr ""
+msgstr "قیمت‌گذاری استاندارد برای مرجع"
 
 #: includes/class-wc-vibe-admin-interface.php:780
 msgid "e.g., Regular Price:"
-msgstr ""
+msgstr "مثلاً، قیمت عادی:"
 
 #: includes/class-wc-vibe-admin-interface.php:787
 msgid "e.g., (was)"
-msgstr ""
+msgstr "مثلاً، (قبلاً)"
 
 #: includes/class-wc-vibe-admin-interface.php:797
 msgid "Live Preview"
-msgstr ""
+msgstr "پیش‌نمایش زنده"
 
 #: includes/class-wc-vibe-admin-interface.php:809
 msgid "Customize the text that appears before and after each price. The preview shows how prices will appear on your product pages."
-msgstr ""
+msgstr "متنی که قبل و بعد از هر قیمت ظاهر می‌شود را سفارشی کنید. پیش‌نمایش نشان می‌دهد قیمت‌ها چگونه در صفحات محصول شما ظاهر خواهند شد."
 
 #: includes/class-wc-vibe-admin-interface.php:814
 msgid "Pricing Badge"
-msgstr ""
+msgstr "نشان قیمت‌گذاری"
 
 #: includes/class-wc-vibe-admin-interface.php:818
 msgid "Show pricing badge"
-msgstr ""
+msgstr "نمایش نشان قیمت‌گذاری"
 
 #: includes/class-wc-vibe-admin-interface.php:822
 msgid "Badge Text:"
-msgstr ""
+msgstr "متن نشان:"
 
 #: includes/class-wc-vibe-admin-interface.php:825
 msgid "Badge Color:"
-msgstr ""
+msgstr "رنگ نشان:"
 
 #: includes/class-wc-vibe-admin-interface.php:828
 msgid "Display a colored badge next to dynamic prices to highlight the special pricing."
-msgstr ""
+msgstr "نشان رنگی کنار قیمت‌های پویا نمایش دهید تا قیمت‌گذاری ویژه را برجسته کنید."
 
 #: includes/class-wc-vibe-admin-interface.php:833
 msgid "Conditional Display"
-msgstr ""
+msgstr "نمایش شرطی"
 
 #: includes/class-wc-vibe-admin-interface.php:837
 msgid "Show dynamic prices only when conditions are met"
-msgstr ""
+msgstr "قیمت‌های پویا را فقط زمانی نمایش دهید که شرایط برآورده شوند"
 
 #: includes/class-wc-vibe-admin-interface.php:839
 msgid "When enabled, dynamic prices are shown only when appropriate (e.g., Vibe payment method selected). When disabled, dynamic prices are always shown if applicable."
-msgstr ""
+msgstr "زمانی که فعال باشد، قیمت‌های پویا فقط در مواقع مناسب نمایش داده می‌شوند (مثلاً، روش پرداخت وایب انتخاب شده). زمانی که غیرفعال باشد، قیمت‌های پویا همیشه در صورت اعمال نمایش داده می‌شوند."
 
 #: includes/class-wc-vibe-admin-interface.php:845
 msgid "Save Settings"
-msgstr ""
+msgstr "ذخیره تنظیمات"
 
 #: includes/class-wc-vibe-admin-interface.php:1089
 msgid "Cache Statistics"
-msgstr ""
+msgstr "آمار کش"
 
 #: includes/class-wc-vibe-admin-interface.php:1092
 msgid "Object Cache Enabled"
-msgstr ""
+msgstr "کش شیء فعال"
 
 #: includes/class-wc-vibe-admin-interface.php:1093
 msgid "Yes"
-msgstr ""
+msgstr "بله"
 
 #: includes/class-wc-vibe-admin-interface.php:1093
 msgid "No"
-msgstr ""
+msgstr "خیر"
 
 #: includes/class-wc-vibe-admin-interface.php:1096
 msgid "Database Cache Entries"
-msgstr ""
+msgstr "ورودی‌های کش پایگاه داده"
 
 #: includes/class-wc-vibe-admin-interface.php:1100
 msgid "Database Cache Size"
-msgstr ""
+msgstr "اندازه کش پایگاه داده"
 
 #: includes/class-wc-vibe-admin-interface.php:1104
 msgid "Transient Entries"
-msgstr ""
+msgstr "ورودی‌های موقت"
 
 #: includes/class-wc-vibe-admin-interface.php:1111
 msgid "Are you sure you want to clear all pricing caches?"
-msgstr ""
+msgstr "آیا مطمئن هستید که می‌خواهید تمام کش‌های قیمت‌گذاری را پاک کنید؟"
 
 #: includes/class-wc-vibe-admin-interface.php:1112
 msgid "Clear All Caches"
-msgstr ""
+msgstr "پاک کردن تمام کش‌ها"
 
 #: includes/class-wc-vibe-admin-interface.php:1188
 #: includes/class-wc-vibe-admin-interface.php:1287
@@ -735,231 +734,231 @@ msgstr ""
 #: includes/class-wc-vibe-admin-interface.php:1387
 #: includes/class-wc-vibe-admin-interface.php:1511
 msgid "Security check failed"
-msgstr ""
+msgstr "بررسی امنیتی ناموفق بود"
 
 #: includes/class-wc-vibe-admin-interface.php:1261
 msgid "Rule updated successfully."
-msgstr ""
+msgstr "قانون با موفقیت به‌روزرسانی شد."
 
 #: includes/class-wc-vibe-admin-interface.php:1266
 msgid "Rule created successfully."
-msgstr ""
+msgstr "قانون با موفقیت ایجاد شد."
 
 #: includes/class-wc-vibe-admin-interface.php:1300
 msgid "Rule deleted successfully."
-msgstr ""
+msgstr "قانون با موفقیت حذف شد."
 
 #: includes/class-wc-vibe-admin-interface.php:1329
 msgid "Rule status updated."
-msgstr ""
+msgstr "وضعیت قانون به‌روزرسانی شد."
 
 #: includes/class-wc-vibe-admin-interface.php:1377
 msgid "Settings saved successfully."
-msgstr ""
+msgstr "تنظیمات با موفقیت ذخیره شد."
 
 #: includes/class-wc-vibe-admin-interface.php:1394
 msgid "Cache cleared successfully."
-msgstr ""
+msgstr "کش با موفقیت پاک شد."
 
 #: includes/class-wc-vibe-admin-interface.php:1404
 msgid "Permission denied"
-msgstr ""
+msgstr "دسترسی مجاز نیست"
 
 #: includes/class-wc-vibe-admin-interface.php:1451
 msgid "Settings"
-msgstr ""
+msgstr "تنظیمات"
 
 #: includes/class-wc-vibe-admin-interface.php:1481
 msgid "Debug logs cleared successfully."
-msgstr ""
+msgstr "گزارش‌های اشکال‌زدایی با موفقیت پاک شدند."
 
 #: includes/class-wc-vibe-admin-interface.php:1498
 msgid "Debug settings saved successfully."
-msgstr ""
+msgstr "تنظیمات اشکال‌زدایی با موفقیت ذخیره شدند."
 
 #: includes/class-wc-vibe-admin-interface.php:1549
 msgid "Display settings saved successfully."
-msgstr ""
+msgstr "تنظیمات نمایش با موفقیت ذخیره شدند."
 
 #: includes/class-wc-vibe-admin-interface.php:1564
 msgid "Pricing rules processing - method needs implementation."
-msgstr ""
+msgstr "پردازش قوانین قیمت‌گذاری - روش نیاز به پیاده‌سازی دارد."
 
 #: includes/class-wc-vibe-api-settings.php:74
 msgid "Vibe API"
-msgstr ""
+msgstr "API وایب"
 
 #: includes/class-wc-vibe-api-settings.php:96
 msgid "API Endpoints"
-msgstr ""
+msgstr "نقاط پایانی API"
 
 #: includes/class-wc-vibe-api-settings.php:97
 msgid "Use these endpoints to access your product information. Click the copy button to copy the URL to your clipboard."
-msgstr ""
+msgstr "از این نقاط پایانی برای دسترسی به اطلاعات محصولات خود استفاده کنید. روی دکمه کپی کلیک کنید تا URL در کلیپ‌بورد کپی شود."
 
 #: includes/class-wc-vibe-api-settings.php:103
 msgid "Product List Endpoint"
-msgstr ""
+msgstr "نقطه پایانی لیست محصولات"
 
 #: includes/class-wc-vibe-api-settings.php:109
 #: includes/class-wc-vibe-api-settings.php:128
 msgid "Copy"
-msgstr ""
+msgstr "کپی"
 
 #: includes/class-wc-vibe-api-settings.php:113
 msgid "Endpoint for retrieving a list of products. Supports pagination with page and size parameters."
-msgstr ""
+msgstr "نقطه پایانی برای دریافت لیست محصولات. از صفحه‌بندی با پارامترهای page و size پشتیبانی می‌کند."
 
 #: includes/class-wc-vibe-api-settings.php:116
 #: includes/class-wc-vibe-api-settings.php:135
 msgid "Example:"
-msgstr ""
+msgstr "مثال:"
 
 #: includes/class-wc-vibe-api-settings.php:122
 msgid "Product Details Endpoint"
-msgstr ""
+msgstr "نقطه پایانی جزئیات محصول"
 
 #: includes/class-wc-vibe-api-settings.php:132
 msgid "Endpoint for retrieving details of a specific product. Replace {product_id} with the actual product ID."
-msgstr ""
+msgstr "نقطه پایانی برای دریافت جزئیات محصول خاص. {product_id} را با شناسه واقعی محصول جایگزین کنید."
 
 #: includes/class-wc-vibe-api-settings.php:141
 msgid "Share Endpoints"
-msgstr ""
+msgstr "اشتراک‌گذاری نقاط پایانی"
 
 #: includes/class-wc-vibe-api-settings.php:145
 msgid "Share via Email"
-msgstr ""
+msgstr "اشتراک‌گذاری از طریق ایمیل"
 
 #: includes/class-wc-vibe-api-settings.php:148
 msgid "Share these endpoints with your integration partner via email."
-msgstr ""
+msgstr "این نقاط پایانی را با شریک یکپارچه‌سازی خود از طریق ایمیل به اشتراک بگذارید."
 
 #: includes/class-wc-vibe-api-settings.php:211
 msgid "Copied!"
-msgstr ""
+msgstr "کپی شد!"
 
 #: includes/class-wc-vibe-api-settings.php:219
 msgid "Vibe API Endpoints"
-msgstr ""
+msgstr "نقاط پایانی API وایب"
 
 #: includes/class-wc-vibe-api-settings.php:220
 msgid "Here are the API endpoints for accessing our product information:"
-msgstr ""
+msgstr "در اینجا نقاط پایانی API برای دسترسی به اطلاعات محصولات ما آمده است:"
 
 #: includes/class-wc-vibe-api-settings.php:221
 msgid "Product List Endpoint:"
-msgstr ""
+msgstr "نقطه پایانی لیست محصولات:"
 
 #: includes/class-wc-vibe-api-settings.php:223
 msgid "Product Details Endpoint:"
-msgstr ""
+msgstr "نقطه پایانی جزئیات محصول:"
 
 #: includes/class-wc-vibe-api-settings.php:227
 msgid "Note: API authentication is enabled. You will need to include the following API key in the X-Vibe-API-Key header of your requests:"
-msgstr ""
+msgstr "توجه: احراز هویت API فعال است. باید کلید API زیر را در هدر X-Vibe-API-Key درخواست‌های خود قرار دهید:"
 
 #: includes/class-wc-vibe-api-settings.php:260
 msgid "Vibe Product Information Collection API"
-msgstr ""
+msgstr "API جمع‌آوری اطلاعات محصولات وایب"
 
 #: includes/class-wc-vibe-api-settings.php:262
 msgid "Configure the settings for the Vibe Product Information Collection API."
-msgstr ""
+msgstr "تنظیمات API جمع‌آوری اطلاعات محصولات وایب را پیکربندی کنید."
 
 #: includes/class-wc-vibe-api-settings.php:266
 msgid "Enable API Authentication"
-msgstr ""
+msgstr "فعال‌سازی احراز هویت API"
 
 #: includes/class-wc-vibe-api-settings.php:268
 msgid "Enable API key authentication for the Vibe Product Information Collection API."
-msgstr ""
+msgstr "فعال‌سازی احراز هویت کلید API برای API جمع‌آوری اطلاعات محصولات وایب."
 
 #: includes/class-wc-vibe-api-settings.php:273
 msgid "API Key"
-msgstr ""
+msgstr "کلید API"
 
 #: includes/class-wc-vibe-api-settings.php:275
 msgid "API key for authenticating requests to the Vibe Product Information Collection API. This key must be included in the X-Vibe-API-Key header of API requests."
-msgstr ""
+msgstr "کلید API برای احراز هویت درخواست‌های API جمع‌آوری اطلاعات محصولات وایب. این کلید باید در هدر X-Vibe-API-Key درخواست‌های API قرار گیرد."
 
 #: includes/class-wc-vibe-api-settings.php:283
 msgid "Generate New API Key"
-msgstr ""
+msgstr "تولید کلید API جدید"
 
 #: includes/class-wc-vibe-api-settings.php:285
 msgid "Check this box and save changes to generate a new API key. Warning: This will invalidate the existing key."
-msgstr ""
+msgstr "این گزینه را علامت بزنید و تغییرات را ذخیره کنید تا کلید API جدید تولید شود. هشدار: این کار کلید موجود را باطل می‌کند."
 
 #: includes/class-wc-vibe-api-settings.php:332
 msgid "API Settings"
-msgstr ""
+msgstr "تنظیمات API"
 
 #: includes/class-wc-vibe-api.php:115
 msgid "Vibe Payment Gateway Warning:"
-msgstr ""
+msgstr "هشدار درگاه پرداخت وایب:"
 
 #: includes/class-wc-vibe-api.php:116
 msgid "The WordPress REST API appears to be disabled on your site. The Vibe Product Information Collection API requires the WordPress REST API to function properly. Please enable the REST API or check with your hosting provider."
-msgstr ""
+msgstr "به نظر می‌رسد WordPress REST API در سایت شما غیرفعال است. API جمع‌آوری اطلاعات محصولات وایب برای عملکرد صحیح به WordPress REST API نیاز دارد. لطفاً REST API را فعال کنید یا با ارائه‌دهنده هاستینگ خود تماس بگیرید."
 
 #: includes/class-wc-vibe-api.php:120
 msgid "Check Permalink Settings"
-msgstr ""
+msgstr "بررسی تنظیمات پیوند یکتا"
 
 #: includes/class-wc-vibe-api.php:123
 msgid "Learn More About REST API"
-msgstr ""
+msgstr "درباره REST API بیشتر بدانید"
 
 #: includes/class-wc-vibe-api.php:144
 msgid "Page number"
-msgstr ""
+msgstr "شماره صفحه"
 
 #: includes/class-wc-vibe-api.php:151
 msgid "Number of products per page"
-msgstr ""
+msgstr "تعداد محصولات در هر صفحه"
 
 #: includes/class-wc-vibe-api.php:171
 msgid "Product ID"
-msgstr ""
+msgstr "شناسه محصول"
 
 #: includes/class-wc-vibe-api.php:190
 msgid "WooCommerce is not active"
-msgstr ""
+msgstr "ووکامرس فعال نیست"
 
 #: includes/class-wc-vibe-api.php:202
 msgid "API key is required. Please include the X-Vibe-API-Key header in your request."
-msgstr ""
+msgstr "کلید API ضروری است. لطفاً هدر X-Vibe-API-Key را در درخواست خود قرار دهید."
 
 #: includes/class-wc-vibe-api.php:214
 msgid "Invalid API key."
-msgstr ""
+msgstr "کلید API نامعتبر."
 
 #: includes/class-wc-vibe-api.php:240
 msgid "Required WooCommerce function is missing"
-msgstr ""
+msgstr "تابع ضروری ووکامرس موجود نیست"
 
 #: includes/class-wc-vibe-api.php:279
 msgid "Required WooCommerce functions are missing"
-msgstr ""
+msgstr "توابع ضروری ووکامرس موجود نیست"
 
 #: includes/class-wc-vibe-api.php:286
 msgid "Product not found"
-msgstr ""
+msgstr "محصول یافت نشد"
 
 #: includes/class-wc-vibe-payment-integration.php:311
 msgid "Dynamic Pricing Adjustment"
-msgstr ""
+msgstr "تعدیل قیمت‌گذاری پویا"
 
 #: includes/class-wc-vibe-payment-integration.php:312
 msgid "Dynamic Pricing Discount"
-msgstr ""
+msgstr "تخفیف قیمت‌گذاری پویا"
 
 #: woocommerce-gateway-vibe.php:128
 msgid "WooCommerce Vibe Payment Gateway requires WooCommerce to be active for dynamic pricing features."
-msgstr ""
+msgstr "درگاه پرداخت وایب ووکامرس برای ویژگی‌های قیمت‌گذاری پویا نیاز به فعال بودن ووکامرس دارد."
 
 #. translators: %s: error message describing the initialization failure
 #: woocommerce-gateway-vibe.php:160
 msgid "WooCommerce Vibe Dynamic Pricing failed to initialize: %s"
-msgstr ""
+msgstr "قیمت‌گذاری پویای وایب ووکامرس نتوانست راه‌اندازی شود: %s"

@@ -1,0 +1,236 @@
+/**
+ * Admin Dynamic Pricing Styles
+ * WooCommerce Vibe Payment Gateway
+ */
+
+/* Main admin interface styles */
+.vibe-pricing-rules {
+	margin-top: 20px;
+}
+
+.vibe-pricing-rules .tablenav {
+	margin-bottom: 10px;
+}
+
+.vibe-pricing-rules .widefat th,
+.vibe-pricing-rules .widefat td {
+	padding: 12px;
+}
+
+.vibe-pricing-rules .column-priority {
+	width: 80px;
+}
+
+.vibe-pricing-rules .column-targeting {
+	width: 180px;
+}
+
+.vibe-pricing-rules .column-status {
+	width: 100px;
+}
+
+.vibe-pricing-rules .column-actions {
+	width: 150px;
+}
+
+/* Status indicators */
+.status-active {
+	color: #46b450;
+	font-weight: bold;
+}
+
+.status-inactive {
+	color: #dc3232;
+	font-weight: bold;
+}
+
+/* Rule form styles */
+.vibe-rule-form {
+	max-width: 800px;
+}
+
+.vibe-rule-form .form-table th {
+	width: 200px;
+	padding: 20px 10px 20px 0;
+}
+
+.vibe-rule-form .form-table td {
+	padding: 15px 10px;
+}
+
+.vibe-rule-form input[type="text"],
+.vibe-rule-form input[type="number"],
+.vibe-rule-form select,
+.vibe-rule-form textarea {
+	width: 100%;
+	max-width: 400px;
+}
+
+.vibe-rule-form textarea {
+	height: 100px;
+	resize: vertical;
+}
+
+/* Settings page styles */
+.vibe-settings-section {
+	margin-bottom: 30px;
+}
+
+.vibe-settings-section h3 {
+	margin-bottom: 15px;
+	border-bottom: 1px solid #ddd;
+	padding-bottom: 10px;
+}
+
+/* Performance page styles */
+.vibe-performance-stats {
+	margin-bottom: 20px;
+}
+
+.vibe-performance-stats .card {
+	max-width: 600px;
+}
+
+.vibe-performance-stats table {
+	margin-bottom: 15px;
+}
+
+.vibe-performance-stats td:first-child {
+	font-weight: bold;
+	width: 200px;
+}
+
+/* Buttons and actions */
+.vibe-action-button {
+	margin-right: 5px;
+}
+
+.vibe-danger-button {
+	color: #dc3232;
+}
+
+.vibe-danger-button:hover {
+	color: #a00;
+}
+
+/* Notices and messages */
+.vibe-notice {
+	margin: 15px 0;
+	padding: 10px 15px;
+	border-left: 4px solid #0073aa;
+	background: #fff;
+	box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.vibe-notice.notice-success {
+	border-left-color: #46b450;
+}
+
+.vibe-notice.notice-error {
+	border-left-color: #dc3232;
+}
+
+.vibe-notice.notice-warning {
+	border-left-color: #ffb900;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+	.vibe-rule-form .form-table th,
+	.vibe-rule-form .form-table td {
+		display: block;
+		width: 100%;
+		padding: 10px 0;
+	}
+	
+	.vibe-rule-form .form-table th {
+		border-bottom: none;
+		font-weight: bold;
+	}
+	
+	.vibe-performance-stats td:first-child {
+		width: auto;
+	}
+}
+
+/* Loading states */
+.vibe-loading {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+.vibe-spinner {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	border: 2px solid #ddd;
+	border-top: 2px solid #0073aa;
+	border-radius: 50%;
+	animation: vibe-spin 1s linear infinite;
+}
+
+@keyframes vibe-spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+/* Product targeting form styles */
+.vibe-product-targeting {
+	border: 1px solid #ddd;
+	padding: 15px;
+	background: #f9f9f9;
+	border-radius: 3px;
+}
+
+.vibe-product-targeting label {
+	display: block;
+	margin-bottom: 8px;
+	font-weight: bold;
+}
+
+.vibe-product-targeting input[type="radio"] {
+	margin-right: 8px;
+}
+
+.target-option {
+	display: none;
+	border-left: 3px solid #0073aa;
+	padding-left: 15px;
+	margin-bottom: 15px;
+}
+
+.target-option.active {
+	display: block;
+}
+
+.target-option select[multiple] {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+}
+
+.target-option input[type="number"] {
+	margin: 0 10px;
+}
+
+/* Complex logic builder */
+#complex-logic-builder textarea {
+	font-family: 'Courier New', monospace;
+	background: #f8f8f8;
+	border: 1px solid #ddd;
+}
+
+/* Price adjustment help */
+.price-adjustment-help {
+	background: #f0f8ff;
+	border: 1px solid #b3d9ff;
+	padding: 10px;
+	border-radius: 3px;
+}
+
+.price-adjustment-help ul {
+	margin: 5px 0;
+}
+
+.price-adjustment-help li {
+	margin-bottom: 5px;
+} 
