@@ -4,7 +4,7 @@
  * Plugin Name: WooCommerce Vibe Payment Gateway
  * Plugin URI: https://vibe.ir
  * Description: Adds the Vibe Payment gateway to your WooCommerce website with dynamic pricing based on referrer detection.
- * Version: 1.1.1
+ * Version: 1.2.1
  *
  * Author: Vibe
  * Author URI: https://vibe.ir
@@ -26,10 +26,21 @@ if (! defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WC_VIBE_VERSION', '1.1.1');
+define('WC_VIBE_VERSION', '1.2.1');
 define('WC_VIBE_PLUGIN_FILE', __FILE__);
 define('WC_VIBE_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('WC_VIBE_PLUGIN_URL', plugin_dir_url(__FILE__));
+
+// Initialize Plugin Update Checker
+require_once WC_VIBE_PLUGIN_PATH . 'includes/update-checker/plugin-update-checker.php';
+
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+$vibeUpdateChecker = PucFactory::buildUpdateChecker(
+	'https://crm-api.vibe.ir/api/v1/plugin/check-update',
+	__FILE__,
+	'woocommerce-gateway-vibe'
+);
 
 /**
  * WC Vibe Payment gateway plugin class.
@@ -90,7 +101,7 @@ class WC_Vibe_Payments
 
 			$has_dynamic_pricing_for_all = true;
 			$cart_items = WC()->cart->get_cart();
-			
+
 			// If cart is empty, don't show Vibe gateway
 			if (empty($cart_items)) {
 				$has_dynamic_pricing_for_all = false;
@@ -101,7 +112,7 @@ class WC_Vibe_Payments
 						break;
 					}
 					$product = $cart_item['data'];
-					
+
 					// For variable products, check if this is a variation
 					if ($product->is_type('variation')) {
 						// For variations, also check the parent product rules
@@ -118,7 +129,7 @@ class WC_Vibe_Payments
 						// For simple products, check normally
 						$has_pricing_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
 					}
-					
+
 					if (!$has_pricing_rules) {
 						$has_dynamic_pricing_for_all = false;
 						break;
@@ -144,15 +155,15 @@ class WC_Vibe_Payments
 		}, 100, 2);
 
 		// Try additional Store API hooks that might work better
-		add_filter('woocommerce_blocks_loaded', function() {
+		add_filter('woocommerce_blocks_loaded', function () {
 			if (function_exists('woocommerce_store_api_register_endpoint_data')) {
 				woocommerce_store_api_register_endpoint_data(array(
 					'endpoint' => \Automattic\WooCommerce\StoreApi\Schemas\V1\CartSchema::IDENTIFIER,
 					'namespace' => 'vibe-dynamic-pricing',
-					'data_callback' => function() {
+					'data_callback' => function () {
 						return self::get_vibe_gateway_availability();
 					},
-					'schema_callback' => function() {
+					'schema_callback' => function () {
 						return array(
 							'vibe_gateway_available' => array(
 								'description' => 'Whether Vibe gateway should be available',
@@ -166,7 +177,7 @@ class WC_Vibe_Payments
 		});
 
 		// Alternative approach - hook into gateway availability directly
-		add_filter('woocommerce_payment_gateway_supports', function($supports, $feature, $gateway) {
+		add_filter('woocommerce_payment_gateway_supports', function ($supports, $feature, $gateway) {
 			if ($gateway && $gateway->id === 'vibe' && $feature === 'products') {
 				$available = self::get_vibe_gateway_availability();
 				return $available['vibe_gateway_available'] ? $supports : false;
@@ -181,7 +192,8 @@ class WC_Vibe_Payments
 	 * @param array $gateways Available gateways.
 	 * @return array Filtered gateways.
 	 */
-	public static function filter_vibe_gateway_for_blocks($gateways) {
+	public static function filter_vibe_gateway_for_blocks($gateways)
+	{
 		if (!function_exists('WC')) {
 			return $gateways;
 		}
@@ -206,7 +218,7 @@ class WC_Vibe_Payments
 
 		$has_dynamic_pricing_for_all = true;
 		$cart_items = WC()->cart->get_cart();
-		
+
 		// If cart is empty, don't show Vibe gateway
 		if (empty($cart_items)) {
 			$has_dynamic_pricing_for_all = false;
@@ -217,7 +229,7 @@ class WC_Vibe_Payments
 					break;
 				}
 				$product = $cart_item['data'];
-				
+
 				// For variable products, check if this is a variation
 				if ($product->is_type('variation')) {
 					// For variations, also check the parent product rules
@@ -234,7 +246,7 @@ class WC_Vibe_Payments
 					// For simple products, check normally
 					$has_pricing_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
 				}
-				
+
 				if (!$has_pricing_rules) {
 					$has_dynamic_pricing_for_all = false;
 					break;
@@ -259,7 +271,8 @@ class WC_Vibe_Payments
 	 *
 	 * @return array Availability data.
 	 */
-	public static function get_vibe_gateway_availability() {
+	public static function get_vibe_gateway_availability()
+	{
 		if (!function_exists('WC') || !WC()->cart) {
 			return array('vibe_gateway_available' => false);
 		}
@@ -279,7 +292,7 @@ class WC_Vibe_Payments
 
 		$has_dynamic_pricing_for_all = true;
 		$cart_items = WC()->cart->get_cart();
-		
+
 		// If cart is empty, don't show Vibe gateway
 		if (empty($cart_items)) {
 			$has_dynamic_pricing_for_all = false;
@@ -290,7 +303,7 @@ class WC_Vibe_Payments
 					break;
 				}
 				$product = $cart_item['data'];
-				
+
 				// For variable products, check if this is a variation
 				if ($product->is_type('variation')) {
 					// For variations, also check the parent product rules
@@ -307,7 +320,7 @@ class WC_Vibe_Payments
 					// For simple products, check normally
 					$has_pricing_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
 				}
-				
+
 				if (!$has_pricing_rules) {
 					$has_dynamic_pricing_for_all = false;
 					break;

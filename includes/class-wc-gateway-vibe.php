@@ -543,6 +543,34 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 	}
 
 	/**
+	 * Output for the order received page.
+	 *
+	 * @param int $order_id Order ID.
+	 */
+	public function thankyou_page($order_id)
+	{
+		$order = wc_get_order($order_id);
+
+		if (!$order) {
+			return;
+		}
+
+		// Only show for orders paid with this gateway
+		if ($order->get_payment_method() !== $this->id) {
+			return;
+		}
+
+		// Get the reference ID from order meta
+		$ref_id = $order->get_meta('_vibe_reference_id');
+
+		if ($ref_id) {
+			echo '<div class="vibe-payment-details">';
+			echo '<p><strong>' . esc_html__('شناسه پرداخت:', 'woocommerce-gateway-vibe') . '</strong> ' . esc_html($ref_id) . '</p>';
+			echo '</div>';
+		}
+	}
+
+	/**
 	 * Override parent get_option to apply translations to certain fields.
 	 *
 	 * @param string $key Option key.
