@@ -42,6 +42,14 @@ $vibeUpdateChecker = PucFactory::buildUpdateChecker(
 	'woocommerce-gateway-vibe'
 );
 
+// Enable auto-update for this plugin by default
+add_filter('auto_update_plugin', function($update, $item) {
+    if ($item->plugin === plugin_basename(__FILE__)) {
+        return true;
+    }
+    return $update;
+}, 10, 2);
+
 /**
  * WC Vibe Payment gateway plugin class.
  *
