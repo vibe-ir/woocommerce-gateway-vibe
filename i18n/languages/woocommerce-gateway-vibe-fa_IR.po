@@ -30,7 +30,7 @@ msgstr "https://vibe.ir"
 #. Description of the plugin
 #: woocommerce-gateway-vibe.php
 msgid "Adds the Vibe Payment gateway to your WooCommerce website with dynamic pricing based on referrer detection."
-msgstr "درگاه پرداخت وایب را به وب‌سایت ووکامرس شما اضافه می‌کند با قیمت‌گذاری پویا بر اساس تشخیص منبع ارجاع."
+msgstr "درگاه پرداخت وایب را به وب‌سایت ووکامرس شما اضافه می‌کند با قیمت‌گذاری اقساطی بر اساس تشخیص منبع ارجاع."
 
 #. Author of the plugin
 #: woocommerce-gateway-vibe.php
@@ -148,7 +148,7 @@ msgstr "پرداخت شما قابل پردازش نبود. در حال هدای
 #: includes/class-wc-vibe-admin-interface.php:85
 #: includes/class-wc-vibe-admin-interface.php:131
 msgid "Vibe Dynamic Pricing"
-msgstr "قیمت‌گذاری پویای وایب"
+msgstr "قیمت‌گذاری اقساطی وایب"
 
 #: includes/class-wc-vibe-admin-interface.php:86
 msgid "Vibe Pricing"
@@ -467,19 +467,19 @@ msgstr "لغو"
 
 #: includes/class-wc-vibe-admin-interface.php:592
 msgid "Configure how dynamic prices are displayed to customers."
-msgstr "نحوه نمایش قیمت‌های پویا به مشتریان را پیکربندی کنید."
+msgstr "نحوه نمایش قیمت‌های اقساطی به مشتریان را پیکربندی کنید."
 
 #: includes/class-wc-vibe-admin-interface.php:621
 msgid "Enable Dynamic Pricing"
-msgstr "فعال‌سازی قیمت‌گذاری پویا"
+msgstr "فعال‌سازی قیمت‌گذاری اقساطی"
 
 #: includes/class-wc-vibe-admin-interface.php:625
 msgid "Enable dynamic pricing functionality"
-msgstr "فعال‌سازی عملکرد قیمت‌گذاری پویا"
+msgstr "فعال‌سازی عملکرد قیمت‌گذاری اقساطی"
 
 #: includes/class-wc-vibe-admin-interface.php:627
 msgid "Master switch to enable or disable all dynamic pricing features."
-msgstr "کلید اصلی برای فعال یا غیرفعال کردن تمام ویژگی‌های قیمت‌گذاری پویا."
+msgstr "کلید اصلی برای فعال یا غیرفعال کردن تمام ویژگی‌های قیمت‌گذاری اقساطی."
 
 #: includes/class-wc-vibe-admin-interface.php:632
 msgid "Apply Pricing Based On"
@@ -491,7 +491,7 @@ msgstr "منبع ارجاع یا درگاه پرداخت (پیشنهادی)"
 
 #: includes/class-wc-vibe-admin-interface.php:640
 msgid "Apply dynamic pricing when visitors come from vibe.ir OR when they select Vibe payment gateway. This provides the best coverage while preventing double pricing application."
-msgstr "قیمت‌گذاری پویا را زمانی اعمال کنید که بازدیدکنندگان از vibe.ir بیایند یا درگاه پرداخت وایب را انتخاب کنند. این بهترین پوشش را فراهم می‌کند و از اعمال دوگانه قیمت‌گذاری جلوگیری می‌کند."
+msgstr "در این حالت قیمت اقساطی فقط وقتی به مشتریان شما نشان داده میشود که درگاه پرداخت وایب را انتخاب کنند، یا از سایت وایب به سایت شما منتقل شده باشند."
 
 #: includes/class-wc-vibe-admin-interface.php:645
 msgid "Payment Gateway Only"
@@ -499,7 +499,7 @@ msgstr "فقط درگاه پرداخت"
 
 #: includes/class-wc-vibe-admin-interface.php:648
 msgid "Apply dynamic pricing only when customers select Vibe payment gateway during checkout, with referrer fallback on product pages."
-msgstr "قیمت‌گذاری پویا را فقط زمانی اعمال کنید که مشتریان در هنگام تسویه حساب درگاه پرداخت وایب را انتخاب کنند، با پشتیبان منبع ارجاع در صفحات محصول."
+msgstr "قیمت‌گذاری اقساطی را فقط زمانی اعمال کنید که مشتریان در هنگام تسویه حساب درگاه پرداخت وایب را انتخاب کنند، با پشتیبان منبع ارجاع در صفحات محصول."
 
 #: includes/class-wc-vibe-admin-interface.php:653
 msgid "Referrer Detection Only (Legacy)"
@@ -515,7 +515,7 @@ msgstr "همیشه اعمال (تمام بازدیدکنندگان)"
 
 #: includes/class-wc-vibe-admin-interface.php:664
 msgid "Apply dynamic pricing to all visitors regardless of referrer or payment method. Use with caution as this affects all customers."
-msgstr "قیمت‌گذاری پویا را برای تمام بازدیدکنندگان صرف‌نظر از منبع ارجاع یا روش پرداخت اعمال کنید. با احتیاط استفاده کنید چون این بر تمام مشتریان تأثیر می‌گذارد."
+msgstr "در این حالت کاربران شما چه مستقیم روی سایت خودتان آمده باشند و چه از سایت وایب به سایت شما منتقل شده باشند، قیمت اقساطی کالاها را می بینند."
 
 #: includes/class-wc-vibe-admin-interface.php:670
 msgid "Emergency Disable"
@@ -523,11 +523,11 @@ msgstr "غیرفعال‌سازی اضطراری"
 
 #: includes/class-wc-vibe-admin-interface.php:674
 msgid "Disable all dynamic pricing"
-msgstr "غیرفعال کردن تمام قیمت‌گذاری پویا"
+msgstr "غیرفعال کردن تمام قیمت‌گذاری اقساطی"
 
 #: includes/class-wc-vibe-admin-interface.php:676
 msgid "Use this to quickly disable all dynamic pricing functionality in case of issues."
-msgstr "از این گزینه برای غیرفعال کردن سریع تمام عملکرد قیمت‌گذاری پویا در صورت بروز مشکل استفاده کنید."
+msgstr "از این گزینه برای غیرفعال کردن سریع تمام عملکرد قیمت‌گذاری اقساطی در صورت بروز مشکل استفاده کنید."
 
 #: includes/class-wc-vibe-admin-interface.php:681
 msgid "Show Both Prices"
@@ -535,11 +535,11 @@ msgstr "نمایش هر دو قیمت"
 
 #: includes/class-wc-vibe-admin-interface.php:685
 msgid "Show both original and dynamic prices"
-msgstr "نمایش قیمت اصلی و پویا"
+msgstr "نمایش قیمت اصلی و اقساطی"
 
 #: includes/class-wc-vibe-admin-interface.php:687
 msgid "When enabled, both the new dynamic price and original price will be displayed."
-msgstr "زمانی که فعال باشد، هم قیمت پویای جدید و هم قیمت اصلی نمایش داده خواهد شد."
+msgstr "زمانی که فعال باشد، هم قیمت اقساطی جدید و هم قیمت اصلی نمایش داده خواهد شد."
 
 #: includes/class-wc-vibe-admin-interface.php:692
 msgid "Price Order"
@@ -547,7 +547,7 @@ msgstr "ترتیب قیمت"
 
 #: includes/class-wc-vibe-admin-interface.php:695
 msgid "Dynamic Price First"
-msgstr "ابتدا قیمت پویا"
+msgstr "ابتدا قیمت اقساطی"
 
 #: includes/class-wc-vibe-admin-interface.php:696
 msgid "Original Price First"
@@ -591,7 +591,7 @@ msgstr "اندازه‌های فونت"
 
 #: includes/class-wc-vibe-admin-interface.php:732
 msgid "Dynamic Price Font Size:"
-msgstr "اندازه فونت قیمت پویا:"
+msgstr "اندازه فونت قیمت اقساطی:"
 
 #: includes/class-wc-vibe-admin-interface.php:735
 msgid "Original Price Font Size:"
@@ -607,11 +607,11 @@ msgstr "پیشوند و پسوند قیمت"
 
 #: includes/class-wc-vibe-admin-interface.php:749
 msgid "Dynamic Price"
-msgstr "قیمت پویا"
+msgstr "قیمت اقساطی"
 
 #: includes/class-wc-vibe-admin-interface.php:750
 msgid "Special pricing for Vibe users"
-msgstr "قیمت‌گذاری ویژه برای کاربران وایب"
+msgstr "عنوان نمایشی به کاربر برای قیمت اقساطی"
 
 #: includes/class-wc-vibe-admin-interface.php:754
 #: includes/class-wc-vibe-admin-interface.php:778
@@ -637,7 +637,7 @@ msgstr "قیمت اصلی"
 
 #: includes/class-wc-vibe-admin-interface.php:774
 msgid "Standard pricing for reference"
-msgstr "قیمت‌گذاری استاندارد برای مرجع"
+msgstr "عنوان نمایشی به کاربر برای قیمت نقدی"
 
 #: includes/class-wc-vibe-admin-interface.php:780
 msgid "e.g., Regular Price:"
@@ -673,7 +673,7 @@ msgstr "رنگ نشان:"
 
 #: includes/class-wc-vibe-admin-interface.php:828
 msgid "Display a colored badge next to dynamic prices to highlight the special pricing."
-msgstr "نشان رنگی کنار قیمت‌های پویا نمایش دهید تا قیمت‌گذاری ویژه را برجسته کنید."
+msgstr "نشان رنگی کنار قیمت‌های اقساطی نمایش دهید تا قیمت‌گذاری ویژه را برجسته کنید."
 
 #: includes/class-wc-vibe-admin-interface.php:833
 msgid "Conditional Display"
@@ -681,11 +681,11 @@ msgstr "نمایش شرطی"
 
 #: includes/class-wc-vibe-admin-interface.php:837
 msgid "Show dynamic prices only when conditions are met"
-msgstr "قیمت‌های پویا را فقط زمانی نمایش دهید که شرایط برآورده شوند"
+msgstr "قیمت‌های اقساطی را فقط زمانی نمایش دهید که شرایط برآورده شوند"
 
 #: includes/class-wc-vibe-admin-interface.php:839
 msgid "When enabled, dynamic prices are shown only when appropriate (e.g., Vibe payment method selected). When disabled, dynamic prices are always shown if applicable."
-msgstr "زمانی که فعال باشد، قیمت‌های پویا فقط در مواقع مناسب نمایش داده می‌شوند (مثلاً، روش پرداخت وایب انتخاب شده). زمانی که غیرفعال باشد، قیمت‌های پویا همیشه در صورت اعمال نمایش داده می‌شوند."
+msgstr "زمانی که فعال باشد، قیمت‌های اقساطی فقط در مواقع مناسب نمایش داده می‌شوند (مثلاً، روش پرداخت وایب انتخاب شده). زمانی که غیرفعال باشد، قیمت‌های اقساطی همیشه در صورت اعمال نمایش داده می‌شوند."
 
 #: includes/class-wc-vibe-admin-interface.php:845
 msgid "Save Settings"
@@ -948,17 +948,17 @@ msgstr "محصول یافت نشد"
 
 #: includes/class-wc-vibe-payment-integration.php:311
 msgid "Dynamic Pricing Adjustment"
-msgstr "تعدیل قیمت‌گذاری پویا"
+msgstr "تعدیل قیمت‌گذاری اقساطی"
 
 #: includes/class-wc-vibe-payment-integration.php:312
 msgid "Dynamic Pricing Discount"
-msgstr "تخفیف قیمت‌گذاری پویا"
+msgstr "تخفیف قیمت‌گذاری اقساطی"
 
 #: woocommerce-gateway-vibe.php:128
 msgid "WooCommerce Vibe Payment Gateway requires WooCommerce to be active for dynamic pricing features."
-msgstr "درگاه پرداخت وایب ووکامرس برای ویژگی‌های قیمت‌گذاری پویا نیاز به فعال بودن ووکامرس دارد."
+msgstr "درگاه پرداخت وایب ووکامرس برای ویژگی‌های قیمت‌گذاری اقساطی نیاز به فعال بودن ووکامرس دارد."
 
 #. translators: %s: error message describing the initialization failure
 #: woocommerce-gateway-vibe.php:160
 msgid "WooCommerce Vibe Dynamic Pricing failed to initialize: %s"
-msgstr "قیمت‌گذاری پویای وایب ووکامرس نتوانست راه‌اندازی شود: %s"
+msgstr "قیمت‌گذاری اقساطی وایب ووکامرس نتوانست راه‌اندازی شود: %s"
