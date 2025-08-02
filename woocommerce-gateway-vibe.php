@@ -4,7 +4,7 @@
  * Plugin Name: WooCommerce Vibe Payment Gateway
  * Plugin URI: https://vibe.ir
  * Description: Adds the Vibe Payment gateway to your WooCommerce website with dynamic pricing based on referrer detection.
- * Version: 1.2.1
+ * Version: 1.2.2
  *
  * Author: Vibe
  * Author URI: https://vibe.ir
@@ -26,7 +26,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WC_VIBE_VERSION', '1.2.1');
+define('WC_VIBE_VERSION', '1.2.2');
 define('WC_VIBE_PLUGIN_FILE', __FILE__);
 define('WC_VIBE_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('WC_VIBE_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -80,6 +80,9 @@ class WC_Vibe_Payments
 
 		// Initialize dynamic pricing system
 		add_action('plugins_loaded', array(__CLASS__, 'init_dynamic_pricing'), 10);
+
+		// Handle plugin updates and migrations
+		add_action('plugins_loaded', array(__CLASS__, 'handle_plugin_update'), 5);
 
 		// Only show Vibe gateway if all cart items have a dynamic price (vibe price)
 		add_filter('woocommerce_available_payment_gateways', function ($available_gateways) {
@@ -394,6 +397,61 @@ class WC_Vibe_Payments
 		if (class_exists('WC_Payment_Gateway')) {
 			require_once 'includes/class-wc-vibe-tracker.php';
 			WC_Vibe_Tracker::init();
+		}
+	}
+
+	/**
+	 * Handle plugin update and migration.
+	 */
+	public static function handle_plugin_update()
+	{
+		$current_version = get_option('wc_vibe_version', '0.0.0');
+		
+		// Only run if version changed
+		if (version_compare($current_version, WC_VIBE_VERSION, '<')) {
+			try {
+				// Force migration of display settings
+				if (class_exists('WC_Vibe_Price_Display')) {
+					$saved_settings = get_option('vibe_price_display_settings', array());
+					
+					// Force migration of deprecated settings
+					$migrated = false;
+					
+					// Remove deprecated keys
+					$deprecated_keys = array('conditional_display', 'strike_through_original');
+					foreach ($deprecated_keys as $key) {
+						if (isset($saved_settings[$key])) {
+							unset($saved_settings[$key]);
+							$migrated = true;
+						}
+					}
+					
+					// Migrate display_layout from 'inline' to 'two_line'
+					if (isset($saved_settings['display_layout']) && $saved_settings['display_layout'] === 'inline') {
+						$saved_settings['display_layout'] = 'two_line';
+						$migrated = true;
+					}
+					
+					// Save migrated settings if changes were made
+					if ($migrated) {
+						update_option('vibe_price_display_settings', $saved_settings);
+						if (defined('WP_DEBUG') && WP_DEBUG) {
+							error_log('[Vibe Plugin] Display settings migrated during update to version ' . WC_VIBE_VERSION);
+						}
+					}
+				}
+				
+				// Update version
+				update_option('wc_vibe_version', WC_VIBE_VERSION);
+				
+				if (defined('WP_DEBUG') && WP_DEBUG) {
+					error_log('[Vibe Plugin] Updated from version ' . $current_version . ' to ' . WC_VIBE_VERSION);
+				}
+			} catch (Exception $e) {
+				if (defined('WP_DEBUG') && WP_DEBUG) {
+					error_log('[Vibe Plugin] Update migration error: ' . $e->getMessage());
+				}
+			}
 		}
 	}
 

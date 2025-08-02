@@ -603,7 +603,7 @@ msgstr "اندازه فونت را با استفاده از واحدهای CSS (
 
 #: includes/class-wc-vibe-admin-interface.php:742
 msgid "Price Prefixes & Suffixes"
-msgstr "پیشوند و پسوند قیمت"
+msgstr "عنوان‌های نمایشی"
 
 #: includes/class-wc-vibe-admin-interface.php:749
 msgid "Dynamic Price"
@@ -653,7 +653,7 @@ msgstr "پیش‌نمایش زنده"
 
 #: includes/class-wc-vibe-admin-interface.php:809
 msgid "Customize the text that appears before and after each price. The preview shows how prices will appear on your product pages."
-msgstr "متنی که قبل و بعد از هر قیمت ظاهر می‌شود را سفارشی کنید. پیش‌نمایش نشان می‌دهد قیمت‌ها چگونه در صفحات محصول شما ظاهر خواهند شد."
+msgstr "متنی که قبل از هر قیمت ظاهر می‌شود را سفارشی کنید. پیش‌نمایش نشان می‌دهد قیمت‌ها چگونه در صفحات محصول شما ظاهر خواهند شد."
 
 #: includes/class-wc-vibe-admin-interface.php:814
 msgid "Pricing Badge"

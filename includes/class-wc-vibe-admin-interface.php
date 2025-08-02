@@ -601,17 +601,10 @@ class WC_Vibe_Admin_Interface
 					'show_both_prices' => true,
 					'display_layout' => 'two_line',
 					'price_order' => 'original_first',
-					'strike_through_original' => false,
 					'new_price_font_size' => '100%',
 					'original_price_font_size' => '85%',
-					'show_pricing_badge' => true,
-					'pricing_badge_text' => 'Special Price',
-					'pricing_badge_color' => '#e74c3c',
 					'new_price_prefix' => 'قیمت اقساطی ',
-					'new_price_suffix' => '',
 					'original_price_prefix' => 'قیمت نقدی ',
-					'original_price_suffix' => '',
-					'conditional_display' => true,
 				);
 				$settings = wp_parse_args($settings, $defaults);
 				?>
@@ -650,66 +643,6 @@ class WC_Vibe_Admin_Interface
 						</td>
 					</tr>
 
-					<!-- <tr>
-						<th scope="row"><?php _e('Emergency Disable', 'woocommerce-gateway-vibe'); ?></th>
-						<td>
-							<label>
-								<input type="checkbox" name="emergency_disable" value="yes" <?php checked(get_option('vibe_dynamic_pricing_emergency_disable'), 'yes'); ?>>
-								<?php _e('Disable all dynamic pricing', 'woocommerce-gateway-vibe'); ?>
-							</label>
-							<p class="description"><?php _e('Use this to quickly disable all dynamic pricing functionality in case of issues.', 'woocommerce-gateway-vibe'); ?></p>
-						</td>
-					</tr> -->
-
-					<!-- <tr>
-						<th scope="row"><?php _e('Show Both Prices', 'woocommerce-gateway-vibe'); ?></th>
-						<td>
-							<label>
-								<input type="checkbox" name="show_both_prices" value="1" <?php checked($settings['show_both_prices']); ?>>
-								<?php _e('Show both original and dynamic prices', 'woocommerce-gateway-vibe'); ?>
-							</label>
-							<p class="description"><?php _e('When enabled, both the new dynamic price and original price will be displayed.', 'woocommerce-gateway-vibe'); ?></p>
-						</td>
-					</tr> -->
-
-					<!-- <tr class="price-display-option" <?php echo !$settings['show_both_prices'] ? 'style="display:none;"' : ''; ?>>
-						<th scope="row"><?php _e('Price Order', 'woocommerce-gateway-vibe'); ?></th>
-						<td>
-							<select name="price_order">
-								<option value="new_first" <?php selected($settings['price_order'], 'new_first'); ?>><?php _e('Dynamic Price First', 'woocommerce-gateway-vibe'); ?></option>
-								<option value="original_first" <?php selected($settings['price_order'], 'original_first'); ?>><?php _e('Original Price First', 'woocommerce-gateway-vibe'); ?></option>
-							</select>
-							<p class="description"><?php _e('Choose which price to display first when showing both prices.', 'woocommerce-gateway-vibe'); ?></p>
-						</td>
-					</tr> -->
-
-					<!-- <tr class="price-display-option" <?php echo !$settings['show_both_prices'] ? 'style="display:none;"' : ''; ?>>
-						<th scope="row"><?php _e('Display Layout', 'woocommerce-gateway-vibe'); ?></th>
-						<td>
-							<label>
-								<input type="radio" name="display_layout" value="inline" <?php checked($settings['display_layout'], 'inline'); ?>>
-								<?php _e('Inline (side by side)', 'woocommerce-gateway-vibe'); ?>
-							</label>
-							<br>
-							<label>
-								<input type="radio" name="display_layout" value="two_line" <?php checked($settings['display_layout'], 'two_line'); ?>>
-								<?php _e('Two lines (stacked)', 'woocommerce-gateway-vibe'); ?>
-							</label>
-							<p class="description"><?php _e('Choose how to display both prices when enabled.', 'woocommerce-gateway-vibe'); ?></p>
-						</td>
-					</tr> -->
-
-					<!-- <tr class="price-display-option" <?php echo !$settings['show_both_prices'] ? 'style="display:none;"' : ''; ?>>
-						<th scope="row"><?php _e('Original Price Style', 'woocommerce-gateway-vibe'); ?></th>
-						<td>
-							<label>
-								<input type="checkbox" name="strike_through_original" value="1" <?php checked($settings['strike_through_original']); ?>>
-								<?php _e('Strike through original price', 'woocommerce-gateway-vibe'); ?>
-							</label>
-							<p class="description"><?php _e('Apply line-through style to the original price to show it as a discount.', 'woocommerce-gateway-vibe'); ?></p>
-						</td>
-					</tr> -->
-
 					<tr>
 						<th scope="row"><?php _e('Font Sizes', 'woocommerce-gateway-vibe'); ?></th>
 						<td>
@@ -731,20 +664,14 @@ class WC_Vibe_Admin_Interface
 									<div class="vibe-price-config-header">
 										<span class="vibe-price-icon vibe-dynamic-icon">💰</span>
 										<h4><?php _e('Dynamic Price', 'woocommerce-gateway-vibe'); ?></h4>
-										<span class="vibe-price-description"><?php _e('Special pricing for Vibe users', 'woocommerce-gateway-vibe'); ?></span>
+
 									</div>
 									<div class="vibe-price-config-fields">
 										<div class="vibe-field-group">
-											<label class="vibe-field-label"><?php _e('Prefix', 'woocommerce-gateway-vibe'); ?></label>
+											<label class="vibe-field-label"><?php _e('Special pricing for Vibe users', 'woocommerce-gateway-vibe'); ?></label>
 											<div class="vibe-input-wrapper">
 												<input type="text" name="new_price_prefix" value="<?php echo esc_attr($settings['new_price_prefix']); ?>" placeholder="<?php _e('e.g., Special Price:', 'woocommerce-gateway-vibe'); ?>" class="vibe-prefix-input">
-												<span class="vibe-input-preview"><?php echo esc_html($settings['new_price_prefix']); ?>1,100 تومان<?php echo esc_html($settings['new_price_suffix']); ?></span>
-											</div>
-										</div>
-										<div class="vibe-field-group">
-											<label class="vibe-field-label"><?php _e('Suffix', 'woocommerce-gateway-vibe'); ?></label>
-											<div class="vibe-input-wrapper">
-												<input type="text" name="new_price_suffix" value="<?php echo esc_attr($settings['new_price_suffix']); ?>" placeholder="<?php _e('e.g., (Save 10%)', 'woocommerce-gateway-vibe'); ?>" class="vibe-suffix-input">
+												<span class="vibe-input-preview"><?php echo esc_html($settings['new_price_prefix']); ?>1,100 تومان</span>
 											</div>
 										</div>
 									</div>
@@ -755,20 +682,13 @@ class WC_Vibe_Admin_Interface
 									<div class="vibe-price-config-header">
 										<span class="vibe-price-icon vibe-original-icon">🏷️</span>
 										<h4><?php _e('Original Price', 'woocommerce-gateway-vibe'); ?></h4>
-										<span class="vibe-price-description"><?php _e('Standard pricing for reference', 'woocommerce-gateway-vibe'); ?></span>
 									</div>
 									<div class="vibe-price-config-fields">
 										<div class="vibe-field-group">
-											<label class="vibe-field-label"><?php _e('Prefix', 'woocommerce-gateway-vibe'); ?></label>
+											<label class="vibe-field-label"><?php _e('Standard pricing for reference', 'woocommerce-gateway-vibe'); ?></label>
 											<div class="vibe-input-wrapper">
 												<input type="text" name="original_price_prefix" value="<?php echo esc_attr($settings['original_price_prefix']); ?>" placeholder="<?php _e('e.g., Regular Price:', 'woocommerce-gateway-vibe'); ?>" class="vibe-prefix-input">
-												<span class="vibe-input-preview"><?php echo esc_html($settings['original_price_prefix']); ?>1,000 تومان<?php echo esc_html($settings['original_price_suffix']); ?></span>
-											</div>
-										</div>
-										<div class="vibe-field-group">
-											<label class="vibe-field-label"><?php _e('Suffix', 'woocommerce-gateway-vibe'); ?></label>
-											<div class="vibe-input-wrapper">
-												<input type="text" name="original_price_suffix" value="<?php echo esc_attr($settings['original_price_suffix']); ?>" placeholder="<?php _e('e.g., (was)', 'woocommerce-gateway-vibe'); ?>" class="vibe-suffix-input">
+												<span class="vibe-input-preview"><?php echo esc_html($settings['original_price_prefix']); ?>1,000 تومان</span>
 											</div>
 										</div>
 									</div>
@@ -782,10 +702,10 @@ class WC_Vibe_Admin_Interface
 									</div>
 									<div class="vibe-preview-content">
 										<div class="vibe-preview-price dynamic">
-											<span class="vibe-preview-prefix" id="dynamic-prefix-preview"><?php echo esc_html($settings['new_price_prefix']); ?></span><span class="vibe-preview-amount">1,100 تومان</span><span class="vibe-preview-suffix" id="dynamic-suffix-preview"><?php echo esc_html($settings['new_price_suffix']); ?></span>
+											<span class="vibe-preview-prefix" id="dynamic-prefix-preview"><?php echo esc_html($settings['new_price_prefix']); ?></span><span class="vibe-preview-amount">1,100 تومان</span>
 										</div>
 										<div class="vibe-preview-price original">
-											<span class="vibe-preview-prefix" id="original-prefix-preview"><?php echo esc_html($settings['original_price_prefix']); ?></span><span class="vibe-preview-amount">1,000 تومان</span><span class="vibe-preview-suffix" id="original-suffix-preview"><?php echo esc_html($settings['original_price_suffix']); ?></span>
+											<span class="vibe-preview-prefix" id="original-prefix-preview"><?php echo esc_html($settings['original_price_prefix']); ?></span><span class="vibe-preview-amount">1,000 تومان</span>
 										</div>
 									</div>
 								</div>
@@ -793,36 +713,6 @@ class WC_Vibe_Admin_Interface
 							<p class="description"><?php _e('Customize the text that appears before and after each price. The preview shows how prices will appear on your product pages.', 'woocommerce-gateway-vibe'); ?></p>
 						</td>
 					</tr>
-
-					<tr>
-						<th scope="row"><?php _e('Pricing Badge', 'woocommerce-gateway-vibe'); ?></th>
-						<td>
-							<label>
-								<input type="checkbox" name="show_pricing_badge" value="1" <?php checked($settings['show_pricing_badge']); ?>>
-								<?php _e('Show pricing badge', 'woocommerce-gateway-vibe'); ?>
-							</label>
-							<br><br>
-							<div class="badge-settings" <?php echo !$settings['show_pricing_badge'] ? 'style="display:none;"' : ''; ?>>
-								<label><?php _e('Badge Text:', 'woocommerce-gateway-vibe'); ?></label>
-								<input type="text" name="pricing_badge_text" value="<?php echo esc_attr($settings['pricing_badge_text']); ?>" placeholder="Special Price" class="regular-text">
-								<br><br>
-								<label><?php _e('Badge Color:', 'woocommerce-gateway-vibe'); ?></label>
-								<input type="color" name="pricing_badge_color" value="<?php echo esc_attr($settings['pricing_badge_color']); ?>">
-							</div>
-							<p class="description"><?php _e('Display a colored badge next to dynamic prices to highlight the special pricing.', 'woocommerce-gateway-vibe'); ?></p>
-						</td>
-					</tr>
-
-					<!-- <tr>
-						<th scope="row"><?php _e('Conditional Display', 'woocommerce-gateway-vibe'); ?></th>
-						<td>
-							<label>
-								<input type="checkbox" name="conditional_display" value="1" <?php checked($settings['conditional_display']); ?>>
-								<?php _e('Show dynamic prices only when conditions are met', 'woocommerce-gateway-vibe'); ?>
-							</label>
-							<p class="description"><?php _e('When enabled, dynamic prices are shown only when appropriate (e.g., Vibe payment method selected). When disabled, dynamic prices are always shown if applicable.', 'woocommerce-gateway-vibe'); ?></p>
-						</td>
-					</tr> -->
 				</table>
 
 				<p class="submit">
@@ -878,7 +768,7 @@ class WC_Vibe_Admin_Interface
 
 				.vibe-price-config-fields {
 					display: grid;
-					grid-template-columns: 1fr 1fr;
+					grid-template-columns: 1fr;
 					gap: 20px;
 				}
 
@@ -989,10 +879,6 @@ class WC_Vibe_Admin_Interface
 
 				/* Responsive Design */
 				@media (max-width: 768px) {
-					.vibe-price-config-fields {
-						grid-template-columns: 1fr;
-					}
-
 					.vibe-price-config-header {
 						flex-direction: column;
 						align-items: flex-start;
@@ -1016,43 +902,25 @@ class WC_Vibe_Admin_Interface
 						}
 					});
 
-					// Show/hide badge settings based on show_pricing_badge
-					$('input[name="show_pricing_badge"]').change(function() {
-						if ($(this).is(':checked')) {
-							$('.badge-settings').show();
-						} else {
-							$('.badge-settings').hide();
-						}
-					});
-
 					// Live preview updates for prefix/suffix
 					function updatePreview() {
 						var dynamicPrefix = $('input[name="new_price_prefix"]').val();
-						var dynamicSuffix = $('input[name="new_price_suffix"]').val();
 						var originalPrefix = $('input[name="original_price_prefix"]').val();
-						var originalSuffix = $('input[name="original_price_suffix"]').val();
 
 						$('#dynamic-prefix-preview').text(dynamicPrefix);
-						$('#dynamic-suffix-preview').text(dynamicSuffix);
 						$('#original-prefix-preview').text(originalPrefix);
-						$('#original-suffix-preview').text(originalSuffix);
 
 						// Update inline previews
 						$('.vibe-prefix-input').each(function() {
 							var preview = $(this).closest('.vibe-input-wrapper').find('.vibe-input-preview');
 							var prefix = $(this).val();
-							var suffix = '';
-							var suffixInput = $(this).closest('.vibe-price-config-section').find('.vibe-suffix-input');
-							if (suffixInput.length) {
-								suffix = suffixInput.val();
-							}
 							var samplePrice = $(this).attr('name').includes('new_') ? '1,100 تومان' : '1,000 تومان';
-							preview.text(prefix + samplePrice + suffix);
+							preview.text(prefix + samplePrice);
 						});
 					}
 
 					// Bind events for live preview
-					$('input[name="new_price_prefix"], input[name="new_price_suffix"], input[name="original_price_prefix"], input[name="original_price_suffix"]').on('input keyup', updatePreview);
+					$('input[name="new_price_prefix"], input[name="original_price_prefix"]').on('input keyup', updatePreview);
 
 					// Initial preview update
 					updatePreview();
@@ -1347,19 +1215,12 @@ class WC_Vibe_Admin_Interface
 		// Update display settings
 		$display_settings = array(
 			'show_both_prices' => isset($_POST['show_both_prices']),
-			'display_layout' => isset($_POST['display_layout']) ? sanitize_text_field($_POST['display_layout']) : 'inline',
-			'price_order' => isset($_POST['price_order']) ? sanitize_text_field($_POST['price_order']) : 'new_first',
-			'strike_through_original' => isset($_POST['strike_through_original']),
+			'display_layout' => 'two_line',
+			'price_order' => isset($_POST['price_order']) ? sanitize_text_field($_POST['price_order']) : 'original_first',
 			'new_price_font_size' => isset($_POST['new_price_font_size']) ? sanitize_text_field($_POST['new_price_font_size']) : '100%',
 			'original_price_font_size' => isset($_POST['original_price_font_size']) ? sanitize_text_field($_POST['original_price_font_size']) : '85%',
-			'show_pricing_badge' => isset($_POST['show_pricing_badge']),
-			'pricing_badge_text' => isset($_POST['pricing_badge_text']) ? sanitize_text_field($_POST['pricing_badge_text']) : 'Special Price',
-			'pricing_badge_color' => isset($_POST['pricing_badge_color']) ? sanitize_hex_color($_POST['pricing_badge_color']) : '#e74c3c',
 			'new_price_prefix' => isset($_POST['new_price_prefix']) ? sanitize_text_field($_POST['new_price_prefix']) : '',
-			'new_price_suffix' => isset($_POST['new_price_suffix']) ? sanitize_text_field($_POST['new_price_suffix']) : '',
 			'original_price_prefix' => isset($_POST['original_price_prefix']) ? sanitize_text_field($_POST['original_price_prefix']) : '',
-			'original_price_suffix' => isset($_POST['original_price_suffix']) ? sanitize_text_field($_POST['original_price_suffix']) : '',
-			'conditional_display' => isset($_POST['conditional_display']),
 		);
 
 		update_option('vibe_price_display_settings', $display_settings);
@@ -1525,20 +1386,13 @@ class WC_Vibe_Admin_Interface
 
 		// Update display settings
 		$display_settings = array(
-			'show_both_prices' => isset($_POST['show_both_prices']),
-			'display_layout' => isset($_POST['display_layout']) ? sanitize_text_field($_POST['display_layout']) : 'inline',
-			'price_order' => isset($_POST['price_order']) ? sanitize_text_field($_POST['price_order']) : 'new_first',
-			'strike_through_original' => isset($_POST['strike_through_original']),
+			'show_both_prices' => isset($_POST['show_both_prices']) ? true : false,
+			'display_layout' => 'two_line',
+			'price_order' => isset($_POST['price_order']) ? sanitize_text_field($_POST['price_order']) : 'original_first',
 			'new_price_font_size' => isset($_POST['new_price_font_size']) ? sanitize_text_field($_POST['new_price_font_size']) : '100%',
 			'original_price_font_size' => isset($_POST['original_price_font_size']) ? sanitize_text_field($_POST['original_price_font_size']) : '85%',
-			'show_pricing_badge' => isset($_POST['show_pricing_badge']),
-			'pricing_badge_text' => isset($_POST['pricing_badge_text']) ? sanitize_text_field($_POST['pricing_badge_text']) : 'Special Price',
-			'pricing_badge_color' => isset($_POST['pricing_badge_color']) ? sanitize_hex_color($_POST['pricing_badge_color']) : '#e74c3c',
 			'new_price_prefix' => isset($_POST['new_price_prefix']) ? sanitize_text_field($_POST['new_price_prefix']) : '',
-			'new_price_suffix' => isset($_POST['new_price_suffix']) ? sanitize_text_field($_POST['new_price_suffix']) : '',
 			'original_price_prefix' => isset($_POST['original_price_prefix']) ? sanitize_text_field($_POST['original_price_prefix']) : '',
-			'original_price_suffix' => isset($_POST['original_price_suffix']) ? sanitize_text_field($_POST['original_price_suffix']) : '',
-			'conditional_display' => isset($_POST['conditional_display']),
 		);
 
 		update_option('vibe_price_display_settings', $display_settings);

@@ -178,7 +178,7 @@ class WC_Vibe_Tracker
         }
 
         // Plugin version from constant
-        $data['plugin_version'] = defined('WC_VIBE_VERSION') ? WC_VIBE_VERSION : '1.2.1';
+        $data['plugin_version'] = defined('WC_VIBE_VERSION') ? WC_VIBE_VERSION : '1.2.2';
 
         // Save to cache with timestamp
         update_option(self::TRACKING_CACHE_OPTION, array(

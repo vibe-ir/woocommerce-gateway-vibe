@@ -20,7 +20,8 @@ if (! defined('ABSPATH')) {
  * @class    WC_Vibe_Price_Display
  * @version  1.1.0
  */
-class WC_Vibe_Price_Display {
+class WC_Vibe_Price_Display
+{
 
 	/**
 	 * Pricing engine instance.
@@ -41,39 +42,75 @@ class WC_Vibe_Price_Display {
 	 *
 	 * @param WC_Vibe_Pricing_Engine $pricing_engine Pricing engine instance.
 	 */
-	public function __construct($pricing_engine) {
+	public function __construct($pricing_engine)
+	{
 		$this->pricing_engine = $pricing_engine;
 		$this->load_display_settings();
 		$this->init_hooks();
 	}
 
 	/**
+	 * Migrate deprecated settings.
+	 *
+	 * @param array $saved_settings Current saved settings.
+	 * @return array Migrated settings.
+	 */
+	private function migrate_deprecated_settings($saved_settings)
+	{
+		$migrated = false;
+		
+		// Remove deprecated keys
+		$deprecated_keys = array('conditional_display', 'strike_through_original');
+		foreach ($deprecated_keys as $key) {
+			if (isset($saved_settings[$key])) {
+				unset($saved_settings[$key]);
+				$migrated = true;
+			}
+		}
+		
+		// Migrate display_layout from 'inline' to 'two_line'
+		if (isset($saved_settings['display_layout']) && $saved_settings['display_layout'] === 'inline') {
+			$saved_settings['display_layout'] = 'two_line';
+			$migrated = true;
+		}
+		
+		// Save migrated settings if changes were made
+		if ($migrated) {
+			update_option('vibe_price_display_settings', $saved_settings);
+			$this->log_debug('Settings migrated', array(
+				'deprecated_keys_removed' => $deprecated_keys,
+				'display_layout_updated' => isset($saved_settings['display_layout']) ? $saved_settings['display_layout'] : 'not_set'
+			));
+		}
+		
+		return $saved_settings;
+	}
+
+	/**
 	 * Load display settings.
 	 */
-	private function load_display_settings() {
+	private function load_display_settings()
+	{
 		$defaults = array(
 			'show_both_prices' => true,
-			'display_layout' => 'inline', // inline or two_line
-			'price_order' => 'new_first', // new_first or original_first
-			'strike_through_original' => true,
+			'display_layout' => 'two_line',
+			'price_order' => 'original_first', // new_first or original_first
 			'new_price_font_size' => '100%',
 			'original_price_font_size' => '85%',
-			'show_pricing_badge' => true,
-			'pricing_badge_text' => 'Special Price',
-			'pricing_badge_color' => '#e74c3c',
-			'new_price_prefix' => '',
-			'new_price_suffix' => '',
-			'original_price_prefix' => '',
-			'original_price_suffix' => '',
-			'conditional_display' => true,
+			'new_price_prefix' => 'قیمت اقساطی ',
+			'original_price_prefix' => 'قیمت نقدی ',
 		);
 
 		$saved_settings = get_option('vibe_price_display_settings', array());
+		
+		// Migrate deprecated settings
+		$saved_settings = $this->migrate_deprecated_settings($saved_settings);
+		
 		$this->display_settings = wp_parse_args(
 			$saved_settings,
 			$defaults
 		);
-		
+
 		// Debug log the loaded settings
 		$this->log_debug('load_display_settings', array(
 			'saved_settings' => $saved_settings,
@@ -85,18 +122,19 @@ class WC_Vibe_Price_Display {
 	/**
 	 * Initialize hooks.
 	 */
-	private function init_hooks() {
+	private function init_hooks()
+	{
 		// Frontend price display hooks
 		add_filter('woocommerce_get_price_html', array($this, 'modify_price_html'), 99, 2);
 		add_filter('woocommerce_cart_item_price', array($this, 'modify_cart_item_price_html'), 99, 3);
-		
+
 		// Enqueue styles for price display
 		add_action('wp_enqueue_scripts', array($this, 'enqueue_price_display_styles'));
-		
+
 		// AJAX handler for price updates
 		add_action('wp_ajax_update_dynamic_prices', array($this, 'ajax_update_prices'));
 		add_action('wp_ajax_nopriv_update_dynamic_prices', array($this, 'ajax_update_prices'));
-		
+
 		// Add debugging capabilities
 		add_action('wp_footer', array($this, 'output_debug_info'));
 	}
@@ -108,7 +146,8 @@ class WC_Vibe_Price_Display {
 	 * @param WC_Product $product Product object.
 	 * @return string Modified price HTML.
 	 */
-	public function modify_price_html($price_html, $product) {
+	public function modify_price_html($price_html, $product)
+	{
 		$this->log_debug('modify_price_html called', array(
 			'product_id' => $product ? $product->get_id() : 'no_product',
 			'is_admin' => is_admin(),
@@ -131,10 +170,10 @@ class WC_Vibe_Price_Display {
 
 		// Get original price
 		$original_price = $product->get_price();
-		
+
 		// Get dynamic price for DISPLAY purposes
 		$dynamic_price = $this->pricing_engine->get_dynamic_price($product, $original_price, 'display');
-		
+
 		$this->log_debug('modify_price_html: Price calculation', array(
 			'product_id' => $product->get_id(),
 			'original_price' => $original_price,
@@ -145,12 +184,6 @@ class WC_Vibe_Price_Display {
 		// If no dynamic pricing applies, return original
 		if (false === $dynamic_price || $dynamic_price == $original_price) {
 			$this->log_debug('modify_price_html: No dynamic pricing, returning original');
-			return $price_html;
-		}
-
-		// Check if we should show price based on payment method
-		if ($this->display_settings['conditional_display'] && !$this->should_show_dynamic_price()) {
-			$this->log_debug('modify_price_html: Conditional display check failed, returning original');
 			return $price_html;
 		}
 
@@ -167,19 +200,20 @@ class WC_Vibe_Price_Display {
 	 * @param string $cart_item_key Cart item key.
 	 * @return string Modified price HTML.
 	 */
-	public function modify_cart_item_price_html($price_html, $cart_item, $cart_item_key) {
+	public function modify_cart_item_price_html($price_html, $cart_item, $cart_item_key)
+	{
 		if (!isset($cart_item['data'])) {
 			return $price_html;
 		}
 
 		$product = $cart_item['data'];
-		
+
 		// Get original price
 		$original_price = $product->get_price();
-		
+
 		// Get dynamic price for APPLICATION purposes (cart/checkout)
 		$dynamic_price = $this->pricing_engine->get_dynamic_price($product, $original_price, 'application');
-		
+
 		$this->log_debug('modify_cart_item_price_html: Price calculation', array(
 			'product_id' => $product->get_id(),
 			'original_price' => $original_price,
@@ -189,11 +223,6 @@ class WC_Vibe_Price_Display {
 
 		// If no dynamic pricing applies, return original
 		if (false === $dynamic_price || $dynamic_price == $original_price) {
-			return $price_html;
-		}
-
-		// Check if we should show price based on payment method
-		if ($this->display_settings['conditional_display'] && !$this->should_show_dynamic_price()) {
 			return $price_html;
 		}
 
@@ -210,18 +239,19 @@ class WC_Vibe_Price_Display {
 	 * @param string $context Display context (shop, single, cart).
 	 * @return string Generated price HTML.
 	 */
-	private function generate_dynamic_price_html($original_price, $dynamic_price, $product, $context = 'shop') {
+	private function generate_dynamic_price_html($original_price, $dynamic_price, $product, $context = 'shop')
+	{
 		// Check if WooCommerce functions are available
 		if (!function_exists('wc_price')) {
 			$this->log_debug('generate_dynamic_price_html: WooCommerce functions not available');
 			// Fallback when WC functions not available
 			return '<span class="price">' . get_woocommerce_currency_symbol() . number_format($original_price) . '</span>';
 		}
-		
+
 		// Format prices
 		$formatted_original = wc_price($original_price);
 		$formatted_dynamic = wc_price($dynamic_price);
-		
+
 		$this->log_debug('generate_dynamic_price_html', array(
 			'product_id' => $product->get_id(),
 			'original_price' => $original_price,
@@ -232,13 +262,9 @@ class WC_Vibe_Price_Display {
 		));
 
 		// Apply prefixes and suffixes
-		$new_price_display = $this->display_settings['new_price_prefix'] 
-			. $formatted_dynamic 
-			. $this->display_settings['new_price_suffix'];
-		
-		$original_price_display = $this->display_settings['original_price_prefix'] 
-			. $formatted_original 
-			. $this->display_settings['original_price_suffix'];
+		$new_price_display = $this->display_settings['new_price_prefix'] . $formatted_dynamic;
+
+		$original_price_display = $this->display_settings['original_price_prefix'] . $formatted_original;
 
 		// Apply styling
 		$new_price_style = $this->get_price_style('new');
@@ -247,18 +273,13 @@ class WC_Vibe_Price_Display {
 		// Build HTML based on settings
 		$html_parts = array();
 
-		// Add pricing badge if enabled
-		if ($this->display_settings['show_pricing_badge'] && $context !== 'cart') {
-			$html_parts[] = $this->get_pricing_badge_html();
-		}
-
 		// Determine price order and layout
 		if ($this->display_settings['show_both_prices']) {
 			$this->log_debug('generate_dynamic_price_html: Building both prices HTML', array(
 				'new_price_display' => $new_price_display,
 				'original_price_display' => $original_price_display
 			));
-			
+
 			$prices_html = $this->build_both_prices_html(
 				$new_price_display,
 				$original_price_display,
@@ -267,7 +288,7 @@ class WC_Vibe_Price_Display {
 			);
 		} else {
 			$this->log_debug('generate_dynamic_price_html: Building single price HTML');
-			
+
 			$prices_html = sprintf(
 				'<span class="vibe-dynamic-price-new" style="%s">%s</span>',
 				$new_price_style,
@@ -304,14 +325,15 @@ class WC_Vibe_Price_Display {
 	 * @param string $original_price_style Original price styles.
 	 * @return string Built HTML.
 	 */
-	private function build_both_prices_html($new_price_display, $original_price_display, $new_price_style, $original_price_style) {
+	private function build_both_prices_html($new_price_display, $original_price_display, $new_price_style, $original_price_style)
+	{
 		$this->log_debug('build_both_prices_html called', array(
 			'new_price_display' => $new_price_display,
 			'original_price_display' => $original_price_display,
 			'price_order' => $this->display_settings['price_order'],
 			'display_layout' => $this->display_settings['display_layout']
 		));
-		
+
 		$new_price_html = sprintf(
 			'<span class="vibe-dynamic-price-new" style="%s">%s</span>',
 			$new_price_style,
@@ -334,32 +356,14 @@ class WC_Vibe_Price_Display {
 		} else {
 			$both_prices_html = $first_price . ' ' . $second_price;
 		}
-		
+
 		$this->log_debug('build_both_prices_html result', array(
 			'first_price' => $first_price,
 			'second_price' => $second_price,
 			'final_html' => $both_prices_html
 		));
-		
+
 		return $both_prices_html;
-	}
-
-	/**
-	 * Get pricing badge HTML.
-	 *
-	 * @return string Badge HTML.
-	 */
-	private function get_pricing_badge_html() {
-		$badge_style = sprintf(
-			'background-color: %s; color: white; padding: 2px 6px; border-radius: 3px; font-size: 0.8em; margin-right: 5px;',
-			$this->display_settings['pricing_badge_color']
-		);
-
-		return sprintf(
-			'<span class="vibe-pricing-badge" style="%s">%s</span>',
-			$badge_style,
-			esc_html($this->display_settings['pricing_badge_text'])
-		);
 	}
 
 	/**
@@ -368,7 +372,8 @@ class WC_Vibe_Price_Display {
 	 * @param string $type Price type ('new' or 'original').
 	 * @return string CSS styles.
 	 */
-	private function get_price_style($type) {
+	private function get_price_style($type)
+	{
 		$styles = array();
 
 		if ($type === 'new') {
@@ -376,24 +381,15 @@ class WC_Vibe_Price_Display {
 			$styles[] = 'font-weight: bold';
 		} else {
 			$styles[] = sprintf('font-size: %s', $this->display_settings['original_price_font_size']);
-			
-			$this->log_debug('get_price_style for original price', array(
-				'strike_through_original' => $this->display_settings['strike_through_original'],
-				'type' => gettype($this->display_settings['strike_through_original'])
-			));
-			
-			if ($this->display_settings['strike_through_original']) {
-				$styles[] = 'text-decoration: line-through';
-			} else {
-				// Explicitly remove any inherited strikethrough
-				$styles[] = 'text-decoration: none';
-			}
-			
+
+			// Strike-through is no longer supported - always remove any inherited strikethrough
+			$styles[] = 'text-decoration: none';
+
 			$styles[] = 'color: #999';
 		}
 
 		$final_styles = implode('; ', $styles);
-		
+
 		$this->log_debug('get_price_style result', array(
 			'type' => $type,
 			'final_styles' => $final_styles
@@ -407,10 +403,11 @@ class WC_Vibe_Price_Display {
 	 *
 	 * @return bool True if dynamic price should be shown.
 	 */
-	private function should_show_dynamic_price() {
+	private function should_show_dynamic_price()
+	{
 		$current_payment_method = $this->pricing_engine->get_current_payment_method();
 		$current_referrer = $this->pricing_engine->get_current_referrer();
-		
+
 		$this->log_debug('should_show_dynamic_price called', array(
 			'is_product' => function_exists('is_product') ? is_product() : 'function_not_available',
 			'is_cart' => function_exists('is_cart') ? is_cart() : 'function_not_available',
@@ -420,23 +417,23 @@ class WC_Vibe_Price_Display {
 		));
 
 		// On product pages: Show ONLY if user is from vibe.ir (regardless of payment method)
-		if ( function_exists('is_product') && is_product() ) {
+		if (function_exists('is_product') && is_product()) {
 			$from_vibe = $current_referrer && strpos($current_referrer, 'vibe.ir') !== false;
 			$result = $from_vibe;
-			
+
 			$this->log_debug('should_show_dynamic_price: On product page', array(
 				'from_vibe' => $from_vibe,
 				'current_payment_method' => $current_payment_method,
 				'logic' => 'show only for vibe.ir referrers',
 				'showing_teaser' => $result
 			));
-			
+
 			return $result;
 		}
 
 		// In cart/checkout: Show dynamic price ONLY when Vibe payment is selected
-		if ( (function_exists('is_cart') && is_cart()) || (function_exists('is_checkout') && is_checkout()) ) {
-			$result = ( 'vibe' === $current_payment_method );
+		if ((function_exists('is_cart') && is_cart()) || (function_exists('is_checkout') && is_checkout())) {
+			$result = ('vibe' === $current_payment_method);
 			$this->log_debug('should_show_dynamic_price: On cart/checkout', array(
 				'payment_method' => $current_payment_method,
 				'logic' => 'show only when vibe payment selected',
@@ -448,14 +445,14 @@ class WC_Vibe_Price_Display {
 		// Elsewhere (shop loops etc.): Show ONLY if user is from vibe.ir (same as product pages)
 		$from_vibe = $current_referrer && strpos($current_referrer, 'vibe.ir') !== false;
 		$result = $from_vibe;
-		
+
 		$this->log_debug('should_show_dynamic_price: Elsewhere', array(
 			'payment_method' => $current_payment_method,
 			'from_vibe' => $from_vibe,
 			'logic' => 'show only for vibe.ir referrers',
 			'showing_dynamic_price' => $result
 		));
-		
+
 		return $result;
 	}
 
@@ -467,14 +464,16 @@ class WC_Vibe_Price_Display {
 	 * @param string $cart_item_key Cart item key.
 	 * @return string Modified price HTML.
 	 */
-	public function render_cart_price($price_html, $cart_item, $cart_item_key) {
+	public function render_cart_price($price_html, $cart_item, $cart_item_key)
+	{
 		return $this->modify_cart_item_price_html($price_html, $cart_item, $cart_item_key);
 	}
 
 	/**
 	 * Enqueue price display styles.
 	 */
-	public function enqueue_price_display_styles() {
+	public function enqueue_price_display_styles()
+	{
 		// Enqueue custom CSS for price display
 		wp_add_inline_style('woocommerce-general', $this->get_inline_css());
 	}
@@ -484,7 +483,8 @@ class WC_Vibe_Price_Display {
 	 *
 	 * @return string CSS styles.
 	 */
-	private function get_inline_css() {
+	private function get_inline_css()
+	{
 		return "
 			.vibe-dynamic-price-container {
 				display: inline-block;
@@ -530,7 +530,8 @@ class WC_Vibe_Price_Display {
 	/**
 	 * AJAX handler for updating prices dynamically.
 	 */
-	public function ajax_update_prices() {
+	public function ajax_update_prices()
+	{
 		$this->log_debug('ajax_update_prices called', $_POST);
 
 		// Verify nonce
@@ -557,13 +558,12 @@ class WC_Vibe_Price_Display {
 			if ($product) {
 				$original_price = $product->get_price();
 				$dynamic_price = $this->pricing_engine->get_dynamic_price($product, $original_price);
-				
+
 				$updated_prices[$product_id] = array(
 					'original' => $original_price,
 					'dynamic' => $dynamic_price,
-					'html' => $dynamic_price !== false ? 
-						$this->generate_dynamic_price_html($original_price, $dynamic_price, $product, 'ajax') :
-						(function_exists('wc_price') ? wc_price($original_price) : '$' . $original_price)
+					'html' => $dynamic_price !== false ?
+						$this->generate_dynamic_price_html($original_price, $dynamic_price, $product, 'ajax') : (function_exists('wc_price') ? wc_price($original_price) : '$' . $original_price)
 				);
 			}
 		}
@@ -577,7 +577,8 @@ class WC_Vibe_Price_Display {
 	 *
 	 * @return array Display settings.
 	 */
-	public function get_display_settings() {
+	public function get_display_settings()
+	{
 		return $this->display_settings;
 	}
 
@@ -586,7 +587,8 @@ class WC_Vibe_Price_Display {
 	 *
 	 * @param array $settings New settings.
 	 */
-	public function update_display_settings($settings) {
+	public function update_display_settings($settings)
+	{
 		$this->display_settings = wp_parse_args($settings, $this->display_settings);
 		update_option('vibe_price_display_settings', $this->display_settings);
 	}
@@ -594,7 +596,8 @@ class WC_Vibe_Price_Display {
 	/**
 	 * Reset display settings to defaults.
 	 */
-	public function reset_display_settings() {
+	public function reset_display_settings()
+	{
 		delete_option('vibe_price_display_settings');
 		$this->load_display_settings();
 	}
@@ -605,7 +608,8 @@ class WC_Vibe_Price_Display {
 	 * @param string $message Debug message.
 	 * @param array $data Additional data to log.
 	 */
-	private function log_debug($message, $data = array()) {
+	private function log_debug($message, $data = array())
+	{
 		if (!$this->is_debug_enabled()) {
 			return;
 		}
@@ -623,12 +627,12 @@ class WC_Vibe_Price_Display {
 		// Also store in option for admin review
 		$debug_logs = get_option('vibe_debug_logs', array());
 		$debug_logs[] = $log_entry;
-		
+
 		// Keep only last 100 entries
 		if (count($debug_logs) > 100) {
 			$debug_logs = array_slice($debug_logs, -100);
 		}
-		
+
 		update_option('vibe_debug_logs', $debug_logs);
 	}
 
@@ -637,14 +641,16 @@ class WC_Vibe_Price_Display {
 	 *
 	 * @return bool True if debugging is enabled.
 	 */
-	private function is_debug_enabled() {
+	private function is_debug_enabled()
+	{
 		return defined('WP_DEBUG') && WP_DEBUG && get_option('vibe_enable_debug_logging', false);
 	}
 
 	/**
 	 * Output debug information in footer for admin users.
 	 */
-	public function output_debug_info() {
+	public function output_debug_info()
+	{
 		if (!current_user_can('manage_options') || !$this->is_debug_enabled()) {
 			return;
 		}
@@ -669,4 +675,4 @@ class WC_Vibe_Price_Display {
 		echo "<script>console.log('Vibe Price Display Debug:', " . json_encode($debug_info) . ");</script>\n";
 		echo "<!-- END VIBE DEBUG INFO -->\n";
 	}
-} 
+}
