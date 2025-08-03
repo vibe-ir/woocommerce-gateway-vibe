@@ -52,6 +52,34 @@ class WC_Vibe_Tracker
     const TRACKING_CACHE_OPTION = 'wc_vibe_tracking_cache';
 
     /**
+     * Circuit breaker options.
+     *
+     * @var string
+     */
+    const CIRCUIT_BREAKER_OPTION = 'wc_vibe_circuit_breaker';
+
+    /**
+     * Activation lock transient key.
+     *
+     * @var string
+     */
+    const ACTIVATION_LOCK_KEY = 'wc_vibe_activation_lock';
+
+    /**
+     * Max retry attempts for API calls.
+     *
+     * @var int
+     */
+    const MAX_RETRY_ATTEMPTS = 3;
+
+    /**
+     * Circuit breaker failure threshold.
+     *
+     * @var int
+     */
+    const CIRCUIT_BREAKER_THRESHOLD = 5;
+
+    /**
      * Debug mode flag.
      *
      * @var bool
@@ -76,6 +104,9 @@ class WC_Vibe_Tracker
 
         // Handle the heartbeat event
         add_action(self::HEARTBEAT_EVENT, array($instance, 'send_heartbeat'));
+
+        // Clean up expired circuit breaker data
+        add_action('init', array($instance, 'cleanup_circuit_breaker'));
     }
 
     /**
@@ -88,11 +119,23 @@ class WC_Vibe_Tracker
 
         // If this is a fresh activation or we haven't sent the activation event yet
         if ($activation_flag === 'pending') {
+            // Use transient lock to prevent duplicate activation tracking
+            if (get_transient(self::ACTIVATION_LOCK_KEY)) {
+                $this->log('Activation already in progress, skipping duplicate');
+                return;
+            }
+
+            // Set lock for 5 minutes
+            set_transient(self::ACTIVATION_LOCK_KEY, true, 5 * MINUTE_IN_SECONDS);
+
             // Track the activation
             $this->track_activation();
 
             // Clear the activation flag
             update_option('wc_vibe_activation_pending', 'completed');
+
+            // Remove the lock
+            delete_transient(self::ACTIVATION_LOCK_KEY);
 
             // Log the activation check
             $this->log('Activation event triggered from plugins_loaded hook');
@@ -105,8 +148,8 @@ class WC_Vibe_Tracker
     public function register_heartbeat()
     {
         if (!wp_next_scheduled(self::HEARTBEAT_EVENT)) {
-            // Schedule weekly heartbeat
-            wp_schedule_event(time(), 'weekly', self::HEARTBEAT_EVENT);
+            // Schedule daily heartbeat for fresh data
+            wp_schedule_event(time(), 'daily', self::HEARTBEAT_EVENT);
         }
     }
 
@@ -117,7 +160,7 @@ class WC_Vibe_Tracker
     public function track_activation()
     {
         $this->log('Track activation method called');
-        $this->send_tracking_data('activation');
+        $this->send_tracking_data('activation', true); // Force fresh data for activation
     }
 
     /**
@@ -128,12 +171,9 @@ class WC_Vibe_Tracker
         $this->log('Track deactivation method called');
         $this->send_tracking_data('deactivation');
 
-        // Update status to inactive (in case the deactivation request fails)
-        $cached_data = get_option(self::TRACKING_CACHE_OPTION);
-        if ($cached_data && isset($cached_data['data'])) {
-            $cached_data['data']['is_active'] = false;
-            update_option(self::TRACKING_CACHE_OPTION, $cached_data);
-        }
+        // Clear tracking cache since plugin is being deactivated
+        delete_transient('wc_vibe_tracking_data');
+        delete_option(self::TRACKING_CACHE_OPTION);
     }
 
     /**
@@ -142,37 +182,51 @@ class WC_Vibe_Tracker
     public function send_heartbeat()
     {
         $this->log('Sending heartbeat ping');
-        $this->send_tracking_data('heartbeat');
+        $this->send_tracking_data('heartbeat', true); // Force fresh data for heartbeat
         update_option(self::LAST_HEARTBEAT_OPTION, time());
     }
 
     /**
      * Get basic site information.
      *
+     * @param bool $force_fresh Whether to force fresh data collection.
      * @return array Site information.
      */
-    private function get_tracking_data()
+    private function get_tracking_data($force_fresh = false)
     {
-        // Use cached data if available (less than 6 hours old)
-        $cached_data = get_option(self::TRACKING_CACHE_OPTION);
-        if ($cached_data && isset($cached_data['timestamp']) && (time() - $cached_data['timestamp']) < 6 * HOUR_IN_SECONDS) {
-            return $cached_data['data'];
+        // For daily heartbeats and tracking, always get fresh data
+        if (!$force_fresh) {
+            // Use cached data if available (less than 1 hour old for non-heartbeat calls)
+            $cached_data = get_transient('wc_vibe_tracking_data');
+            if ($cached_data !== false) {
+                return $cached_data;
+            }
         }
+
+        // Batch option reads for efficiency
+        $options = $this->get_batch_options(array(
+            'admin_email',
+            'blogname',
+            'woocommerce_vibe_settings'
+        ));
 
         // Basic site data that doesn't require expensive operations
         $data = array(
             'url' => get_site_url(),
-            'name' => get_bloginfo('name'),
-            'email' => get_option('admin_email'),
+            'name' => $options['blogname'] ?: get_bloginfo('name'),
+            'email' => $options['admin_email'],
             'wp_version' => get_bloginfo('version'),
             'php_version' => phpversion(),
             'is_active' => true,
+            'timestamp' => time(),
         );
 
-        // Get WooCommerce version if available
-        global $woocommerce;
-        if ($woocommerce && isset($woocommerce->version)) {
-            $data['wc_version'] = $woocommerce->version;
+        // Get WooCommerce version more reliably
+        if (defined('WC_VERSION')) {
+            $data['wc_version'] = WC_VERSION;
+        } elseif (function_exists('WC')) {
+            $wc = WC();
+            $data['wc_version'] = $wc->version ?? 'unknown';
         } else {
             $data['wc_version'] = 'unknown';
         }
@@ -180,19 +234,23 @@ class WC_Vibe_Tracker
         // Plugin version from constant
         $data['plugin_version'] = defined('WC_VIBE_VERSION') ? WC_VIBE_VERSION : '1.2.2';
 
-        // Save to cache with timestamp
-        update_option(self::TRACKING_CACHE_OPTION, array(
-            'timestamp' => time(),
-            'data' => $data
-        ));
+        // Add gateway configuration status
+        if ($options['woocommerce_vibe_settings']) {
+            $settings = $options['woocommerce_vibe_settings'];
+            $data['gateway_enabled'] = isset($settings['enabled']) ? ($settings['enabled'] === 'yes') : false;
+            $data['has_api_key'] = !empty($settings['api_key']);
+        }
+
+        // Cache for 1 hour using transients (more efficient than options)
+        set_transient('wc_vibe_tracking_data', $data, HOUR_IN_SECONDS);
 
         return $data;
     }
 
     /**
-     * Get API key from options.
+     * Get API key from options with validation.
      *
-     * @return string|bool The API key or false if not set.
+     * @return string|bool The API key or false if not set or invalid.
      */
     private function get_api_key()
     {
@@ -208,19 +266,68 @@ class WC_Vibe_Tracker
             }
         }
 
+        // Validate API key format (basic validation)
+        if ($api_key && !$this->validate_api_key($api_key)) {
+            $this->log('Invalid API key format detected');
+            return false;
+        }
+
         return $api_key;
+    }
+
+    /**
+     * Validate API key format.
+     *
+     * @param string $api_key The API key to validate.
+     * @return bool True if valid format.
+     */
+    private function validate_api_key($api_key)
+    {
+        // Basic validation - should be non-empty string with reasonable length
+        if (!is_string($api_key) || strlen($api_key) < 10 || strlen($api_key) > 100) {
+            return false;
+        }
+
+        // Check for obvious invalid patterns
+        if (preg_match('/^(test|demo|example|placeholder)$/i', $api_key)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Batch option reads for efficiency.
+     *
+     * @param array $option_names Array of option names to retrieve.
+     * @return array Associative array of option values.
+     */
+    private function get_batch_options($option_names)
+    {
+        $options = array();
+        foreach ($option_names as $name) {
+            $options[$name] = get_option($name, null);
+        }
+        return $options;
     }
 
     /**
      * Send tracking data to the API.
      *
      * @param string $event The event type (activation, deactivation, or heartbeat).
+     * @param bool $force_fresh Whether to force fresh data collection.
      */
-    private function send_tracking_data($event)
+    private function send_tracking_data($event, $force_fresh = false)
     {
         // Don't track if WordPress is installing
         if (defined('WP_INSTALLING') && WP_INSTALLING) {
             $this->log("Skipping tracking during WordPress installation");
+            return;
+        }
+
+        // Check circuit breaker
+        if ($this->is_circuit_breaker_open()) {
+            $this->log("Circuit breaker is open, skipping tracking");
             return;
         }
 
@@ -231,7 +338,7 @@ class WC_Vibe_Tracker
             return;
         }
 
-        $data = $this->get_tracking_data();
+        $data = $this->get_tracking_data($force_fresh);
         $data['event'] = $event;
 
         // Set active status based on event
@@ -241,8 +348,42 @@ class WC_Vibe_Tracker
 
         $this->log("Sending $event tracking data: " . wp_json_encode($data));
 
-        // Use a more reliable request method
-        $this->send_request($data, $api_key);
+        // Use retry logic with exponential backoff
+        $this->send_request_with_retry($data, $api_key);
+    }
+
+    /**
+     * Send an HTTP request to the tracking API with retry logic.
+     * 
+     * @param array $data The data to send.
+     * @param string $api_key The API key to use.
+     */
+    private function send_request_with_retry($data, $api_key)
+    {
+        $attempt = 0;
+        $max_attempts = self::MAX_RETRY_ATTEMPTS;
+        
+        while ($attempt < $max_attempts) {
+            $attempt++;
+            $success = $this->send_request($data, $api_key, $attempt);
+            
+            if ($success) {
+                // Reset circuit breaker on success
+                $this->reset_circuit_breaker();
+                return;
+            }
+            
+            // Exponential backoff: 1s, 2s, 4s
+            if ($attempt < $max_attempts) {
+                $delay = pow(2, $attempt - 1);
+                $this->log("Retrying in {$delay} seconds (attempt {$attempt}/{$max_attempts})");
+                sleep($delay);
+            }
+        }
+        
+        // All attempts failed, record failure
+        $this->record_circuit_breaker_failure();
+        $this->log("All {$max_attempts} attempts failed, giving up");
     }
 
     /**
@@ -250,17 +391,20 @@ class WC_Vibe_Tracker
      * 
      * @param array $data The data to send.
      * @param string $api_key The API key to use.
+     * @param int $attempt Current attempt number.
+     * @return bool Success status.
      */
-    private function send_request($data, $api_key)
+    private function send_request($data, $api_key, $attempt = 1)
     {
-        // In debug mode, use blocking requests with longer timeout
+        // Use non-blocking requests by default (except for deactivation/uninstall)
+        $is_blocking_event = in_array($data['event'], array('deactivation', 'uninstall'));
         $is_debug = defined('WP_DEBUG') && WP_DEBUG;
-
+        
         // Prepare the request
         $args = array(
             'body' => wp_json_encode($data),
-            'timeout' => $is_debug ? 10 : 5,
-            'blocking' => $is_debug, // Only wait for response in debug mode
+            'timeout' => $is_debug ? 15 : 10,
+            'blocking' => $is_blocking_event || $is_debug,
             'headers' => array(
                 'Content-Type' => 'application/json',
                 'X-API-Key' => $api_key,
@@ -269,19 +413,29 @@ class WC_Vibe_Tracker
             'user-agent' => 'WordPress/' . get_bloginfo('version') . '; ' . get_site_url(),
         );
 
-        $this->log("Sending request to: " . $this->api_url . $data['event']);
+        $url = $this->api_url . $data['event'];
+        $this->log("Sending request to: {$url} (attempt {$attempt})");
 
         // Send the request
-        $response = wp_remote_post($this->api_url . $data['event'], $args);
+        $response = wp_remote_post($url, $args);
 
-        // Log the result
+        // Handle the response
         if (is_wp_error($response)) {
             $error_message = $response->get_error_message();
-            $this->log("API request error: $error_message");
+            $this->log("API request error (attempt {$attempt}): {$error_message}");
+            return false;
+        }
+        
+        $response_code = wp_remote_retrieve_response_code($response);
+        $body = wp_remote_retrieve_body($response);
+        
+        // Consider 2xx codes as success
+        if ($response_code >= 200 && $response_code < 300) {
+            $this->log("API success ({$response_code}): {$body}");
+            return true;
         } else {
-            $response_code = wp_remote_retrieve_response_code($response);
-            $body = wp_remote_retrieve_body($response);
-            $this->log("API response ($response_code): $body");
+            $this->log("API error ({$response_code}): {$body}");
+            return false;
         }
     }
 
@@ -298,6 +452,63 @@ class WC_Vibe_Tracker
     }
 
     /**
+     * Check if circuit breaker is open.
+     *
+     * @return bool True if circuit breaker is open.
+     */
+    private function is_circuit_breaker_open()
+    {
+        $breaker_data = get_transient(self::CIRCUIT_BREAKER_OPTION);
+        if (!$breaker_data) {
+            return false;
+        }
+        
+        return $breaker_data['failures'] >= self::CIRCUIT_BREAKER_THRESHOLD;
+    }
+
+    /**
+     * Record a circuit breaker failure.
+     */
+    private function record_circuit_breaker_failure()
+    {
+        $breaker_data = get_transient(self::CIRCUIT_BREAKER_OPTION);
+        if (!$breaker_data) {
+            $breaker_data = array('failures' => 0, 'last_failure' => time());
+        }
+        
+        $breaker_data['failures']++;
+        $breaker_data['last_failure'] = time();
+        
+        // Keep circuit breaker data for 1 hour
+        set_transient(self::CIRCUIT_BREAKER_OPTION, $breaker_data, HOUR_IN_SECONDS);
+        
+        $this->log("Circuit breaker failure recorded: {$breaker_data['failures']}/{" . self::CIRCUIT_BREAKER_THRESHOLD . "}");
+    }
+
+    /**
+     * Reset circuit breaker on successful request.
+     */
+    private function reset_circuit_breaker()
+    {
+        delete_transient(self::CIRCUIT_BREAKER_OPTION);
+    }
+
+    /**
+     * Clean up expired circuit breaker data.
+     */
+    public function cleanup_circuit_breaker()
+    {
+        $breaker_data = get_transient(self::CIRCUIT_BREAKER_OPTION);
+        if ($breaker_data && isset($breaker_data['last_failure'])) {
+            // Reset if last failure was more than 1 hour ago
+            if (time() - $breaker_data['last_failure'] > HOUR_IN_SECONDS) {
+                delete_transient(self::CIRCUIT_BREAKER_OPTION);
+                $this->log('Circuit breaker reset due to timeout');
+            }
+        }
+    }
+
+    /**
      * Clean up when the plugin is uninstalled.
      */
     public static function cleanup()
@@ -309,10 +520,15 @@ class WC_Vibe_Tracker
         delete_option(self::LAST_HEARTBEAT_OPTION);
         delete_option(self::TRACKING_CACHE_OPTION);
         delete_option('wc_vibe_activation_pending');
+        
+        // Delete transients
+        delete_transient('wc_vibe_tracking_data');
+        delete_transient(self::CIRCUIT_BREAKER_OPTION);
+        delete_transient(self::ACTIVATION_LOCK_KEY);
 
         // Send final uninstall event if possible
         $instance = new self();
         $instance->log('Cleanup called - sending uninstall event');
-        $instance->send_tracking_data('uninstall');
+        $instance->send_tracking_data('uninstall', true);
     }
 }
