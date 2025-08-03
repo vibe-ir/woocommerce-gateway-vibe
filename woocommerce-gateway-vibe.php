@@ -4,7 +4,7 @@
  * Plugin Name: WooCommerce Vibe Payment Gateway
  * Plugin URI: https://vibe.ir
  * Description: Adds the Vibe Payment gateway to your WooCommerce website with dynamic pricing based on referrer detection.
- * Version: 1.2.2
+ * Version: 1.2.3
  *
  * Author: Vibe
  * Author URI: https://vibe.ir
@@ -26,7 +26,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WC_VIBE_VERSION', '1.2.2');
+define('WC_VIBE_VERSION', '1.2.3');
 define('WC_VIBE_PLUGIN_FILE', __FILE__);
 define('WC_VIBE_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('WC_VIBE_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -401,6 +401,44 @@ class WC_Vibe_Payments
 	}
 
 	/**
+	 * Migrate option keys to consistent wc_vibe_ prefix.
+	 */
+	public static function migrate_option_keys()
+	{
+		$option_migrations = array(
+			'vibe_dynamic_pricing_enabled' => 'wc_vibe_dynamic_pricing_enabled',
+			'vibe_dynamic_pricing_emergency_disable' => 'wc_vibe_dynamic_pricing_emergency_disable',
+			'vibe_dynamic_pricing_apply_mode' => 'wc_vibe_dynamic_pricing_apply_mode',
+			'vibe_price_display_settings' => 'wc_vibe_price_display_settings',
+			'vibe_api_key' => 'wc_vibe_api_key',
+			'vibe_api_enable_auth' => 'wc_vibe_api_enable_auth',
+			'vibe_debug_logs' => 'wc_vibe_debug_logs',
+			'vibe_enable_debug_logging' => 'wc_vibe_enable_debug_logging'
+		);
+
+		$migrated_count = 0;
+		foreach ($option_migrations as $old_key => $new_key) {
+			$value = get_option($old_key);
+			if ($value !== false) {
+				// Migrate to new key
+				update_option($new_key, $value);
+				delete_option($old_key);
+				$migrated_count++;
+			}
+		}
+
+		// Remove deprecated dynamic pricing version option
+		if (get_option('vibe_dynamic_pricing_version') !== false) {
+			delete_option('vibe_dynamic_pricing_version');
+			$migrated_count++;
+		}
+
+		if ($migrated_count > 0 && defined('WP_DEBUG') && WP_DEBUG) {
+			error_log("[Vibe Plugin] Migrated {$migrated_count} option keys to wc_vibe_ prefix");
+		}
+	}
+
+	/**
 	 * Handle plugin update and migration.
 	 */
 	public static function handle_plugin_update()
@@ -410,9 +448,14 @@ class WC_Vibe_Payments
 		// Only run if version changed
 		if (version_compare($current_version, WC_VIBE_VERSION, '<')) {
 			try {
+				// Migrate option keys to consistent naming convention (v1.2.3+)
+				if (version_compare($current_version, '1.2.3', '<')) {
+					self::migrate_option_keys();
+				}
+				
 				// Force migration of display settings
 				if (class_exists('WC_Vibe_Price_Display')) {
-					$saved_settings = get_option('vibe_price_display_settings', array());
+					$saved_settings = get_option('wc_vibe_price_display_settings', array());
 					
 					// Force migration of deprecated settings
 					$migrated = false;
@@ -434,7 +477,7 @@ class WC_Vibe_Payments
 					
 					// Save migrated settings if changes were made
 					if ($migrated) {
-						update_option('vibe_price_display_settings', $saved_settings);
+						update_option('wc_vibe_price_display_settings', $saved_settings);
 						if (defined('WP_DEBUG') && WP_DEBUG) {
 							error_log('[Vibe Plugin] Display settings migrated during update to version ' . WC_VIBE_VERSION);
 						}
@@ -475,6 +518,7 @@ class WC_Vibe_Payments
 
 		try {
 			// Core dynamic pricing classes
+			require_once 'includes/class-wc-vibe-options.php';
 			require_once 'includes/class-wc-vibe-dynamic-pricing.php';
 			require_once 'includes/class-wc-vibe-pricing-engine.php';
 			require_once 'includes/class-wc-vibe-cache-manager.php';
@@ -660,14 +704,29 @@ function wc_vibe_uninstall()
 			$options_to_delete = array(
 				'wc_vibe_activation_pending',
 				'wc_vibe_activation_error',
+				'wc_vibe_last_heartbeat',
+				'wc_vibe_tracking_cache',
+				'wc_vibe_version',
+				// Old option names (pre-migration)
 				'vibe_dynamic_pricing_version',
 				'vibe_dynamic_pricing_emergency_disable',
 				'vibe_dynamic_pricing_enabled',
 				'vibe_dynamic_pricing_apply_mode',
 				'vibe_dynamic_pricing_settings',
 				'vibe_price_display_settings',
-				'wc_vibe_last_heartbeat',
-				'wc_vibe_tracking_cache'
+				'vibe_api_key',
+				'vibe_api_enable_auth',
+				'vibe_debug_logs',
+				'vibe_enable_debug_logging',
+				// New standardized option names
+				'wc_vibe_dynamic_pricing_emergency_disable',
+				'wc_vibe_dynamic_pricing_enabled',
+				'wc_vibe_dynamic_pricing_apply_mode',
+				'wc_vibe_price_display_settings',
+				'wc_vibe_api_key',
+				'wc_vibe_api_enable_auth',
+				'wc_vibe_debug_logs',
+				'wc_vibe_enable_debug_logging'
 			);
 
 			foreach ($options_to_delete as $option) {

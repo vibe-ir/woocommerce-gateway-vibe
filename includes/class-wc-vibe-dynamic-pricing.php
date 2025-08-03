@@ -93,12 +93,12 @@ class WC_Vibe_Dynamic_Pricing {
 	 */
 	private function init() {
 		// Check if dynamic pricing is enabled
-		if ('no' === get_option('vibe_dynamic_pricing_enabled', 'yes')) {
+		if ('no' === get_option('wc_vibe_dynamic_pricing_enabled', 'yes')) {
 			return; // Exit early if disabled
 		}
 		
 		// Check if emergency disabled
-		$this->emergency_disabled = 'yes' === get_option('vibe_dynamic_pricing_emergency_disable', 'no');
+		$this->emergency_disabled = 'yes' === get_option('wc_vibe_dynamic_pricing_emergency_disable', 'no');
 		
 		if ($this->emergency_disabled) {
 			return; // Exit early if emergency disabled
@@ -355,7 +355,7 @@ class WC_Vibe_Dynamic_Pricing {
 			
 			// Determine if dynamic pricing was applied
 			$is_vibe_payment = ($payment_method === 'vibe');
-			$apply_mode = get_option('vibe_dynamic_pricing_apply_mode', 'combined');
+			$apply_mode = get_option('wc_vibe_dynamic_pricing_apply_mode', 'combined');
 			$pricing_applied = false;
 			
 			// Check if pricing should be applied based on current context
@@ -501,8 +501,7 @@ class WC_Vibe_Dynamic_Pricing {
 		dbDelta($cache_sql);
 
 		// Set initial options
-		add_option('vibe_dynamic_pricing_version', WC_VIBE_VERSION);
-		add_option('vibe_dynamic_pricing_emergency_disable', 'no');
+		add_option('wc_vibe_dynamic_pricing_emergency_disable', 'no');
 	}
 
 	/**
@@ -525,7 +524,7 @@ class WC_Vibe_Dynamic_Pricing {
 				}
 			}
 
-			// Remove options with error handling
+			// Remove options with error handling - old option names (pre-migration)
 			$options_to_delete = array(
 				'vibe_dynamic_pricing_version',
 				'vibe_dynamic_pricing_emergency_disable',
@@ -535,7 +534,19 @@ class WC_Vibe_Dynamic_Pricing {
 				'vibe_price_display_settings'
 			);
 			
+			// Also remove new standardized option names
+			$new_options_to_delete = array(
+				'wc_vibe_dynamic_pricing_emergency_disable',
+				'wc_vibe_dynamic_pricing_enabled',
+				'wc_vibe_dynamic_pricing_apply_mode',
+				'wc_vibe_price_display_settings'
+			);
+			
 			foreach ($options_to_delete as $option_name) {
+				delete_option($option_name);
+			}
+			
+			foreach ($new_options_to_delete as $option_name) {
 				delete_option($option_name);
 			}
 			
@@ -616,7 +627,7 @@ class WC_Vibe_Dynamic_Pricing {
 	 * Enable emergency disable mode.
 	 */
 	public function enable_emergency_disable() {
-		update_option('vibe_dynamic_pricing_emergency_disable', 'yes');
+		update_option('wc_vibe_dynamic_pricing_emergency_disable', 'yes');
 		$this->emergency_disabled = true;
 	}
 
@@ -624,7 +635,7 @@ class WC_Vibe_Dynamic_Pricing {
 	 * Disable emergency disable mode.
 	 */
 	public function disable_emergency_disable() {
-		update_option('vibe_dynamic_pricing_emergency_disable', 'no');
+		update_option('wc_vibe_dynamic_pricing_emergency_disable', 'no');
 		$this->emergency_disabled = false;
 	}
 } 

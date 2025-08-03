@@ -225,7 +225,7 @@ class WC_Vibe_API_Settings {
 					
 					if ($("input#vibe_api_enable_auth").is(":checked")) {
 						body += "' . esc_js( __( 'Note: API authentication is enabled. You will need to include the following API key in the X-Vibe-API-Key header of your requests:', 'woocommerce-gateway-vibe' ) ) . '\\n";
-						body += "' . esc_js( get_option( 'vibe_api_key', '' ) ) . '";
+						body += "' . esc_js( get_option( 'wc_vibe_api_key', '' ) ) . '";
 					}
 					
 					window.location.href = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
@@ -317,7 +317,7 @@ class WC_Vibe_API_Settings {
 	 */
 	private function generate_api_key() {
 		$api_key = wp_generate_password( 32, false );
-		update_option( 'vibe_api_key', $api_key );
+		update_option( 'wc_vibe_api_key', $api_key );
 		
 		return $api_key;
 	}

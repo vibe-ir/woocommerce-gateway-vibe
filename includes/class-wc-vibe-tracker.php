@@ -197,7 +197,7 @@ class WC_Vibe_Tracker
     private function get_api_key()
     {
         // Try to get it from options first
-        $api_key = get_option('vibe_api_key', false);
+        $api_key = get_option('wc_vibe_api_key', false);
 
         // If not in options, try to get from WooCommerce settings
         if (!$api_key) {

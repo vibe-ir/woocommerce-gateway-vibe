@@ -199,7 +199,7 @@ class WC_Vibe_API
 		}
 
 		// Check if API authentication is enabled.
-		if ('yes' === get_option('vibe_api_enable_auth', 'no')) {
+		if ('yes' === get_option('wc_vibe_api_enable_auth', 'no')) {
 			// Get the API key from the request headers.
 			$api_key = $request->get_header('X-Vibe-API-Key');
 
@@ -213,7 +213,7 @@ class WC_Vibe_API
 			}
 
 			// Get the stored API key.
-			$stored_api_key = get_option('vibe_api_key');
+			$stored_api_key = get_option('wc_vibe_api_key');
 
 			// If the API key doesn't match, return an error.
 			if ($api_key !== $stored_api_key) {

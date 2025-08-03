@@ -76,7 +76,7 @@ class WC_Vibe_Price_Display
 		
 		// Save migrated settings if changes were made
 		if ($migrated) {
-			update_option('vibe_price_display_settings', $saved_settings);
+			update_option('wc_vibe_price_display_settings', $saved_settings);
 			$this->log_debug('Settings migrated', array(
 				'deprecated_keys_removed' => $deprecated_keys,
 				'display_layout_updated' => isset($saved_settings['display_layout']) ? $saved_settings['display_layout'] : 'not_set'
@@ -92,7 +92,6 @@ class WC_Vibe_Price_Display
 	private function load_display_settings()
 	{
 		$defaults = array(
-			'show_both_prices' => true,
 			'display_layout' => 'two_line',
 			'price_order' => 'original_first', // new_first or original_first
 			'new_price_font_size' => '100%',
@@ -101,7 +100,7 @@ class WC_Vibe_Price_Display
 			'original_price_prefix' => 'قیمت نقدی ',
 		);
 
-		$saved_settings = get_option('vibe_price_display_settings', array());
+		$saved_settings = get_option('wc_vibe_price_display_settings', array());
 		
 		// Migrate deprecated settings
 		$saved_settings = $this->migrate_deprecated_settings($saved_settings);
@@ -115,7 +114,7 @@ class WC_Vibe_Price_Display
 		$this->log_debug('load_display_settings', array(
 			'saved_settings' => $saved_settings,
 			'final_settings' => $this->display_settings,
-			'show_both_prices' => $this->display_settings['show_both_prices']
+			'always_show_both_prices' => true
 		));
 	}
 
@@ -181,14 +180,25 @@ class WC_Vibe_Price_Display
 			'context' => 'display'
 		));
 
-		// If no dynamic pricing applies, return original
-		if (false === $dynamic_price || $dynamic_price == $original_price) {
-			$this->log_debug('modify_price_html: No dynamic pricing, returning original');
+		// If no dynamic pricing applies, return original price only
+		if (false === $dynamic_price) {
+			$this->log_debug('modify_price_html: No dynamic pricing available, showing original price only');
 			return $price_html;
 		}
 
-		$this->log_debug('modify_price_html: Generating dynamic price HTML');
-		// Generate dynamic price HTML
+		// If dynamic pricing equals original price, return original price only
+		if ($dynamic_price == $original_price) {
+			$this->log_debug('modify_price_html: Dynamic price equals original, showing original price only');
+			return $price_html;
+		}
+
+		$this->log_debug('modify_price_html: Generating both prices HTML', array(
+			'original_price' => $original_price,
+			'dynamic_price' => $dynamic_price,
+			'showing_both_prices' => true
+		));
+		
+		// Generate both-price HTML when dynamic pricing is different from original
 		return $this->generate_dynamic_price_html($original_price, $dynamic_price, $product);
 	}
 
@@ -257,7 +267,7 @@ class WC_Vibe_Price_Display
 			'original_price' => $original_price,
 			'dynamic_price' => $dynamic_price,
 			'context' => $context,
-			'show_both_prices' => $this->display_settings['show_both_prices'],
+			'prices_equal' => $original_price == $dynamic_price,
 			'display_settings' => $this->display_settings
 		));
 
@@ -270,31 +280,20 @@ class WC_Vibe_Price_Display
 		$new_price_style = $this->get_price_style('new');
 		$original_price_style = $this->get_price_style('original');
 
-		// Build HTML based on settings
+		// Build HTML - always show both prices
 		$html_parts = array();
 
-		// Determine price order and layout
-		if ($this->display_settings['show_both_prices']) {
-			$this->log_debug('generate_dynamic_price_html: Building both prices HTML', array(
-				'new_price_display' => $new_price_display,
-				'original_price_display' => $original_price_display
-			));
+		$this->log_debug('generate_dynamic_price_html: Building both prices HTML', array(
+			'new_price_display' => $new_price_display,
+			'original_price_display' => $original_price_display
+		));
 
-			$prices_html = $this->build_both_prices_html(
-				$new_price_display,
-				$original_price_display,
-				$new_price_style,
-				$original_price_style
-			);
-		} else {
-			$this->log_debug('generate_dynamic_price_html: Building single price HTML');
-
-			$prices_html = sprintf(
-				'<span class="vibe-dynamic-price-new" style="%s">%s</span>',
-				$new_price_style,
-				$new_price_display
-			);
-		}
+		$prices_html = $this->build_both_prices_html(
+			$new_price_display,
+			$original_price_display,
+			$new_price_style,
+			$original_price_style
+		);
 
 		$html_parts[] = $prices_html;
 
@@ -625,7 +624,7 @@ class WC_Vibe_Price_Display
 		error_log('VIBE_DEBUG: ' . json_encode($log_entry));
 
 		// Also store in option for admin review
-		$debug_logs = get_option('vibe_debug_logs', array());
+		$debug_logs = get_option('wc_vibe_debug_logs', array());
 		$debug_logs[] = $log_entry;
 
 		// Keep only last 100 entries
@@ -633,7 +632,7 @@ class WC_Vibe_Price_Display
 			$debug_logs = array_slice($debug_logs, -100);
 		}
 
-		update_option('vibe_debug_logs', $debug_logs);
+		update_option('wc_vibe_debug_logs', $debug_logs);
 	}
 
 	/**
@@ -643,7 +642,7 @@ class WC_Vibe_Price_Display
 	 */
 	private function is_debug_enabled()
 	{
-		return defined('WP_DEBUG') && WP_DEBUG && get_option('vibe_enable_debug_logging', false);
+		return defined('WP_DEBUG') && WP_DEBUG && get_option('wc_vibe_enable_debug_logging', false);
 	}
 
 	/**

@@ -240,7 +240,7 @@ class WC_Vibe_Pricing_Engine {
 	 * @return array Filtered rules.
 	 */
 	private function filter_rules_by_context($rules, $context_type = 'application') {
-		$apply_mode = get_option('vibe_dynamic_pricing_apply_mode', 'combined');
+		$apply_mode = get_option('wc_vibe_dynamic_pricing_apply_mode', 'combined');
 		$filtered_rules = array();
 
 		$this->log_debug('filter_rules_by_context', array(
@@ -275,7 +275,7 @@ class WC_Vibe_Pricing_Engine {
 	 */
 	private function does_rule_match_context($rule, $apply_mode = null, $context_type = 'application') {
 		if (null === $apply_mode) {
-			$apply_mode = get_option('vibe_dynamic_pricing_apply_mode', 'combined');
+			$apply_mode = get_option('wc_vibe_dynamic_pricing_apply_mode', 'combined');
 		}
 
 		$this->log_debug('does_rule_match_context', array(
@@ -850,7 +850,7 @@ class WC_Vibe_Pricing_Engine {
 			$this->current_referrer ? $this->current_referrer : 'no_referrer',
 			$this->current_payment_method ? $this->current_payment_method : 'no_payment_method',
 			// Add timestamp component to avoid stale caches during development/testing
-			get_option('vibe_dynamic_pricing_apply_mode', 'combined'),
+			get_option('wc_vibe_dynamic_pricing_apply_mode', 'combined'),
 			$context_type
 		);
 
@@ -954,7 +954,7 @@ class WC_Vibe_Pricing_Engine {
 		error_log('VIBE_DEBUG: ' . json_encode($log_entry));
 
 		// Also store in option for admin review
-		$debug_logs = get_option('vibe_debug_logs', array());
+		$debug_logs = get_option('wc_vibe_debug_logs', array());
 		$debug_logs[] = $log_entry;
 		
 		// Keep only last 100 entries
@@ -962,7 +962,7 @@ class WC_Vibe_Pricing_Engine {
 			$debug_logs = array_slice($debug_logs, -100);
 		}
 		
-		update_option('vibe_debug_logs', $debug_logs);
+		update_option('wc_vibe_debug_logs', $debug_logs);
 	}
 
 	/**
@@ -971,7 +971,7 @@ class WC_Vibe_Pricing_Engine {
 	 * @return bool True if debugging is enabled.
 	 */
 	private function is_debug_enabled() {
-		return defined('WP_DEBUG') && WP_DEBUG && get_option('vibe_enable_debug_logging', false);
+		return defined('WP_DEBUG') && WP_DEBUG && get_option('wc_vibe_enable_debug_logging', false);
 	}
 
 	/**
@@ -987,7 +987,7 @@ class WC_Vibe_Pricing_Engine {
 				'current_payment_method' => $this->current_payment_method,
 				'current_referrer' => $this->current_referrer,
 				'evaluation_context' => $this->evaluation_context,
-				'apply_mode' => get_option('vibe_dynamic_pricing_apply_mode', 'combined'),
+				'apply_mode' => get_option('wc_vibe_dynamic_pricing_apply_mode', 'combined'),
 				'compiled_rules_count' => $this->compiled_rules ? count($this->compiled_rules) : 0
 			),
 			'wc_functions_available' => array(

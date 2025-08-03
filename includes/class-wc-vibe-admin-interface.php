@@ -596,9 +596,8 @@ class WC_Vibe_Admin_Interface
 				<input type="hidden" name="action" value="save_vibe_display_settings">
 
 				<?php
-				$settings = get_option('vibe_price_display_settings', array());
+				$settings = get_option('wc_vibe_price_display_settings', array());
 				$defaults = array(
-					'show_both_prices' => true,
 					'display_layout' => 'two_line',
 					'price_order' => 'original_first',
 					'new_price_font_size' => '100%',
@@ -614,7 +613,7 @@ class WC_Vibe_Admin_Interface
 						<th scope="row"><?php _e('Enable Dynamic Pricing', 'woocommerce-gateway-vibe'); ?></th>
 						<td>
 							<label>
-								<input type="checkbox" name="enable_dynamic_pricing" value="yes" <?php checked(get_option('vibe_dynamic_pricing_enabled', 'yes'), 'yes'); ?>>
+								<input type="checkbox" name="enable_dynamic_pricing" value="yes" <?php checked(get_option('wc_vibe_dynamic_pricing_enabled', 'yes'), 'yes'); ?>>
 								<?php _e('Enable dynamic pricing functionality', 'woocommerce-gateway-vibe'); ?>
 							</label>
 							<p class="description"><?php _e('Master switch to enable or disable all dynamic pricing features.', 'woocommerce-gateway-vibe'); ?></p>
@@ -624,7 +623,7 @@ class WC_Vibe_Admin_Interface
 					<tr>
 						<th scope="row"><?php _e('Apply Pricing Based On', 'woocommerce-gateway-vibe'); ?></th>
 						<td>
-							<?php $apply_mode = get_option('vibe_dynamic_pricing_apply_mode', 'combined'); ?>
+							<?php $apply_mode = get_option('wc_vibe_dynamic_pricing_apply_mode', 'combined'); ?>
 							<label>
 								<input type="radio" name="apply_mode" value="combined" <?php checked($apply_mode, 'combined'); ?>>
 								<strong><?php _e('Referrer OR Payment Gateway (Recommended)', 'woocommerce-gateway-vibe'); ?></strong>
@@ -893,15 +892,6 @@ class WC_Vibe_Admin_Interface
 
 			<script>
 				jQuery(document).ready(function($) {
-					// Show/hide pricing options based on show_both_prices
-					$('input[name="show_both_prices"]').change(function() {
-						if ($(this).is(':checked')) {
-							$('.price-display-option').show();
-						} else {
-							$('.price-display-option').hide();
-						}
-					});
-
 					// Live preview updates for prefix/suffix
 					function updatePreview() {
 						var dynamicPrefix = $('input[name="new_price_prefix"]').val();
@@ -1203,18 +1193,17 @@ class WC_Vibe_Admin_Interface
 		}
 
 		// Update enable/disable setting
-		update_option('vibe_dynamic_pricing_enabled', isset($_POST['enable_dynamic_pricing']) ? 'yes' : 'no');
+		update_option('wc_vibe_dynamic_pricing_enabled', isset($_POST['enable_dynamic_pricing']) ? 'yes' : 'no');
 
 		// Update apply mode setting
 		$apply_mode = isset($_POST['apply_mode']) ? sanitize_text_field($_POST['apply_mode']) : 'combined';
-		update_option('vibe_dynamic_pricing_apply_mode', $apply_mode);
+		update_option('wc_vibe_dynamic_pricing_apply_mode', $apply_mode);
 
 		// Update emergency disable setting
-		update_option('vibe_dynamic_pricing_emergency_disable', isset($_POST['emergency_disable']) ? 'yes' : 'no');
+		update_option('wc_vibe_dynamic_pricing_emergency_disable', isset($_POST['emergency_disable']) ? 'yes' : 'no');
 
-		// Update display settings
+		// Update display settings (both prices always shown)
 		$display_settings = array(
-			'show_both_prices' => isset($_POST['show_both_prices']),
 			'display_layout' => 'two_line',
 			'price_order' => isset($_POST['price_order']) ? sanitize_text_field($_POST['price_order']) : 'original_first',
 			'new_price_font_size' => isset($_POST['new_price_font_size']) ? sanitize_text_field($_POST['new_price_font_size']) : '100%',
@@ -1223,7 +1212,7 @@ class WC_Vibe_Admin_Interface
 			'original_price_prefix' => isset($_POST['original_price_prefix']) ? sanitize_text_field($_POST['original_price_prefix']) : '',
 		);
 
-		update_option('vibe_price_display_settings', $display_settings);
+		update_option('wc_vibe_price_display_settings', $display_settings);
 
 		// Clear pricing cache when settings change
 		$this->cache_manager->clear_pricing_cache();
@@ -1354,7 +1343,7 @@ class WC_Vibe_Admin_Interface
 		}
 
 		$debug_enabled = isset($_POST['vibe_enable_debug_logging']) ? true : false;
-		update_option('vibe_enable_debug_logging', $debug_enabled);
+		update_option('wc_vibe_enable_debug_logging', $debug_enabled);
 
 		add_action('admin_notices', function () {
 			echo '<div class="notice notice-success is-dismissible"><p>' . __('Debug settings saved successfully.', 'woocommerce-gateway-vibe') . '</p></div>';
@@ -1375,18 +1364,17 @@ class WC_Vibe_Admin_Interface
 		}
 
 		// Update enable/disable setting
-		update_option('vibe_dynamic_pricing_enabled', isset($_POST['enable_dynamic_pricing']) ? 'yes' : 'no');
+		update_option('wc_vibe_dynamic_pricing_enabled', isset($_POST['enable_dynamic_pricing']) ? 'yes' : 'no');
 
 		// Update apply mode setting
 		$apply_mode = isset($_POST['apply_mode']) ? sanitize_text_field($_POST['apply_mode']) : 'combined';
-		update_option('vibe_dynamic_pricing_apply_mode', $apply_mode);
+		update_option('wc_vibe_dynamic_pricing_apply_mode', $apply_mode);
 
 		// Update emergency disable setting
-		update_option('vibe_dynamic_pricing_emergency_disable', isset($_POST['emergency_disable']) ? 'yes' : 'no');
+		update_option('wc_vibe_dynamic_pricing_emergency_disable', isset($_POST['emergency_disable']) ? 'yes' : 'no');
 
-		// Update display settings
+		// Update display settings (both prices always shown)
 		$display_settings = array(
-			'show_both_prices' => isset($_POST['show_both_prices']) ? true : false,
 			'display_layout' => 'two_line',
 			'price_order' => isset($_POST['price_order']) ? sanitize_text_field($_POST['price_order']) : 'original_first',
 			'new_price_font_size' => isset($_POST['new_price_font_size']) ? sanitize_text_field($_POST['new_price_font_size']) : '100%',
@@ -1395,7 +1383,7 @@ class WC_Vibe_Admin_Interface
 			'original_price_prefix' => isset($_POST['original_price_prefix']) ? sanitize_text_field($_POST['original_price_prefix']) : '',
 		);
 
-		update_option('vibe_price_display_settings', $display_settings);
+		update_option('wc_vibe_price_display_settings', $display_settings);
 
 		// Clear pricing cache when settings change
 		$this->cache_manager->clear_pricing_cache();
