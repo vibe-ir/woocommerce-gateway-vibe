@@ -180,8 +180,16 @@ class WC_Vibe_Dynamic_Pricing {
 			return $price;
 		}
 
-		// Get dynamic price
-		$dynamic_price = $this->pricing_engine->get_dynamic_price($product, $price);
+		// Get the actual original price from the product object to prevent double application
+		$original_price = $this->get_product_original_price($product);
+		
+		// If we can't get the original price, fall back to the passed price
+		if ($original_price === false || $original_price <= 0) {
+			$original_price = $price;
+		}
+
+		// Get dynamic price using the original price as base
+		$dynamic_price = $this->pricing_engine->get_dynamic_price($product, $original_price);
 		
 		return $dynamic_price !== false ? $dynamic_price : $price;
 	}
@@ -637,5 +645,52 @@ class WC_Vibe_Dynamic_Pricing {
 	public function disable_emergency_disable() {
 		update_option('wc_vibe_dynamic_pricing_emergency_disable', 'no');
 		$this->emergency_disabled = false;
+	}
+
+	/**
+	 * Get the actual original price from the product object.
+	 *
+	 * @param WC_Product $product Product object.
+	 * @return float|false Original price or false if not available.
+	 */
+	private function get_product_original_price($product) {
+		if (!$product || !is_a($product, 'WC_Product')) {
+			return false;
+		}
+
+		// Temporarily remove our own filters to get the actual original price
+		$removed_filters = array();
+		
+		// Store which filters we removed so we can restore them
+		if (has_filter('woocommerce_product_get_price', array($this, 'modify_product_price'))) {
+			remove_filter('woocommerce_product_get_price', array($this, 'modify_product_price'), 99);
+			$removed_filters[] = 'woocommerce_product_get_price';
+		}
+		
+		if (has_filter('woocommerce_product_variation_get_price', array($this, 'modify_product_price'))) {
+			remove_filter('woocommerce_product_variation_get_price', array($this, 'modify_product_price'), 99);
+			$removed_filters[] = 'woocommerce_product_variation_get_price';
+		}
+
+		// Get the original price without our modifications
+		$original_price = false;
+		
+		// For sale price, use sale price if available, otherwise regular price
+		if ($product->get_sale_price()) {
+			$original_price = floatval($product->get_sale_price());
+		} else {
+			$original_price = floatval($product->get_regular_price());
+		}
+
+		// Restore the filters we removed
+		foreach ($removed_filters as $filter_name) {
+			if ($filter_name === 'woocommerce_product_get_price') {
+				add_filter($filter_name, array($this, 'modify_product_price'), 99, 2);
+			} elseif ($filter_name === 'woocommerce_product_variation_get_price') {
+				add_filter($filter_name, array($this, 'modify_product_price'), 99, 2);
+			}
+		}
+
+		return $original_price;
 	}
 } 

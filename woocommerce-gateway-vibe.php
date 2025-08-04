@@ -4,7 +4,7 @@
  * Plugin Name: WooCommerce Vibe Payment Gateway
  * Plugin URI: https://vibe.ir
  * Description: Adds the Vibe Payment gateway to your WooCommerce website with dynamic pricing based on referrer detection.
- * Version: 1.2.3
+ * Version: 1.2.4
  *
  * Author: Vibe
  * Author URI: https://vibe.ir
@@ -26,7 +26,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WC_VIBE_VERSION', '1.2.3');
+define('WC_VIBE_VERSION', '1.2.4');
 define('WC_VIBE_PLUGIN_FILE', __FILE__);
 define('WC_VIBE_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('WC_VIBE_PLUGIN_URL', plugin_dir_url(__FILE__));

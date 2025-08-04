@@ -565,7 +565,7 @@ class WC_Gateway_Vibe extends WC_Payment_Gateway
 
 		if ($ref_id) {
 			echo '<div class="vibe-payment-details">';
-			echo '<p><strong>' . esc_html__('شناسه پرداخت:', 'woocommerce-gateway-vibe') . '</strong> ' . esc_html($ref_id) . '</p>';
+			echo '<p><strong>' . esc_html__('Payment ID:', 'woocommerce-gateway-vibe') . '</strong> ' . esc_html($ref_id) . '</p>';
 			echo '</div>';
 		}
 	}

@@ -27,7 +27,7 @@ class WC_Vibe_Options {
 	 * Default option values.
 	 */
 	private static $defaults = array(
-		'version' => '1.2.3',
+		'version' => '1.2.4',
 		'activation_pending' => false,
 		'activation_error' => '',
 		'last_heartbeat' => 0,
@@ -39,7 +39,11 @@ class WC_Vibe_Options {
 			'display_layout' => 'two_line',
 			'price_order' => 'original_first',
 			'new_price_font_size' => '100%',
+			'new_price_color' => '',
+			'new_price_font_weight' => 'bold',
 			'original_price_font_size' => '85%',
+			'original_price_color' => '#999999',
+			'original_price_font_weight' => 'normal',
 			'new_price_prefix' => 'قیمت اقساطی ',
 			'original_price_prefix' => 'قیمت نقدی ',
 		),
@@ -178,6 +182,14 @@ class WC_Vibe_Options {
 							case 'original_price_prefix':
 								$sanitized[$setting_key] = sanitize_text_field($value[$setting_key]);
 								break;
+							case 'new_price_color':
+							case 'original_price_color':
+								$sanitized[$setting_key] = sanitize_hex_color($value[$setting_key]);
+								break;
+							case 'new_price_font_weight':
+							case 'original_price_font_weight':
+								$sanitized[$setting_key] = $this->sanitize_font_weight($value[$setting_key]);
+								break;
 							default:
 								$sanitized[$setting_key] = $value[$setting_key];
 						}
@@ -263,5 +275,27 @@ class WC_Vibe_Options {
 		}
 
 		return $stats;
+	}
+
+	/**
+	 * Sanitize font weight value.
+	 *
+	 * @param string $font_weight Font weight value to sanitize.
+	 * @return string Sanitized font weight.
+	 */
+	private function sanitize_font_weight($font_weight) {
+		$allowed_weights = array(
+			'normal', 'bold', 'bolder', 'lighter',
+			'100', '200', '300', '400', '500', '600', '700', '800', '900'
+		);
+		
+		$font_weight = sanitize_text_field($font_weight);
+		
+		if (in_array($font_weight, $allowed_weights, true)) {
+			return $font_weight;
+		}
+		
+		// Default fallback
+		return 'normal';
 	}
 }

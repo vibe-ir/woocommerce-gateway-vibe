@@ -95,7 +95,11 @@ class WC_Vibe_Price_Display
 			'display_layout' => 'two_line',
 			'price_order' => 'original_first', // new_first or original_first
 			'new_price_font_size' => '100%',
+			'new_price_color' => '',
+			'new_price_font_weight' => 'bold',
 			'original_price_font_size' => '85%',
+			'original_price_color' => '#999999',
+			'original_price_font_weight' => 'normal',
 			'new_price_prefix' => 'قیمت اقساطی ',
 			'original_price_prefix' => 'قیمت نقدی ',
 		);
@@ -376,15 +380,41 @@ class WC_Vibe_Price_Display
 		$styles = array();
 
 		if ($type === 'new') {
-			$styles[] = sprintf('font-size: %s', $this->display_settings['new_price_font_size']);
-			$styles[] = 'font-weight: bold';
+			// Font size
+			if (!empty($this->display_settings['new_price_font_size'])) {
+				$styles[] = sprintf('font-size: %s', $this->display_settings['new_price_font_size']);
+			}
+			
+			// Color
+			if (!empty($this->display_settings['new_price_color'])) {
+				$styles[] = sprintf('color: %s', $this->display_settings['new_price_color']);
+			}
+			
+			// Font weight
+			$font_weight = !empty($this->display_settings['new_price_font_weight']) 
+				? $this->display_settings['new_price_font_weight'] 
+				: 'bold';
+			$styles[] = sprintf('font-weight: %s', $font_weight);
 		} else {
-			$styles[] = sprintf('font-size: %s', $this->display_settings['original_price_font_size']);
+			// Font size
+			if (!empty($this->display_settings['original_price_font_size'])) {
+				$styles[] = sprintf('font-size: %s', $this->display_settings['original_price_font_size']);
+			}
+
+			// Color - use custom color if set, otherwise default
+			$color = !empty($this->display_settings['original_price_color']) 
+				? $this->display_settings['original_price_color'] 
+				: '#999';
+			$styles[] = sprintf('color: %s', $color);
+			
+			// Font weight
+			$font_weight = !empty($this->display_settings['original_price_font_weight']) 
+				? $this->display_settings['original_price_font_weight'] 
+				: 'normal';
+			$styles[] = sprintf('font-weight: %s', $font_weight);
 
 			// Strike-through is no longer supported - always remove any inherited strikethrough
 			$styles[] = 'text-decoration: none';
-
-			$styles[] = 'color: #999';
 		}
 
 		$final_styles = implode('; ', $styles);

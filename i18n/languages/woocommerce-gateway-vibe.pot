@@ -2,14 +2,14 @@
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Vibe Payment Gateway 1.1.0\n"
+"Project-Id-Version: WooCommerce Vibe Payment Gateway 1.2.4\n"
 "Report-Msgid-Bugs-To: https://woocommerce.com/my-account/create-a-ticket/\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-06-23T09:59:03+00:00\n"
+"POT-Creation-Date: 2025-08-04T06:57:18+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "language-team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -64,7 +64,7 @@ msgid "This controls the title which the user sees during checkout."
 msgstr ""
 
 #: includes/class-wc-gateway-vibe.php:137
-#: includes/class-wc-vibe-admin-interface.php:349
+#: includes/class-wc-vibe-admin-interface.php:356
 msgid "Description"
 msgstr ""
 
@@ -146,323 +146,315 @@ msgstr ""
 msgid "Your payment could not be processed. Redirecting to checkout..."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:85
-#: includes/class-wc-vibe-admin-interface.php:131
+#: includes/class-wc-gateway-vibe.php:568
+msgid "Payment ID:"
+msgstr ""
+
+#: includes/class-wc-vibe-admin-interface.php:89
+#: includes/class-wc-vibe-admin-interface.php:136
 msgid "Vibe Dynamic Pricing"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:86
+#: includes/class-wc-vibe-admin-interface.php:90
 msgid "Vibe Pricing"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:97
-#: includes/class-wc-vibe-admin-interface.php:135
+#: includes/class-wc-vibe-admin-interface.php:101
+#: includes/class-wc-vibe-admin-interface.php:140
 msgid "Pricing Rules"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:98
+#: includes/class-wc-vibe-admin-interface.php:102
 msgid "Rules"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:106
+#: includes/class-wc-vibe-admin-interface.php:110
 #: includes/class-wc-vibe-admin-interface.php:591
 msgid "Display Settings"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:107
+#: includes/class-wc-vibe-admin-interface.php:111
 msgid "Display"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:115
-#: includes/class-wc-vibe-admin-interface.php:116
-#: includes/class-wc-vibe-admin-interface.php:1086
+#: includes/class-wc-vibe-admin-interface.php:119
+#: includes/class-wc-vibe-admin-interface.php:120
+#: includes/class-wc-vibe-admin-interface.php:1041
 msgid "Performance"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:138
+#: includes/class-wc-vibe-admin-interface.php:143
 msgid "Add Rule"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:170
+#: includes/class-wc-vibe-admin-interface.php:176
 msgid "Bulk Actions"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:171
-#: includes/class-wc-vibe-admin-interface.php:304
+#: includes/class-wc-vibe-admin-interface.php:177
+#: includes/class-wc-vibe-admin-interface.php:310
 msgid "Enable"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:172
-#: includes/class-wc-vibe-admin-interface.php:304
+#: includes/class-wc-vibe-admin-interface.php:178
+#: includes/class-wc-vibe-admin-interface.php:310
 msgid "Disable"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:173
-#: includes/class-wc-vibe-admin-interface.php:309
+#: includes/class-wc-vibe-admin-interface.php:179
+#: includes/class-wc-vibe-admin-interface.php:315
 msgid "Delete"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:175
+#: includes/class-wc-vibe-admin-interface.php:181
 msgid "Apply"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:179
+#: includes/class-wc-vibe-admin-interface.php:185
 msgid "Add New Rule"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:190
-#: includes/class-wc-vibe-admin-interface.php:339
+#: includes/class-wc-vibe-admin-interface.php:196
+#: includes/class-wc-vibe-admin-interface.php:346
 msgid "Rule Name"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:191
-#: includes/class-wc-vibe-admin-interface.php:359
+#: includes/class-wc-vibe-admin-interface.php:197
+#: includes/class-wc-vibe-admin-interface.php:366
 msgid "Priority"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:192
-#: includes/class-wc-vibe-admin-interface.php:377
+#: includes/class-wc-vibe-admin-interface.php:198
+#: includes/class-wc-vibe-admin-interface.php:376
 msgid "Product Targeting"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:193
-#: includes/class-wc-vibe-admin-interface.php:504
+#: includes/class-wc-vibe-admin-interface.php:199
+#: includes/class-wc-vibe-admin-interface.php:503
 msgid "Price Adjustment"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:194
-#: includes/class-wc-vibe-admin-interface.php:554
+#: includes/class-wc-vibe-admin-interface.php:200
+#: includes/class-wc-vibe-admin-interface.php:553
 msgid "Status"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:195
+#: includes/class-wc-vibe-admin-interface.php:201
 msgid "Actions"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:202
+#: includes/class-wc-vibe-admin-interface.php:208
 msgid "No pricing rules found."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:203
+#: includes/class-wc-vibe-admin-interface.php:209
 msgid "Create your first rule"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:232
-#: includes/class-wc-vibe-admin-interface.php:270
-#: includes/class-wc-vibe-admin-interface.php:387
+#: includes/class-wc-vibe-admin-interface.php:238
+#: includes/class-wc-vibe-admin-interface.php:276
+#: includes/class-wc-vibe-admin-interface.php:386
 msgid "All Products"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:236
-#: includes/class-wc-vibe-admin-interface.php:393
+#: includes/class-wc-vibe-admin-interface.php:242
+#: includes/class-wc-vibe-admin-interface.php:392
 msgid "Specific Products"
 msgstr ""
 
 #. translators: %d: number of products selected for the pricing rule
-#: includes/class-wc-vibe-admin-interface.php:238
+#: includes/class-wc-vibe-admin-interface.php:244
 msgid "%d product"
 msgid_plural "%d products"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-wc-vibe-admin-interface.php:243
+#: includes/class-wc-vibe-admin-interface.php:249
 msgid "Categories"
 msgstr ""
 
 #. translators: %d: number of categories selected for the pricing rule
-#: includes/class-wc-vibe-admin-interface.php:245
+#: includes/class-wc-vibe-admin-interface.php:251
 msgid "%d category"
 msgid_plural "%d categories"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-wc-vibe-admin-interface.php:250
+#: includes/class-wc-vibe-admin-interface.php:256
 msgid "Tags"
 msgstr ""
 
 #. translators: %d: number of tags selected for the pricing rule
-#: includes/class-wc-vibe-admin-interface.php:252
+#: includes/class-wc-vibe-admin-interface.php:258
 msgid "%d tag"
 msgid_plural "%d tags"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-wc-vibe-admin-interface.php:255
-#: includes/class-wc-vibe-admin-interface.php:468
+#: includes/class-wc-vibe-admin-interface.php:261
+#: includes/class-wc-vibe-admin-interface.php:467
 msgid "Price Range"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:267
-#: includes/class-wc-vibe-admin-interface.php:485
+#: includes/class-wc-vibe-admin-interface.php:273
+#: includes/class-wc-vibe-admin-interface.php:484
 msgid "Complex Logic"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:296
+#: includes/class-wc-vibe-admin-interface.php:302
 msgid "Active"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:296
+#: includes/class-wc-vibe-admin-interface.php:302
 msgid "Inactive"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:301
+#: includes/class-wc-vibe-admin-interface.php:307
 msgid "Edit"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:308
+#: includes/class-wc-vibe-admin-interface.php:314
 msgid "Are you sure you want to delete this rule?"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:343
+#: includes/class-wc-vibe-admin-interface.php:350
 msgid "A descriptive name for this pricing rule."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:353
+#: includes/class-wc-vibe-admin-interface.php:360
 msgid "Optional description of what this rule does."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:363
+#: includes/class-wc-vibe-admin-interface.php:370
 msgid "Higher priority rules are applied first. Use 0 for lowest priority."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:368
-msgid "Referrer Requirements"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:370
-msgid "Automatically applies to vibe.ir and all subdomains (*.vibe.ir)"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:371
-msgid "This rule will only apply to visitors coming from vibe.ir or any of its subdomains."
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:408
+#: includes/class-wc-vibe-admin-interface.php:407
 msgid "Hold Ctrl/Cmd to select multiple products."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:414
+#: includes/class-wc-vibe-admin-interface.php:413
 msgid "Product Categories"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:431
-#: includes/class-wc-vibe-admin-interface.php:458
+#: includes/class-wc-vibe-admin-interface.php:430
+#: includes/class-wc-vibe-admin-interface.php:457
 msgid "Logic:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:433
+#: includes/class-wc-vibe-admin-interface.php:432
 msgid "Any of selected categories (OR)"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:434
+#: includes/class-wc-vibe-admin-interface.php:433
 msgid "All selected categories (AND)"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:441
+#: includes/class-wc-vibe-admin-interface.php:440
 msgid "Product Tags"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:460
+#: includes/class-wc-vibe-admin-interface.php:459
 msgid "Any of selected tags (OR)"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:461
+#: includes/class-wc-vibe-admin-interface.php:460
 msgid "All selected tags (AND)"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:475
+#: includes/class-wc-vibe-admin-interface.php:474
 msgid "Minimum Price:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:477
+#: includes/class-wc-vibe-admin-interface.php:476
 msgid "Maximum Price:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:479
+#: includes/class-wc-vibe-admin-interface.php:478
 msgid "Leave empty for no limit. Applies to products within this price range."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:489
+#: includes/class-wc-vibe-admin-interface.php:488
 msgid "Build complex conditions like: ((Category A AND Tag X) OR (Category B AND Tag Y)) AND Price > $50"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:494
+#: includes/class-wc-vibe-admin-interface.php:493
 msgid "Syntax: category:slug, tag:slug, price > amount, price < amount, price = amount. Use AND, OR, parentheses for grouping."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:513
+#: includes/class-wc-vibe-admin-interface.php:512
 msgid "Percentage Adjustment"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:514
+#: includes/class-wc-vibe-admin-interface.php:513
 msgid "Fixed Amount Addition/Subtraction"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:515
+#: includes/class-wc-vibe-admin-interface.php:514
 msgid "Fixed Price Override"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:520
+#: includes/class-wc-vibe-admin-interface.php:519
 msgid "Price Adjustment Types:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:522
+#: includes/class-wc-vibe-admin-interface.php:521
 msgid "Percentage:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:522
+#: includes/class-wc-vibe-admin-interface.php:521
 msgid "+10 = 10% increase, -5 = 5% decrease from original price"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:523
+#: includes/class-wc-vibe-admin-interface.php:522
 msgid "Fixed Amount:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:523
+#: includes/class-wc-vibe-admin-interface.php:522
 msgid "+10 = add $10, -5 = subtract $5 from original price"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:524
+#: includes/class-wc-vibe-admin-interface.php:523
 msgid "Fixed Price:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:524
+#: includes/class-wc-vibe-admin-interface.php:523
 msgid "25 = set price to exactly $25 regardless of original price"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:531
+#: includes/class-wc-vibe-admin-interface.php:530
 msgid "Discount Integration"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:536
+#: includes/class-wc-vibe-admin-interface.php:535
 msgid "Apply with existing WooCommerce discounts"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:541
+#: includes/class-wc-vibe-admin-interface.php:540
 msgid "Ignore existing discounts (replace them)"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:546
+#: includes/class-wc-vibe-admin-interface.php:545
 msgid "Apply before other discounts"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:548
+#: includes/class-wc-vibe-admin-interface.php:547
 msgid "Choose how this rule interacts with existing WooCommerce coupons and discounts."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:559
+#: includes/class-wc-vibe-admin-interface.php:558
 msgid "Enable this rule"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:566
+#: includes/class-wc-vibe-admin-interface.php:565
 msgid "Update Rule"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:566
+#: includes/class-wc-vibe-admin-interface.php:565
 msgid "Create Rule"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:567
+#: includes/class-wc-vibe-admin-interface.php:566
 msgid "Cancel"
 msgstr ""
 
@@ -470,318 +462,227 @@ msgstr ""
 msgid "Configure how dynamic prices are displayed to customers."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:621
+#: includes/class-wc-vibe-admin-interface.php:617
 msgid "Enable Dynamic Pricing"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:625
+#: includes/class-wc-vibe-admin-interface.php:621
 msgid "Enable dynamic pricing functionality"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:627
+#: includes/class-wc-vibe-admin-interface.php:623
 msgid "Master switch to enable or disable all dynamic pricing features."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:632
+#: includes/class-wc-vibe-admin-interface.php:628
 msgid "Apply Pricing Based On"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:637
+#: includes/class-wc-vibe-admin-interface.php:633
 msgid "Referrer OR Payment Gateway (Recommended)"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:640
+#: includes/class-wc-vibe-admin-interface.php:636
 msgid "Apply dynamic pricing when visitors come from vibe.ir OR when they select Vibe payment gateway. This provides the best coverage while preventing double pricing application."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:645
-msgid "Payment Gateway Only"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:648
-msgid "Apply dynamic pricing only when customers select Vibe payment gateway during checkout, with referrer fallback on product pages."
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:653
-msgid "Referrer Detection Only (Legacy)"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:656
-msgid "Apply pricing only when visitors come from vibe.ir domains. Less reliable as referrer information can be lost during navigation."
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:661
+#: includes/class-wc-vibe-admin-interface.php:641
 msgid "Always Apply (All Visitors)"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:664
+#: includes/class-wc-vibe-admin-interface.php:644
 msgid "Apply dynamic pricing to all visitors regardless of referrer or payment method. Use with caution as this affects all customers."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:670
-msgid "Emergency Disable"
+#: includes/class-wc-vibe-admin-interface.php:650
+msgid "Price Styling"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:674
-msgid "Disable all dynamic pricing"
+#: includes/class-wc-vibe-admin-interface.php:653
+msgid "Dynamic Price Styling"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:676
-msgid "Use this to quickly disable all dynamic pricing functionality in case of issues."
+#: includes/class-wc-vibe-admin-interface.php:654
+msgid "Dynamic Price Styling:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:681
-msgid "Show Both Prices"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:685
-msgid "Show both original and dynamic prices"
-msgstr ""
-
+#: includes/class-wc-vibe-admin-interface.php:657
 #: includes/class-wc-vibe-admin-interface.php:687
-msgid "When enabled, both the new dynamic price and original price will be displayed."
+msgid "Font Size:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:692
-msgid "Price Order"
+#: includes/class-wc-vibe-admin-interface.php:661
+#: includes/class-wc-vibe-admin-interface.php:691
+msgid "Color:"
 msgstr ""
 
+#: includes/class-wc-vibe-admin-interface.php:665
 #: includes/class-wc-vibe-admin-interface.php:695
-msgid "Dynamic Price First"
+msgid "Font Weight:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:696
-msgid "Original Price First"
+#: includes/class-wc-vibe-admin-interface.php:667
+#: includes/class-wc-vibe-admin-interface.php:697
+msgid "Normal"
 msgstr ""
 
+#: includes/class-wc-vibe-admin-interface.php:668
 #: includes/class-wc-vibe-admin-interface.php:698
-msgid "Choose which price to display first when showing both prices."
+msgid "Bold"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:703
-msgid "Display Layout"
+#: includes/class-wc-vibe-admin-interface.php:669
+#: includes/class-wc-vibe-admin-interface.php:699
+msgid "Bolder"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:707
-msgid "Inline (side by side)"
+#: includes/class-wc-vibe-admin-interface.php:670
+#: includes/class-wc-vibe-admin-interface.php:700
+msgid "Lighter"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:712
-msgid "Two lines (stacked)"
+#: includes/class-wc-vibe-admin-interface.php:684
+msgid "Original Price Styling:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:714
-msgid "Choose how to display both prices when enabled."
+#: includes/class-wc-vibe-admin-interface.php:715
+msgid "Font Size: Use CSS units (%, px, em, rem). Examples: 100%, 14px, 1.2em, 1rem"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:719
-msgid "Original Price Style"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:723
-msgid "Strike through original price"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:725
-msgid "Apply line-through style to the original price to show it as a discount."
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:730
-msgid "Font Sizes"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:732
-msgid "Dynamic Price Font Size:"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:735
-msgid "Original Price Font Size:"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:737
-msgid "Set font sizes using CSS units (%, px, em). Examples: 100%, 14px, 1.2em"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:742
-msgid "Price Prefixes & Suffixes"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:749
-msgid "Dynamic Price"
+#: includes/class-wc-vibe-admin-interface.php:716
+msgid "Color: Use hex codes (#000000), color names (black), or CSS color values (rgb(0,0,0))"
 msgstr ""
 
 #: includes/class-wc-vibe-admin-interface.php:750
+msgid "Price Prefixes & Suffixes"
+msgstr ""
+
+#: includes/class-wc-vibe-admin-interface.php:757
+msgid "Dynamic Price"
+msgstr ""
+
+#: includes/class-wc-vibe-admin-interface.php:762
 msgid "Special pricing for Vibe users"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:754
-#: includes/class-wc-vibe-admin-interface.php:778
-msgid "Prefix"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:756
+#: includes/class-wc-vibe-admin-interface.php:764
 msgid "e.g., Special Price:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:761
-#: includes/class-wc-vibe-admin-interface.php:785
-msgid "Suffix"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:763
-msgid "e.g., (Save 10%)"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:773
+#: includes/class-wc-vibe-admin-interface.php:775
 msgid "Original Price"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:774
+#: includes/class-wc-vibe-admin-interface.php:779
 msgid "Standard pricing for reference"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:780
+#: includes/class-wc-vibe-admin-interface.php:781
 msgid "e.g., Regular Price:"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:787
-msgid "e.g., (was)"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:797
+#: includes/class-wc-vibe-admin-interface.php:792
 msgid "Live Preview"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:809
+#: includes/class-wc-vibe-admin-interface.php:804
 msgid "Customize the text that appears before and after each price. The preview shows how prices will appear on your product pages."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:814
-msgid "Pricing Badge"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:818
-msgid "Show pricing badge"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:822
-msgid "Badge Text:"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:825
-msgid "Badge Color:"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:828
-msgid "Display a colored badge next to dynamic prices to highlight the special pricing."
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:833
-msgid "Conditional Display"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:837
-msgid "Show dynamic prices only when conditions are met"
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:839
-msgid "When enabled, dynamic prices are shown only when appropriate (e.g., Vibe payment method selected). When disabled, dynamic prices are always shown if applicable."
-msgstr ""
-
-#: includes/class-wc-vibe-admin-interface.php:845
+#: includes/class-wc-vibe-admin-interface.php:810
 msgid "Save Settings"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1089
+#: includes/class-wc-vibe-admin-interface.php:1044
 msgid "Cache Statistics"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1092
+#: includes/class-wc-vibe-admin-interface.php:1047
 msgid "Object Cache Enabled"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1093
+#: includes/class-wc-vibe-admin-interface.php:1048
 msgid "Yes"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1093
+#: includes/class-wc-vibe-admin-interface.php:1048
 msgid "No"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1096
+#: includes/class-wc-vibe-admin-interface.php:1051
 msgid "Database Cache Entries"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1100
+#: includes/class-wc-vibe-admin-interface.php:1055
 msgid "Database Cache Size"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1104
+#: includes/class-wc-vibe-admin-interface.php:1059
 msgid "Transient Entries"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1111
+#: includes/class-wc-vibe-admin-interface.php:1066
 msgid "Are you sure you want to clear all pricing caches?"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1112
+#: includes/class-wc-vibe-admin-interface.php:1067
 msgid "Clear All Caches"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1188
-#: includes/class-wc-vibe-admin-interface.php:1287
-#: includes/class-wc-vibe-admin-interface.php:1312
-#: includes/class-wc-vibe-admin-interface.php:1339
-#: includes/class-wc-vibe-admin-interface.php:1387
-#: includes/class-wc-vibe-admin-interface.php:1511
+#: includes/class-wc-vibe-admin-interface.php:1147
+#: includes/class-wc-vibe-admin-interface.php:1247
+#: includes/class-wc-vibe-admin-interface.php:1273
+#: includes/class-wc-vibe-admin-interface.php:1301
+#: includes/class-wc-vibe-admin-interface.php:1346
+#: includes/class-wc-vibe-admin-interface.php:1480
 msgid "Security check failed"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1261
+#: includes/class-wc-vibe-admin-interface.php:1220
 msgid "Rule updated successfully."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1266
+#: includes/class-wc-vibe-admin-interface.php:1225
 msgid "Rule created successfully."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1300
+#: includes/class-wc-vibe-admin-interface.php:1260
 msgid "Rule deleted successfully."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1329
+#: includes/class-wc-vibe-admin-interface.php:1290
 msgid "Rule status updated."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1377
+#: includes/class-wc-vibe-admin-interface.php:1335
 msgid "Settings saved successfully."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1394
+#: includes/class-wc-vibe-admin-interface.php:1353
 msgid "Cache cleared successfully."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1404
+#: includes/class-wc-vibe-admin-interface.php:1364
 msgid "Permission denied"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1451
+#: includes/class-wc-vibe-admin-interface.php:1417
 msgid "Settings"
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1481
+#: includes/class-wc-vibe-admin-interface.php:1448
 msgid "Debug logs cleared successfully."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1498
+#: includes/class-wc-vibe-admin-interface.php:1466
 msgid "Debug settings saved successfully."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1549
+#: includes/class-wc-vibe-admin-interface.php:1514
 msgid "Display settings saved successfully."
 msgstr ""
 
-#: includes/class-wc-vibe-admin-interface.php:1564
+#: includes/class-wc-vibe-admin-interface.php:1530
 msgid "Pricing rules processing - method needs implementation."
 msgstr ""
 
@@ -895,56 +796,64 @@ msgstr ""
 msgid "API Settings"
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:115
+#: includes/class-wc-vibe-api.php:121
 msgid "Vibe Payment Gateway Warning:"
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:116
+#: includes/class-wc-vibe-api.php:122
 msgid "The WordPress REST API appears to be disabled on your site. The Vibe Product Information Collection API requires the WordPress REST API to function properly. Please enable the REST API or check with your hosting provider."
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:120
+#: includes/class-wc-vibe-api.php:126
 msgid "Check Permalink Settings"
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:123
+#: includes/class-wc-vibe-api.php:129
 msgid "Learn More About REST API"
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:144
+#: includes/class-wc-vibe-api.php:151
 msgid "Page number"
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:151
+#: includes/class-wc-vibe-api.php:158
 msgid "Number of products per page"
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:171
+#: includes/class-wc-vibe-api.php:178
 msgid "Product ID"
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:190
+#: includes/class-wc-vibe-api.php:198
 msgid "WooCommerce is not active"
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:202
+#: includes/class-wc-vibe-api.php:210
 msgid "API key is required. Please include the X-Vibe-API-Key header in your request."
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:214
+#: includes/class-wc-vibe-api.php:222
 msgid "Invalid API key."
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:240
+#: includes/class-wc-vibe-api.php:250
 msgid "Required WooCommerce function is missing"
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:279
+#: includes/class-wc-vibe-api.php:290
 msgid "Required WooCommerce functions are missing"
 msgstr ""
 
-#: includes/class-wc-vibe-api.php:286
+#: includes/class-wc-vibe-api.php:297
 msgid "Product not found"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:343
+msgid "Vibe Dynamic Pricing is not available"
+msgstr ""
+
+#: includes/class-wc-vibe-api.php:347
+msgid "Vibe Pricing Engine is not available"
 msgstr ""
 
 #: includes/class-wc-vibe-payment-integration.php:311
@@ -955,11 +864,11 @@ msgstr ""
 msgid "Dynamic Pricing Discount"
 msgstr ""
 
-#: woocommerce-gateway-vibe.php:128
+#: woocommerce-gateway-vibe.php:512
 msgid "WooCommerce Vibe Payment Gateway requires WooCommerce to be active for dynamic pricing features."
 msgstr ""
 
 #. translators: %s: error message describing the initialization failure
-#: woocommerce-gateway-vibe.php:160
+#: woocommerce-gateway-vibe.php:545
 msgid "WooCommerce Vibe Dynamic Pricing failed to initialize: %s"
 msgstr ""

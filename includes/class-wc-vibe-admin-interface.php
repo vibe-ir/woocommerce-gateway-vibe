@@ -601,7 +601,11 @@ class WC_Vibe_Admin_Interface
 					'display_layout' => 'two_line',
 					'price_order' => 'original_first',
 					'new_price_font_size' => '100%',
+					'new_price_color' => '',
+					'new_price_font_weight' => 'bold',
 					'original_price_font_size' => '85%',
+					'original_price_color' => '#999999',
+					'original_price_font_weight' => 'normal',
 					'new_price_prefix' => 'قیمت اقساطی ',
 					'original_price_prefix' => 'قیمت نقدی ',
 				);
@@ -643,14 +647,102 @@ class WC_Vibe_Admin_Interface
 					</tr>
 
 					<tr>
-						<th scope="row"><?php _e('Font Sizes', 'woocommerce-gateway-vibe'); ?></th>
+						<th scope="row"><?php _e('Price Styling', 'woocommerce-gateway-vibe'); ?></th>
 						<td>
-							<label><?php _e('Dynamic Price Font Size:', 'woocommerce-gateway-vibe'); ?></label>
-							<input type="text" name="new_price_font_size" value="<?php echo esc_attr($settings['new_price_font_size']); ?>" placeholder="100%" class="small-text">
-							<br><br>
-							<label><?php _e('Original Price Font Size:', 'woocommerce-gateway-vibe'); ?></label>
-							<input type="text" name="original_price_font_size" value="<?php echo esc_attr($settings['original_price_font_size']); ?>" placeholder="85%" class="small-text">
-							<p class="description"><?php _e('Set font sizes using CSS units (%, px, em). Examples: 100%, 14px, 1.2em', 'woocommerce-gateway-vibe'); ?></p>
+							<fieldset>
+								<legend class="screen-reader-text"><?php _e('Dynamic Price Styling', 'woocommerce-gateway-vibe'); ?></legend>
+								<h4><?php _e('Dynamic Price Styling:', 'woocommerce-gateway-vibe'); ?></h4>
+								<div class="vibe-styling-controls">
+									<div class="vibe-style-row">
+										<label for="new_price_font_size"><?php _e('Font Size:', 'woocommerce-gateway-vibe'); ?></label>
+										<input type="text" id="new_price_font_size" name="new_price_font_size" value="<?php echo esc_attr($settings['new_price_font_size']); ?>" placeholder="100%" class="small-text">
+									</div>
+									<div class="vibe-style-row">
+										<label for="new_price_color"><?php _e('Color:', 'woocommerce-gateway-vibe'); ?></label>
+										<input type="text" id="new_price_color" name="new_price_color" value="<?php echo esc_attr($settings['new_price_color']); ?>" placeholder="#000000" class="vibe-color-picker small-text">
+									</div>
+									<div class="vibe-style-row">
+										<label for="new_price_font_weight"><?php _e('Font Weight:', 'woocommerce-gateway-vibe'); ?></label>
+										<select id="new_price_font_weight" name="new_price_font_weight">
+											<option value="normal" <?php selected($settings['new_price_font_weight'], 'normal'); ?>><?php _e('Normal', 'woocommerce-gateway-vibe'); ?></option>
+											<option value="bold" <?php selected($settings['new_price_font_weight'], 'bold'); ?>><?php _e('Bold', 'woocommerce-gateway-vibe'); ?></option>
+											<option value="bolder" <?php selected($settings['new_price_font_weight'], 'bolder'); ?>><?php _e('Bolder', 'woocommerce-gateway-vibe'); ?></option>
+											<option value="lighter" <?php selected($settings['new_price_font_weight'], 'lighter'); ?>><?php _e('Lighter', 'woocommerce-gateway-vibe'); ?></option>
+											<option value="100" <?php selected($settings['new_price_font_weight'], '100'); ?>>100</option>
+											<option value="200" <?php selected($settings['new_price_font_weight'], '200'); ?>>200</option>
+											<option value="300" <?php selected($settings['new_price_font_weight'], '300'); ?>>300</option>
+											<option value="400" <?php selected($settings['new_price_font_weight'], '400'); ?>>400</option>
+											<option value="500" <?php selected($settings['new_price_font_weight'], '500'); ?>>500</option>
+											<option value="600" <?php selected($settings['new_price_font_weight'], '600'); ?>>600</option>
+											<option value="700" <?php selected($settings['new_price_font_weight'], '700'); ?>>700</option>
+											<option value="800" <?php selected($settings['new_price_font_weight'], '800'); ?>>800</option>
+											<option value="900" <?php selected($settings['new_price_font_weight'], '900'); ?>>900</option>
+										</select>
+									</div>
+								</div>
+								
+								<h4><?php _e('Original Price Styling:', 'woocommerce-gateway-vibe'); ?></h4>
+								<div class="vibe-styling-controls">
+									<div class="vibe-style-row">
+										<label for="original_price_font_size"><?php _e('Font Size:', 'woocommerce-gateway-vibe'); ?></label>
+										<input type="text" id="original_price_font_size" name="original_price_font_size" value="<?php echo esc_attr($settings['original_price_font_size']); ?>" placeholder="85%" class="small-text">
+									</div>
+									<div class="vibe-style-row">
+										<label for="original_price_color"><?php _e('Color:', 'woocommerce-gateway-vibe'); ?></label>
+										<input type="text" id="original_price_color" name="original_price_color" value="<?php echo esc_attr($settings['original_price_color']); ?>" placeholder="#999999" class="vibe-color-picker small-text">
+									</div>
+									<div class="vibe-style-row">
+										<label for="original_price_font_weight"><?php _e('Font Weight:', 'woocommerce-gateway-vibe'); ?></label>
+										<select id="original_price_font_weight" name="original_price_font_weight">
+											<option value="normal" <?php selected($settings['original_price_font_weight'], 'normal'); ?>><?php _e('Normal', 'woocommerce-gateway-vibe'); ?></option>
+											<option value="bold" <?php selected($settings['original_price_font_weight'], 'bold'); ?>><?php _e('Bold', 'woocommerce-gateway-vibe'); ?></option>
+											<option value="bolder" <?php selected($settings['original_price_font_weight'], 'bolder'); ?>><?php _e('Bolder', 'woocommerce-gateway-vibe'); ?></option>
+											<option value="lighter" <?php selected($settings['original_price_font_weight'], 'lighter'); ?>><?php _e('Lighter', 'woocommerce-gateway-vibe'); ?></option>
+											<option value="100" <?php selected($settings['original_price_font_weight'], '100'); ?>>100</option>
+											<option value="200" <?php selected($settings['original_price_font_weight'], '200'); ?>>200</option>
+											<option value="300" <?php selected($settings['original_price_font_weight'], '300'); ?>>300</option>
+											<option value="400" <?php selected($settings['original_price_font_weight'], '400'); ?>>400</option>
+											<option value="500" <?php selected($settings['original_price_font_weight'], '500'); ?>>500</option>
+											<option value="600" <?php selected($settings['original_price_font_weight'], '600'); ?>>600</option>
+											<option value="700" <?php selected($settings['original_price_font_weight'], '700'); ?>>700</option>
+											<option value="800" <?php selected($settings['original_price_font_weight'], '800'); ?>>800</option>
+											<option value="900" <?php selected($settings['original_price_font_weight'], '900'); ?>>900</option>
+										</select>
+									</div>
+								</div>
+								
+								<p class="description">
+									<?php _e('Font Size: Use CSS units (%, px, em, rem). Examples: 100%, 14px, 1.2em, 1rem', 'woocommerce-gateway-vibe'); ?><br>
+									<?php _e('Color: Use hex codes (#000000), color names (black), or CSS color values (rgb(0,0,0))', 'woocommerce-gateway-vibe'); ?>
+								</p>
+							</fieldset>
+							
+							<style>
+								.vibe-styling-controls {
+									margin: 10px 0;
+									padding: 10px;
+									background: #f9f9f9;
+									border: 1px solid #ddd;
+									border-radius: 4px;
+								}
+								.vibe-style-row {
+									display: flex;
+									align-items: center;
+									margin-bottom: 8px;
+								}
+								.vibe-style-row label {
+									min-width: 100px;
+									margin-right: 10px;
+									font-weight: 500;
+								}
+								.vibe-style-row input,
+								.vibe-style-row select {
+									margin-right: 10px;
+								}
+								.vibe-color-picker {
+									max-width: 100px;
+								}
+							</style>
 						</td>
 					</tr>
 
@@ -914,6 +1006,23 @@ class WC_Vibe_Admin_Interface
 
 					// Initial preview update
 					updatePreview();
+					
+					// Initialize WordPress color pickers if available
+					if (typeof jQuery.fn.wpColorPicker !== 'undefined') {
+						jQuery('.vibe-color-picker').wpColorPicker({
+							change: function(event, ui) {
+								// Trigger change event for any listeners
+								jQuery(this).trigger('change');
+							},
+							clear: function() {
+								// Handle color clear
+								jQuery(this).trigger('change');
+							}
+						});
+					} else {
+						// Fallback: Add placeholder text for manual entry
+						jQuery('.vibe-color-picker').attr('placeholder', '#000000').addClass('regular-text');
+					}
 				});
 			</script>
 		</div>
@@ -1207,7 +1316,11 @@ class WC_Vibe_Admin_Interface
 			'display_layout' => 'two_line',
 			'price_order' => isset($_POST['price_order']) ? sanitize_text_field($_POST['price_order']) : 'original_first',
 			'new_price_font_size' => isset($_POST['new_price_font_size']) ? sanitize_text_field($_POST['new_price_font_size']) : '100%',
+			'new_price_color' => isset($_POST['new_price_color']) ? sanitize_hex_color($_POST['new_price_color']) : '',
+			'new_price_font_weight' => isset($_POST['new_price_font_weight']) ? $this->sanitize_font_weight($_POST['new_price_font_weight']) : 'bold',
 			'original_price_font_size' => isset($_POST['original_price_font_size']) ? sanitize_text_field($_POST['original_price_font_size']) : '85%',
+			'original_price_color' => isset($_POST['original_price_color']) ? sanitize_hex_color($_POST['original_price_color']) : '#999999',
+			'original_price_font_weight' => isset($_POST['original_price_font_weight']) ? $this->sanitize_font_weight($_POST['original_price_font_weight']) : 'normal',
 			'new_price_prefix' => isset($_POST['new_price_prefix']) ? sanitize_text_field($_POST['new_price_prefix']) : '',
 			'original_price_prefix' => isset($_POST['original_price_prefix']) ? sanitize_text_field($_POST['original_price_prefix']) : '',
 		);
@@ -1264,13 +1377,17 @@ class WC_Vibe_Admin_Interface
 			return;
 		}
 
+		// Enqueue WordPress color picker
+		wp_enqueue_style('wp-color-picker');
+		wp_enqueue_script('wp-color-picker');
+
 		// Check if CSS file exists before enqueuing
 		$css_file = WC_VIBE_PLUGIN_PATH . 'assets/css/admin-pricing.css';
 		if (file_exists($css_file)) {
 			wp_enqueue_style(
 				'vibe-admin-pricing',
 				WC_VIBE_PLUGIN_URL . 'assets/css/admin-pricing.css',
-				array(),
+				array('wp-color-picker'),
 				WC_VIBE_VERSION
 			);
 		}
@@ -1281,7 +1398,7 @@ class WC_Vibe_Admin_Interface
 			wp_enqueue_script(
 				'vibe-admin-pricing',
 				WC_VIBE_PLUGIN_URL . 'assets/js/admin-pricing.js',
-				array('jquery'),
+				array('jquery', 'wp-color-picker'),
 				WC_VIBE_VERSION,
 				true
 			);
@@ -1378,7 +1495,11 @@ class WC_Vibe_Admin_Interface
 			'display_layout' => 'two_line',
 			'price_order' => isset($_POST['price_order']) ? sanitize_text_field($_POST['price_order']) : 'original_first',
 			'new_price_font_size' => isset($_POST['new_price_font_size']) ? sanitize_text_field($_POST['new_price_font_size']) : '100%',
+			'new_price_color' => isset($_POST['new_price_color']) ? sanitize_hex_color($_POST['new_price_color']) : '',
+			'new_price_font_weight' => isset($_POST['new_price_font_weight']) ? $this->sanitize_font_weight($_POST['new_price_font_weight']) : 'bold',
 			'original_price_font_size' => isset($_POST['original_price_font_size']) ? sanitize_text_field($_POST['original_price_font_size']) : '85%',
+			'original_price_color' => isset($_POST['original_price_color']) ? sanitize_hex_color($_POST['original_price_color']) : '#999999',
+			'original_price_font_weight' => isset($_POST['original_price_font_weight']) ? $this->sanitize_font_weight($_POST['original_price_font_weight']) : 'normal',
 			'new_price_prefix' => isset($_POST['new_price_prefix']) ? sanitize_text_field($_POST['new_price_prefix']) : '',
 			'original_price_prefix' => isset($_POST['original_price_prefix']) ? sanitize_text_field($_POST['original_price_prefix']) : '',
 		);
@@ -1425,5 +1546,27 @@ class WC_Vibe_Admin_Interface
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Sanitize font weight value.
+	 *
+	 * @param string $font_weight Font weight value to sanitize.
+	 * @return string Sanitized font weight.
+	 */
+	private function sanitize_font_weight($font_weight) {
+		$allowed_weights = array(
+			'normal', 'bold', 'bolder', 'lighter',
+			'100', '200', '300', '400', '500', '600', '700', '800', '900'
+		);
+		
+		$font_weight = sanitize_text_field($font_weight);
+		
+		if (in_array($font_weight, $allowed_weights, true)) {
+			return $font_weight;
+		}
+		
+		// Default fallback
+		return 'normal';
 	}
 }
