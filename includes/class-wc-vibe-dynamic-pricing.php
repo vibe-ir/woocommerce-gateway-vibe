@@ -180,16 +180,48 @@ class WC_Vibe_Dynamic_Pricing {
 			return $price;
 		}
 
+		// Skip in admin context to preserve original prices in admin views (product lists, edit pages)
+		if (is_admin() && !wp_doing_ajax()) {
+			return $price;
+		}
+
+		// Skip if we're already in the process of getting original price to prevent recursion
+		static $getting_original_price = false;
+		if ($getting_original_price) {
+			return $price;
+		}
+
+		// Get apply mode to determine context
+		$apply_mode = get_option('wc_vibe_dynamic_pricing_apply_mode', 'combined');
+		
+		// For "always" mode, still apply context-aware logic to prevent unwanted modifications
+		if ($apply_mode === 'always') {
+			// Only apply to frontend display and cart/checkout contexts
+			if (!$this->should_apply_pricing_in_context()) {
+				return $price;
+			}
+		}
+
 		// Get the actual original price from the product object to prevent double application
+		$getting_original_price = true;
 		$original_price = $this->get_product_original_price($product);
+		$getting_original_price = false;
 		
 		// If we can't get the original price, fall back to the passed price
 		if ($original_price === false || $original_price <= 0) {
 			$original_price = $price;
 		}
 
+		// Prevent double application: if the passed price is already modified, use original
+		if (abs($price - $original_price) > 0.01) {
+			// Price has already been modified, use original as base
+			$base_price = $original_price;
+		} else {
+			$base_price = $price;
+		}
+
 		// Get dynamic price using the original price as base
-		$dynamic_price = $this->pricing_engine->get_dynamic_price($product, $original_price);
+		$dynamic_price = $this->pricing_engine->get_dynamic_price($product, $base_price);
 		
 		return $dynamic_price !== false ? $dynamic_price : $price;
 	}
@@ -692,5 +724,49 @@ class WC_Vibe_Dynamic_Pricing {
 		}
 
 		return $original_price;
+	}
+
+	/**
+	 * Check if pricing should be applied in the current context.
+	 *
+	 * @return bool True if pricing should be applied.
+	 */
+	private function should_apply_pricing_in_context() {
+		// Don't apply in admin context (except AJAX)
+		if (is_admin() && !wp_doing_ajax()) {
+			return false;
+		}
+
+		// Don't apply during REST API calls for admin
+		if (defined('REST_REQUEST') && REST_REQUEST && current_user_can('manage_options')) {
+			return false;
+		}
+
+		// Don't apply in customizer
+		if (is_customize_preview()) {
+			return false;
+		}
+
+		// Apply in frontend contexts
+		if (!is_admin()) {
+			return true;
+		}
+
+		// Apply in AJAX contexts that are frontend-related
+		if (wp_doing_ajax()) {
+			$allowed_ajax_actions = array(
+				'woocommerce_checkout_update_order_review',
+				'woocommerce_update_order_review',
+				'vibe_update_payment_pricing',
+				'woocommerce_get_refreshed_fragments',
+				'woocommerce_add_to_cart',
+				'woocommerce_remove_cart_item'
+			);
+
+			$current_action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
+			return in_array($current_action, $allowed_ajax_actions);
+		}
+
+		return false;
 	}
 } 

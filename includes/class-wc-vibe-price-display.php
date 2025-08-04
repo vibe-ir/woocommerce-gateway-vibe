@@ -171,10 +171,10 @@ class WC_Vibe_Price_Display
 			return $price_html;
 		}
 
-		// Get original price
-		$original_price = $product->get_price();
+		// Get TRUE original price without any dynamic pricing modifications
+		$original_price = $this->get_true_original_price($product);
 
-		// Get dynamic price for DISPLAY purposes
+		// Get dynamic price for DISPLAY purposes using the true original price
 		$dynamic_price = $this->pricing_engine->get_dynamic_price($product, $original_price, 'display');
 
 		$this->log_debug('modify_price_html: Price calculation', array(
@@ -222,10 +222,10 @@ class WC_Vibe_Price_Display
 
 		$product = $cart_item['data'];
 
-		// Get original price
-		$original_price = $product->get_price();
+		// Get TRUE original price without any dynamic pricing modifications
+		$original_price = $this->get_true_original_price($product);
 
-		// Get dynamic price for APPLICATION purposes (cart/checkout)
+		// Get dynamic price for APPLICATION purposes (cart/checkout) using the true original price
 		$dynamic_price = $this->pricing_engine->get_dynamic_price($product, $original_price, 'application');
 
 		$this->log_debug('modify_cart_item_price_html: Price calculation', array(
@@ -585,7 +585,7 @@ class WC_Vibe_Price_Display
 		foreach ($product_ids as $product_id) {
 			$product = function_exists('wc_get_product') ? wc_get_product($product_id) : null;
 			if ($product) {
-				$original_price = $product->get_price();
+				$original_price = $this->get_true_original_price($product);
 				$dynamic_price = $this->pricing_engine->get_dynamic_price($product, $original_price);
 
 				$updated_prices[$product_id] = array(
@@ -703,5 +703,77 @@ class WC_Vibe_Price_Display
 		echo "<!-- VIBE DEBUG INFO -->\n";
 		echo "<script>console.log('Vibe Price Display Debug:', " . json_encode($debug_info) . ");</script>\n";
 		echo "<!-- END VIBE DEBUG INFO -->\n";
+	}
+
+	/**
+	 * Get the TRUE original price without any dynamic pricing modifications.
+	 *
+	 * @param WC_Product $product Product object.
+	 * @return float Original price.
+	 */
+	private function get_true_original_price($product) {
+		if (!$product || !is_a($product, 'WC_Product')) {
+			return 0;
+		}
+
+		// We need to bypass ALL pricing filters to get the true original price
+		// This is different from the dynamic pricing class method because we need to be sure
+		// we're getting the unmodified price for display purposes
+		
+		// Remove all pricing filters temporarily
+		$removed_filters = array();
+		
+		// Check for and remove our dynamic pricing filters
+		if (has_filter('woocommerce_product_get_price')) {
+			global $wp_filter;
+			
+			// Store all filters for this hook
+			$all_filters = isset($wp_filter['woocommerce_product_get_price']) ? $wp_filter['woocommerce_product_get_price']->callbacks : array();
+			
+			// Remove all callbacks with priority 99 (our pricing filters)
+			if (isset($all_filters[99])) {
+				foreach ($all_filters[99] as $callback_key => $callback_data) {
+					remove_filter('woocommerce_product_get_price', $callback_data['function'], 99);
+					$removed_filters[] = array('hook' => 'woocommerce_product_get_price', 'function' => $callback_data['function'], 'priority' => 99);
+				}
+			}
+		}
+		
+		// Same for variation prices
+		if (has_filter('woocommerce_product_variation_get_price')) {
+			global $wp_filter;
+			
+			$all_filters = isset($wp_filter['woocommerce_product_variation_get_price']) ? $wp_filter['woocommerce_product_variation_get_price']->callbacks : array();
+			
+			if (isset($all_filters[99])) {
+				foreach ($all_filters[99] as $callback_key => $callback_data) {
+					remove_filter('woocommerce_product_variation_get_price', $callback_data['function'], 99);
+					$removed_filters[] = array('hook' => 'woocommerce_product_variation_get_price', 'function' => $callback_data['function'], 'priority' => 99);
+				}
+			}
+		}
+
+		// Get the original price without any modifications
+		$original_price = 0;
+		
+		// For sale price, use sale price if available, otherwise regular price
+		if ($product->get_sale_price()) {
+			$original_price = floatval($product->get_sale_price());
+		} else {
+			$original_price = floatval($product->get_regular_price());
+		}
+
+		// Restore all filters we removed
+		foreach ($removed_filters as $filter_data) {
+			add_filter($filter_data['hook'], $filter_data['function'], $filter_data['priority'], 2);
+		}
+
+		$this->log_debug('get_true_original_price', array(
+			'product_id' => $product->get_id(),
+			'original_price' => $original_price,
+			'removed_filters_count' => count($removed_filters)
+		));
+
+		return $original_price;
 	}
 }

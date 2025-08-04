@@ -1011,12 +1011,13 @@ class WC_Vibe_Admin_Interface
 					if (typeof jQuery.fn.wpColorPicker !== 'undefined') {
 						jQuery('.vibe-color-picker').wpColorPicker({
 							change: function(event, ui) {
-								// Trigger change event for any listeners
-								jQuery(this).trigger('change');
+								// Update the input field value with the selected color
+								var colorValue = ui.color.toString();
+								jQuery(this).val(colorValue).trigger('change');
 							},
 							clear: function() {
-								// Handle color clear
-								jQuery(this).trigger('change');
+								// Clear the input field value
+								jQuery(this).val('').trigger('change');
 							}
 						});
 					} else {
