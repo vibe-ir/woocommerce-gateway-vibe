@@ -33,6 +33,29 @@
         })
         .trigger("change");
 
+      // Show/hide adjustment value input based on type
+      $("#adjustment_type")
+        .change(function () {
+          var type = $(this).val();
+          console.log("Adjustment type changed to:", type); // Debug log
+          if (type === "original") {
+            console.log("Hiding input and unit"); // Debug log
+            $("#adjustment_value, #adjustment_unit").hide();
+          } else {
+            console.log("Showing input and unit"); // Debug log
+            $("#adjustment_value, #adjustment_unit").show();
+            // Update unit display - get currency from PHP rendered content
+            if (type === "percentage") {
+              $("#adjustment_unit").text("%");
+            } else {
+              // Get currency symbol from the server-rendered content
+              var currencySymbol = $("#adjustment_unit").data("currency") || "";
+              $("#adjustment_unit").text(currencySymbol);
+            }
+          }
+        })
+        .trigger("change");
+
       // Auto-calculate priority based on existing rules
       $("#rule_priority").on("focus", function () {
         if ($(this).val() === "0" || $(this).val() === "") {
@@ -76,12 +99,6 @@
           $(this).siblings(".error-message").remove();
           $(this).after(
             '<span class="error-message">درصد باید بین -100% و 1000% باشد.</span>'
-          );
-        } else if (type === "fixed_price" && value < 0) {
-          $(this).addClass("error");
-          $(this).siblings(".error-message").remove();
-          $(this).after(
-            '<span class="error-message">قیمت ثابت نمی تواند منفی باشد.</span>'
           );
         } else {
           $(this).removeClass("error");
@@ -157,7 +174,7 @@
       var $complexTextarea = $('textarea[name="complex_logic"]');
       if ($complexTextarea.length > 0) {
         var $helpButton = $(
-          '<button type="button" class="button" style="margin-top: 5px;">Show Syntax Help</button>'
+          '<button type="button" class="button" style="margin-top: 5px;">نمایش راهنمای سینتکس</button>'
         );
         var $helpDiv = $(
           '<div class="complex-logic-help" style="display: none; margin-top: 10px; padding: 10px; background: #f0f8ff; border: 1px solid #b3d9ff; border-radius: 3px;"></div>'

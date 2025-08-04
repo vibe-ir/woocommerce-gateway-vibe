@@ -4,7 +4,7 @@
  * Plugin Name: WooCommerce Vibe Payment Gateway
  * Plugin URI: https://vibe.ir
  * Description: Adds the Vibe Payment gateway to your WooCommerce website with dynamic pricing based on referrer detection.
- * Version: 1.2.4
+ * Version: 1.2.5
  *
  * Author: Vibe
  * Author URI: https://vibe.ir
@@ -26,7 +26,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WC_VIBE_VERSION', '1.2.4');
+define('WC_VIBE_VERSION', '1.2.5');
 define('WC_VIBE_PLUGIN_FILE', __FILE__);
 define('WC_VIBE_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('WC_VIBE_PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -63,8 +63,8 @@ class WC_Vibe_Payments
 	 */
 	public static function init()
 	{
-		// Load plugin text domain - move this before plugins_loaded
-		self::load_plugin_textdomain();
+		// Load plugin text domain at proper time (init action)
+		add_action('init', array(__CLASS__, 'load_plugin_textdomain'));
 
 		// Vibe Payments gateway class.
 		add_action('plugins_loaded', array(__CLASS__, 'includes'), 0);
@@ -84,6 +84,7 @@ class WC_Vibe_Payments
 		// Handle plugin updates and migrations
 		add_action('plugins_loaded', array(__CLASS__, 'handle_plugin_update'), 5);
 
+		// OPTIMIZED: Single-pass cart analysis with O(n) complexity
 		// Only show Vibe gateway if all cart items have a dynamic price (vibe price)
 		add_filter('woocommerce_available_payment_gateways', function ($available_gateways) {
 			// Ensure WooCommerce functions are available
@@ -96,66 +97,29 @@ class WC_Vibe_Payments
 			if (!WC()->cart) {
 				return $available_gateways;
 			}
-			// Get pricing engine
-			$pricing_engine = null;
-			if (class_exists('WC_Vibe_Dynamic_Pricing')) {
-				$pricing_engine = \WC_Vibe_Dynamic_Pricing::get_instance()->get_pricing_engine();
-			}
-			if (!$pricing_engine) {
+
+			// Get cart processor for optimized analysis
+			$cart_processor = self::get_cart_processor();
+			if (!$cart_processor) {
 				return $available_gateways;
 			}
 
-			// Save current context
-			$previous_method = $pricing_engine->get_current_payment_method();
-			// Set context to 'vibe' for the check
-			$pricing_engine->set_current_payment_method('vibe');
-
-			$has_dynamic_pricing_for_all = true;
-			$cart_items = WC()->cart->get_cart();
-
-			// If cart is empty, don't show Vibe gateway
-			if (empty($cart_items)) {
-				$has_dynamic_pricing_for_all = false;
-			} else {
-				foreach ($cart_items as $cart_item) {
-					if (!isset($cart_item['data']) || !is_a($cart_item['data'], 'WC_Product')) {
-						$has_dynamic_pricing_for_all = false;
-						break;
-					}
-					$product = $cart_item['data'];
-
-					// For variable products, check if this is a variation
-					if ($product->is_type('variation')) {
-						// For variations, also check the parent product rules
-						$parent_product = wc_get_product($product->get_parent_id());
-						if ($parent_product) {
-							$has_parent_rules = $pricing_engine->has_applicable_rules_for_product($parent_product, 'vibe');
-							$has_variant_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
-							// Product has rules if either parent or variant has rules
-							$has_pricing_rules = $has_parent_rules || $has_variant_rules;
-						} else {
-							$has_pricing_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
-						}
-					} else {
-						// For simple products, check normally
-						$has_pricing_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
-					}
-
-					if (!$has_pricing_rules) {
-						$has_dynamic_pricing_for_all = false;
-						break;
-					}
+			try {
+				// Single-pass cart analysis with enterprise-grade optimization
+				$cart_analysis = $cart_processor->analyze_cart_for_vibe_gateway('gateway_check', 'vibe');
+				
+				// Remove Vibe gateway if not all products have dynamic pricing
+				if (!$cart_analysis['vibe_gateway_available']) {
+					unset($available_gateways['vibe']);
 				}
-			}
 
-
-			// Remove Vibe gateway if not all products have dynamic pricing
-			if (!$has_dynamic_pricing_for_all) {
+			} catch (Exception $e) {
+				// Fail gracefully with logging
+				if (defined('WP_DEBUG') && WP_DEBUG) {
+					error_log('[Vibe Plugin] Gateway availability check failed: ' . $e->getMessage());
+				}
 				unset($available_gateways['vibe']);
 			}
-
-			// Restore previous context
-			$pricing_engine->set_current_payment_method($previous_method);
 
 			return $available_gateways;
 		}, 100);
@@ -199,6 +163,7 @@ class WC_Vibe_Payments
 
 	/**
 	 * Filter Vibe gateway for blocks checkout.
+	 * OPTIMIZED: Uses single-pass cart processor for O(n) performance.
 	 *
 	 * @param array $gateways Available gateways.
 	 * @return array Filtered gateways.
@@ -214,71 +179,36 @@ class WC_Vibe_Payments
 		if (!WC()->cart) {
 			return $gateways;
 		}
-		$pricing_engine = null;
-		if (class_exists('WC_Vibe_Dynamic_Pricing')) {
-			$pricing_engine = \WC_Vibe_Dynamic_Pricing::get_instance()->get_pricing_engine();
-		}
-		if (!$pricing_engine) {
+
+		// Get cart processor for optimized analysis
+		$cart_processor = self::get_cart_processor();
+		if (!$cart_processor) {
 			return $gateways;
 		}
 
-		// Save current context
-		$previous_method = $pricing_engine->get_current_payment_method();
-		// Set context to 'vibe' for the check
-		$pricing_engine->set_current_payment_method('vibe');
-
-		$has_dynamic_pricing_for_all = true;
-		$cart_items = WC()->cart->get_cart();
-
-		// If cart is empty, don't show Vibe gateway
-		if (empty($cart_items)) {
-			$has_dynamic_pricing_for_all = false;
-		} else {
-			foreach ($cart_items as $cart_item) {
-				if (!isset($cart_item['data']) || !is_a($cart_item['data'], 'WC_Product')) {
-					$has_dynamic_pricing_for_all = false;
-					break;
-				}
-				$product = $cart_item['data'];
-
-				// For variable products, check if this is a variation
-				if ($product->is_type('variation')) {
-					// For variations, also check the parent product rules
-					$parent_product = wc_get_product($product->get_parent_id());
-					if ($parent_product) {
-						$has_parent_rules = $pricing_engine->has_applicable_rules_for_product($parent_product, 'vibe');
-						$has_variant_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
-						// Product has rules if either parent or variant has rules
-						$has_pricing_rules = $has_parent_rules || $has_variant_rules;
-					} else {
-						$has_pricing_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
-					}
-				} else {
-					// For simple products, check normally
-					$has_pricing_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
-				}
-
-				if (!$has_pricing_rules) {
-					$has_dynamic_pricing_for_all = false;
-					break;
-				}
+		try {
+			// Single-pass cart analysis for blocks context
+			$cart_analysis = $cart_processor->analyze_cart_for_vibe_gateway('blocks_checkout', 'vibe');
+			
+			// Remove Vibe gateway if not all products have dynamic pricing
+			if (!$cart_analysis['vibe_gateway_available']) {
+				unset($gateways['vibe']);
 			}
-		}
 
-
-		// Remove Vibe gateway if not all products have dynamic pricing
-		if (!$has_dynamic_pricing_for_all) {
+		} catch (Exception $e) {
+			// Fail gracefully with logging
+			if (defined('WP_DEBUG') && WP_DEBUG) {
+				error_log('[Vibe Plugin] Blocks gateway filter failed: ' . $e->getMessage());
+			}
 			unset($gateways['vibe']);
 		}
-
-		// Restore previous context
-		$pricing_engine->set_current_payment_method($previous_method);
 
 		return $gateways;
 	}
 
 	/**
 	 * Get Vibe gateway availability status.
+	 * OPTIMIZED: Uses single-pass cart processor for O(n) performance.
 	 *
 	 * @return array Availability data.
 	 */
@@ -288,62 +218,30 @@ class WC_Vibe_Payments
 			return array('vibe_gateway_available' => false);
 		}
 
-		$pricing_engine = null;
-		if (class_exists('WC_Vibe_Dynamic_Pricing')) {
-			$pricing_engine = \WC_Vibe_Dynamic_Pricing::get_instance()->get_pricing_engine();
-		}
-		if (!$pricing_engine) {
+		// Get cart processor for optimized analysis
+		$cart_processor = self::get_cart_processor();
+		if (!$cart_processor) {
 			return array('vibe_gateway_available' => false);
 		}
 
-		// Save current context
-		$previous_method = $pricing_engine->get_current_payment_method();
-		// Set context to 'vibe' for the check
-		$pricing_engine->set_current_payment_method('vibe');
+		try {
+			// Single-pass cart analysis for API context
+			$cart_analysis = $cart_processor->analyze_cart_for_vibe_gateway('api_check', 'vibe');
+			
+			return array(
+				'vibe_gateway_available' => $cart_analysis['vibe_gateway_available'],
+				'items_with_rules' => $cart_analysis['items_with_rules'],
+				'total_items' => $cart_analysis['total_items'],
+				'performance_metrics' => $cart_analysis['performance_summary']
+			);
 
-		$has_dynamic_pricing_for_all = true;
-		$cart_items = WC()->cart->get_cart();
-
-		// If cart is empty, don't show Vibe gateway
-		if (empty($cart_items)) {
-			$has_dynamic_pricing_for_all = false;
-		} else {
-			foreach ($cart_items as $cart_item) {
-				if (!isset($cart_item['data']) || !is_a($cart_item['data'], 'WC_Product')) {
-					$has_dynamic_pricing_for_all = false;
-					break;
-				}
-				$product = $cart_item['data'];
-
-				// For variable products, check if this is a variation
-				if ($product->is_type('variation')) {
-					// For variations, also check the parent product rules
-					$parent_product = wc_get_product($product->get_parent_id());
-					if ($parent_product) {
-						$has_parent_rules = $pricing_engine->has_applicable_rules_for_product($parent_product, 'vibe');
-						$has_variant_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
-						// Product has rules if either parent or variant has rules
-						$has_pricing_rules = $has_parent_rules || $has_variant_rules;
-					} else {
-						$has_pricing_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
-					}
-				} else {
-					// For simple products, check normally
-					$has_pricing_rules = $pricing_engine->has_applicable_rules_for_product($product, 'vibe');
-				}
-
-				if (!$has_pricing_rules) {
-					$has_dynamic_pricing_for_all = false;
-					break;
-				}
+		} catch (Exception $e) {
+			// Fail gracefully with logging
+			if (defined('WP_DEBUG') && WP_DEBUG) {
+				error_log('[Vibe Plugin] Gateway availability API failed: ' . $e->getMessage());
 			}
+			return array('vibe_gateway_available' => false);
 		}
-
-		// Restore previous context
-		$pricing_engine->set_current_payment_method($previous_method);
-
-
-		return array('vibe_gateway_available' => $has_dynamic_pricing_for_all);
 	}
 
 	/**
@@ -505,11 +403,11 @@ class WC_Vibe_Payments
 	{
 		// Only load dynamic pricing if WooCommerce is active
 		if (!class_exists('WC_Payment_Gateway')) {
-			// Add admin notice if WooCommerce is not active
+			// Add admin notice if WooCommerce is not active (defer to avoid early translation loading)
 			if (is_admin()) {
 				add_action('admin_notices', function () {
 					echo '<div class="notice notice-error"><p>' .
-						__('WooCommerce Vibe Payment Gateway requires WooCommerce to be active for dynamic pricing features.', 'woocommerce-gateway-vibe') .
+						esc_html('WooCommerce Vibe Payment Gateway requires WooCommerce to be active for dynamic pricing features.') .
 						'</p></div>';
 				});
 			}
@@ -519,9 +417,12 @@ class WC_Vibe_Payments
 		try {
 			// Core dynamic pricing classes
 			require_once 'includes/class-wc-vibe-options.php';
+			require_once 'includes/class-wc-vibe-performance-monitor.php';
+			require_once 'includes/class-wc-vibe-cache-manager.php';
+			require_once 'includes/class-wc-vibe-rule-compiler.php';
+			require_once 'includes/class-wc-vibe-cart-processor.php';
 			require_once 'includes/class-wc-vibe-dynamic-pricing.php';
 			require_once 'includes/class-wc-vibe-pricing-engine.php';
-			require_once 'includes/class-wc-vibe-cache-manager.php';
 			require_once 'includes/class-wc-vibe-price-display.php';
 			require_once 'includes/class-wc-vibe-payment-integration.php';
 
@@ -541,11 +442,57 @@ class WC_Vibe_Payments
 			if (is_admin()) {
 				add_action('admin_notices', function () use ($e) {
 					echo '<div class="notice notice-error"><p>' .
-						/* translators: %s: error message describing the initialization failure */
-						sprintf(__('WooCommerce Vibe Dynamic Pricing failed to initialize: %s', 'woocommerce-gateway-vibe'), $e->getMessage()) .
+						esc_html('WooCommerce Vibe Dynamic Pricing failed to initialize: ' . $e->getMessage()) .
 						'</p></div>';
 				});
 			}
+		}
+	}
+
+	/**
+	 * Get cart processor instance for optimized cart analysis.
+	 *
+	 * @return WC_Vibe_Cart_Processor|null Cart processor instance or null on failure.
+	 */
+	public static function get_cart_processor()
+	{
+		static $cart_processor = null;
+		
+		if (null !== $cart_processor) {
+			return $cart_processor;
+		}
+
+		try {
+			// Ensure dynamic pricing is initialized
+			if (!class_exists('WC_Vibe_Dynamic_Pricing')) {
+				return null;
+			}
+
+			$dynamic_pricing = WC_Vibe_Dynamic_Pricing::get_instance();
+			if (!$dynamic_pricing) {
+				return null;
+			}
+
+			$pricing_engine = $dynamic_pricing->get_pricing_engine();
+			$cache_manager = $dynamic_pricing->get_cache_manager();
+			
+			if (!$pricing_engine || !$cache_manager) {
+				return null;
+			}
+
+			// Create rule compiler
+			$rule_compiler = new WC_Vibe_Rule_Compiler($cache_manager);
+			
+			// Create cart processor
+			$cart_processor = new WC_Vibe_Cart_Processor($rule_compiler, $pricing_engine, $cache_manager);
+			
+			return $cart_processor;
+
+		} catch (Exception $e) {
+			if (defined('WP_DEBUG') && WP_DEBUG) {
+				error_log('[Vibe Plugin] Cart processor creation failed: ' . $e->getMessage());
+			}
+			return null;
 		}
 	}
 
@@ -595,29 +542,65 @@ register_activation_hook(__FILE__, 'wc_vibe_activation');
 /**
  * Set the activation flag when the plugin is activated.
  * Also create necessary database tables for dynamic pricing.
+ * FIXED: Prevent output during activation and defer heavy operations.
  */
 function wc_vibe_activation()
 {
+	// Prevent any output during activation
+	ob_start();
+	
 	try {
 		// Set the activation flag to pending
 		update_option('wc_vibe_activation_pending', 'pending');
 
-		// Create dynamic pricing database tables only if WooCommerce is available
-		if (class_exists('WC_Payment_Gateway')) {
-			require_once WC_VIBE_PLUGIN_PATH . 'includes/class-wc-vibe-dynamic-pricing.php';
-			WC_Vibe_Dynamic_Pricing::create_tables();
-		}
+		// Defer database table creation to avoid activation timeout and output
+		wp_schedule_single_event(time() + 10, 'vibe_create_tables_deferred');
 
+		// Only log in debug mode
 		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log('[Vibe Tracker] Plugin activated successfully');
+			error_log('[Vibe Plugin] Plugin activation scheduled successfully');
 		}
 	} catch (Exception $e) {
-		// Log the error
+		// Log the error without output
 		if (defined('WP_DEBUG') && WP_DEBUG) {
 			error_log('[Vibe Plugin] Activation error: ' . $e->getMessage());
 		}
 
 		// Don't let activation fail completely - set a flag for later processing
+		update_option('wc_vibe_activation_error', $e->getMessage());
+	}
+	
+	// Clean any potential output
+	ob_end_clean();
+}
+
+// Register the deferred table creation action globally
+add_action('vibe_create_tables_deferred', 'wc_vibe_create_tables_deferred');
+
+/**
+ * Deferred database table creation to prevent activation timeouts.
+ */
+function wc_vibe_create_tables_deferred() {
+	try {
+		// Only create tables if WooCommerce is available
+		if (class_exists('WC_Payment_Gateway')) {
+			require_once WC_VIBE_PLUGIN_PATH . 'includes/class-wc-vibe-dynamic-pricing.php';
+			WC_Vibe_Dynamic_Pricing::create_tables();
+			
+			// Clear the pending flag
+			delete_option('wc_vibe_activation_pending');
+			
+			if (defined('WP_DEBUG') && WP_DEBUG) {
+				error_log('[Vibe Plugin] Database tables created successfully');
+			}
+		} else {
+			// Retry later if WooCommerce is not yet available
+			wp_schedule_single_event(time() + 30, 'vibe_create_tables_deferred');
+		}
+	} catch (Exception $e) {
+		if (defined('WP_DEBUG') && WP_DEBUG) {
+			error_log('[Vibe Plugin] Deferred table creation error: ' . $e->getMessage());
+		}
 		update_option('wc_vibe_activation_error', $e->getMessage());
 	}
 }

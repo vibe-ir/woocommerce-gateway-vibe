@@ -117,20 +117,53 @@ class WC_Vibe_Dynamic_Pricing {
 	}
 
 	/**
-	 * Initialize core components.
+	 * Initialize core components with optimized architecture.
+	 * OPTIMIZED: Added performance monitoring and rule compiler integration.
 	 */
 	private function init_components() {
+		// Initialize performance monitoring first
+		if (class_exists('WC_Vibe_Performance_Monitor')) {
+			WC_Vibe_Performance_Monitor::init();
+			WC_Vibe_Performance_Monitor::checkpoint('dynamic_pricing_init_start');
+		}
+
 		// Initialize cache manager first
 		$this->cache_manager = new WC_Vibe_Cache_Manager();
 
-		// Initialize pricing engine
-		$this->pricing_engine = new WC_Vibe_Pricing_Engine($this->cache_manager);
+		// Initialize pricing engine with performance monitoring
+		$pricing_engine_creation = function() {
+			return new WC_Vibe_Pricing_Engine($this->cache_manager);
+		};
+
+		if (class_exists('WC_Vibe_Performance_Monitor')) {
+			$this->pricing_engine = WC_Vibe_Performance_Monitor::time_operation(
+				'pricing_engine_init',
+				$pricing_engine_creation
+			);
+		} else {
+			$this->pricing_engine = $pricing_engine_creation();
+		}
 
 		// Initialize price display
 		$this->price_display = new WC_Vibe_Price_Display($this->pricing_engine);
 
 		// Initialize payment integration
 		$this->payment_integration = new WC_Vibe_Payment_Integration($this->pricing_engine);
+
+		// Warm up rule compiler cache for better performance
+		if (class_exists('WC_Vibe_Rule_Compiler')) {
+			$rule_compiler = new WC_Vibe_Rule_Compiler($this->cache_manager);
+			
+			// Warm up in background to avoid blocking initialization
+			wp_schedule_single_event(time() + 10, 'vibe_warm_up_rule_cache');
+			add_action('vibe_warm_up_rule_cache', function() use ($rule_compiler) {
+				$rule_compiler->warm_up_index();
+			});
+		}
+
+		if (class_exists('WC_Vibe_Performance_Monitor')) {
+			WC_Vibe_Performance_Monitor::checkpoint('dynamic_pricing_init_complete');
+		}
 	}
 
 	/**
@@ -499,14 +532,15 @@ class WC_Vibe_Dynamic_Pricing {
 	}
 
 	/**
-	 * Create database tables for dynamic pricing.
+	 * Create database tables for dynamic pricing with optimized indexing.
+	 * OPTIMIZED: Added composite indexes and query-specific indexes for performance.
 	 */
 	public static function create_tables() {
 		global $wpdb;
 
 		$charset_collate = $wpdb->get_charset_collate();
 
-		// Create pricing rules table
+		// Create pricing rules table with optimized indexes
 		$table_name = $wpdb->prefix . 'vibe_pricing_rules';
 		$sql = "CREATE TABLE $table_name (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -522,26 +556,138 @@ class WC_Vibe_Dynamic_Pricing {
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
 			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY (id),
-			KEY idx_priority (priority),
-			KEY idx_status (status)
+			KEY idx_status_priority (status, priority DESC, id ASC),
+			KEY idx_priority_status (priority DESC, status),
+			KEY idx_active_rules (status, updated_at) USING BTREE,
+			KEY idx_name (name(50))
 		) $charset_collate;";
 
-		// Create cache table
+		// Create cache table with optimized indexing
 		$cache_table_name = $wpdb->prefix . 'vibe_pricing_cache';
 		$cache_sql = "CREATE TABLE $cache_table_name (
 			cache_key varchar(255) NOT NULL,
 			cache_value longtext,
 			expiry_time datetime,
+			created_at timestamp DEFAULT CURRENT_TIMESTAMP,
 			PRIMARY KEY (cache_key),
-			KEY idx_expiry (expiry_time)
+			KEY idx_expiry_created (expiry_time, created_at),
+			KEY idx_cleanup (expiry_time) USING BTREE
 		) $charset_collate;";
 
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		dbDelta($sql);
 		dbDelta($cache_sql);
 
+		// Create additional optimized indexes if table already exists
+		self::create_optimized_indexes();
+
 		// Set initial options
 		add_option('wc_vibe_dynamic_pricing_emergency_disable', 'no');
+	}
+
+	/**
+	 * Create optimized indexes for existing tables.
+	 * This method safely adds indexes without failing if they already exist.
+	 * FIXED: Prevent output during index creation and handle MySQL version compatibility.
+	 */
+	private static function create_optimized_indexes() {
+		global $wpdb;
+
+		// Suppress any potential output during index creation
+		$original_error_level = error_reporting(0);
+		
+		try {
+			$rules_table = $wpdb->prefix . 'vibe_pricing_rules';
+			$cache_table = $wpdb->prefix . 'vibe_pricing_cache';
+
+			// MySQL version-compatible index creation (IF NOT EXISTS added in MySQL 5.7+)
+			$mysql_version = $wpdb->get_var("SELECT VERSION()");
+			$use_if_not_exists = version_compare($mysql_version, '5.7.0', '>=');
+
+			$indexes_to_create = array();
+			
+			if ($use_if_not_exists) {
+				// Modern MySQL with IF NOT EXISTS support
+				$indexes_to_create = array(
+					"ALTER TABLE {$rules_table} ADD INDEX IF NOT EXISTS idx_status_priority (status, priority DESC, id ASC)",
+					"ALTER TABLE {$rules_table} ADD INDEX IF NOT EXISTS idx_priority_status (priority DESC, status)",
+					"ALTER TABLE {$rules_table} ADD INDEX IF NOT EXISTS idx_active_rules (status, updated_at) USING BTREE",
+					"ALTER TABLE {$cache_table} ADD INDEX IF NOT EXISTS idx_expiry_created (expiry_time, created_at)",
+					"ALTER TABLE {$cache_table} ADD INDEX IF NOT EXISTS idx_cleanup (expiry_time) USING BTREE"
+				);
+			} else {
+				// Legacy MySQL - check index existence first
+				$indexes_to_create = self::get_safe_index_creation_queries($rules_table, $cache_table);
+			}
+
+			foreach ($indexes_to_create as $index_sql) {
+				// Execute with full error suppression to prevent activation output
+				@$wpdb->query($index_sql);
+			}
+		} catch (Exception $e) {
+			// Log error but don't output anything
+			if (defined('WP_DEBUG') && WP_DEBUG) {
+				error_log('[Vibe Plugin] Index creation error: ' . $e->getMessage());
+			}
+		} finally {
+			// Restore error reporting
+			error_reporting($original_error_level);
+		}
+	}
+
+	/**
+	 * Get safe index creation queries for legacy MySQL versions.
+	 *
+	 * @param string $rules_table Rules table name.
+	 * @param string $cache_table Cache table name.
+	 * @return array Safe index creation queries.
+	 */
+	private static function get_safe_index_creation_queries($rules_table, $cache_table) {
+		global $wpdb;
+		
+		$queries = array();
+		
+		// Check existing indexes to avoid duplicates
+		$existing_indexes = array();
+		
+		// Get existing indexes for rules table
+		$rules_indexes = @$wpdb->get_results("SHOW INDEX FROM {$rules_table}", ARRAY_A);
+		if ($rules_indexes) {
+			foreach ($rules_indexes as $index) {
+				$existing_indexes[$rules_table][] = $index['Key_name'];
+			}
+		}
+		
+		// Get existing indexes for cache table
+		$cache_indexes = @$wpdb->get_results("SHOW INDEX FROM {$cache_table}", ARRAY_A);
+		if ($cache_indexes) {
+			foreach ($cache_indexes as $index) {
+				$existing_indexes[$cache_table][] = $index['Key_name'];
+			}
+		}
+		
+		// Add indexes that don't exist
+		$desired_indexes = array(
+			$rules_table => array(
+				'idx_status_priority' => "ALTER TABLE {$rules_table} ADD INDEX idx_status_priority (status, priority DESC, id ASC)",
+				'idx_priority_status' => "ALTER TABLE {$rules_table} ADD INDEX idx_priority_status (priority DESC, status)",
+				'idx_active_rules' => "ALTER TABLE {$rules_table} ADD INDEX idx_active_rules (status, updated_at)"
+			),
+			$cache_table => array(
+				'idx_expiry_created' => "ALTER TABLE {$cache_table} ADD INDEX idx_expiry_created (expiry_time, created_at)",
+				'idx_cleanup' => "ALTER TABLE {$cache_table} ADD INDEX idx_cleanup (expiry_time)"
+			)
+		);
+		
+		foreach ($desired_indexes as $table => $table_indexes) {
+			foreach ($table_indexes as $index_name => $query) {
+				if (!isset($existing_indexes[$table]) || !in_array($index_name, $existing_indexes[$table])) {
+					$queries[] = $query;
+				}
+			}
+		}
+		
+		return $queries;
 	}
 
 	/**

@@ -86,7 +86,8 @@ class WC_Vibe_Pricing_Engine {
 	}
 
 	/**
-	 * Get dynamic price for a product.
+	 * Get dynamic price for a product with early exit optimization.
+	 * OPTIMIZED: Implements early exit and rule priority optimization for linear performance.
 	 *
 	 * @param WC_Product $product Product object.
 	 * @param float $original_price Original product price.
@@ -97,21 +98,13 @@ class WC_Vibe_Pricing_Engine {
 		// Ensure original_price is a valid number
 		$original_price = floatval($original_price);
 		
-		$this->log_debug('get_dynamic_price called', array(
-			'product_id' => $product ? $product->get_id() : 'no_product',
-			'original_price' => $original_price,
-			'context_type' => $context_type,
-			'current_payment_method' => $this->current_payment_method,
-			'current_referrer' => $this->current_referrer
-		));
-
-		// Skip if product is not valid
+		// EARLY EXIT: Skip if product is not valid
 		if (!$product || !is_a($product, 'WC_Product')) {
 			$this->log_debug('get_dynamic_price: Invalid product');
 			return false;
 		}
 		
-		// Skip if original price is not valid
+		// EARLY EXIT: Skip if original price is not valid
 		if ($original_price <= 0) {
 			$this->log_debug('get_dynamic_price: Invalid original price', array(
 				'original_price' => $original_price,
@@ -125,7 +118,7 @@ class WC_Vibe_Pricing_Engine {
 		// Generate cache context
 		$cache_context = $this->generate_cache_context($context_type);
 		
-		// Try to get cached price
+		// EARLY EXIT: Try to get cached price first
 		$cached_price = $this->cache_manager->get_dynamic_price($product_id, $cache_context);
 		if (false !== $cached_price) {
 			$this->log_debug('get_dynamic_price: Using cached price', array(
@@ -135,33 +128,48 @@ class WC_Vibe_Pricing_Engine {
 			return $cached_price;
 		}
 
-		// Get applicable rules for this product
-		$applicable_rules = $this->get_applicable_rules($product, $context_type);
-		
-		$this->log_debug('get_dynamic_price: Applicable rules', array(
+		$this->log_debug('get_dynamic_price called', array(
 			'product_id' => $product_id,
-			'rule_count' => count($applicable_rules),
-			'rules' => array_map(function($rule) { return $rule['name']; }, $applicable_rules)
+			'original_price' => $original_price,
+			'context_type' => $context_type,
+			'current_payment_method' => $this->current_payment_method,
+			'current_referrer' => $this->current_referrer
 		));
 
+		// Get applicable rules with optimized lookup
+		$applicable_rules = $this->get_applicable_rules($product, $context_type);
+		
+		// EARLY EXIT: No applicable rules
 		if (empty($applicable_rules)) {
 			// Cache the original price to avoid repeated calculations
-			$this->cache_manager->set_dynamic_price($product_id, $cache_context, $original_price, 1800); // 30 minutes
+			$this->cache_manager->set_dynamic_price($product_id, $cache_context, $original_price, 1800);
 			$this->log_debug('get_dynamic_price: No applicable rules');
 			return false;
 		}
 
-		// Get the highest priority rule (first in sorted array)
+		$this->log_debug('get_dynamic_price: Applicable rules', array(
+			'product_id' => $product_id,
+			'rule_count' => count($applicable_rules),
+			'rules' => array_map(function($rule) { return isset($rule['name']) ? $rule['name'] : 'unnamed'; }, $applicable_rules)
+		));
+
+		// OPTIMIZATION: Use first rule (highest priority) with early exit
 		$winning_rule = reset($applicable_rules);
 		
 		$this->log_debug('get_dynamic_price: Using winning rule', array(
-			'rule_name' => $winning_rule['name'],
-			'rule_priority' => $winning_rule['priority']
+			'rule_name' => isset($winning_rule['name']) ? $winning_rule['name'] : 'unnamed',
+			'rule_priority' => isset($winning_rule['priority']) ? $winning_rule['priority'] : 0
 		));
 
-		// Calculate dynamic price
-		$dynamic_price = $this->calculate_dynamic_price($original_price, $winning_rule, $product);
+		// Calculate dynamic price with optimized calculation
+		$dynamic_price = $this->calculate_dynamic_price_optimized($original_price, $winning_rule, $product);
 		
+		// EARLY EXIT: Invalid calculation result
+		if (false === $dynamic_price) {
+			$this->cache_manager->set_dynamic_price($product_id, $cache_context, $original_price, 1800);
+			return false;
+		}
+
 		$this->log_debug('get_dynamic_price: Calculated price', array(
 			'product_id' => $product_id,
 			'original_price' => $original_price,
@@ -195,13 +203,55 @@ class WC_Vibe_Pricing_Engine {
 	}
 
 	/**
-	 * Get applicable rules for a product.
+	 * Get applicable rules for a product using optimized rule compiler.
+	 * OPTIMIZED: Uses pre-compiled rule index for O(1) lookup instead of O(n) iteration.
 	 *
 	 * @param WC_Product $product Product object.
 	 * @param string $context_type Context type: 'display' or 'application'.
 	 * @return array Applicable rules sorted by priority.
 	 */
 	private function get_applicable_rules($product, $context_type = 'application') {
+		$product_id = $product->get_id();
+
+		// Get rule compiler instance from dynamic pricing
+		$rule_compiler = $this->get_rule_compiler();
+		if (!$rule_compiler) {
+			// Fallback to legacy method if compiler not available
+			return $this->get_applicable_rules_legacy($product, $context_type);
+		}
+
+		try {
+			// Use optimized rule compiler for O(1) lookup
+			$rule_ids = $rule_compiler->get_applicable_rule_ids($product);
+			if (empty($rule_ids)) {
+				return array();
+			}
+
+			// Get rule data for applicable rule IDs
+			$applicable_rules = $rule_compiler->get_rules_data($rule_ids);
+
+			// Filter by current context (referrer, payment method)
+			return $this->filter_rules_by_context($applicable_rules, $context_type);
+
+		} catch (Exception $e) {
+			$this->log_debug('get_applicable_rules: Compiler error, falling back to legacy', array(
+				'error' => $e->getMessage(),
+				'product_id' => $product_id
+			));
+			
+			// Fallback to legacy method on error
+			return $this->get_applicable_rules_legacy($product, $context_type);
+		}
+	}
+
+	/**
+	 * Legacy method for getting applicable rules (fallback).
+	 *
+	 * @param WC_Product $product Product object.
+	 * @param string $context_type Context type.
+	 * @return array Applicable rules.
+	 */
+	private function get_applicable_rules_legacy($product, $context_type = 'application') {
 		$product_id = $product->get_id();
 		
 		// Try to get cached product rules
@@ -619,7 +669,58 @@ class WC_Vibe_Pricing_Engine {
 	}
 
 	/**
-	 * Calculate dynamic price based on rule.
+	 * Calculate dynamic price based on rule with optimized performance.
+	 * OPTIMIZED: Streamlined calculation with early exit and type checking.
+	 *
+	 * @param float $original_price Original price.
+	 * @param array $rule Pricing rule.
+	 * @param WC_Product $product Product object.
+	 * @return float|false Calculated dynamic price or false on error.
+	 */
+	private function calculate_dynamic_price_optimized($original_price, $rule, $product) {
+		// EARLY EXIT: Validate inputs
+		if ($original_price <= 0 || empty($rule['price_adjustment'])) {
+			return false;
+		}
+		
+		$adjustment = $rule['price_adjustment'];
+		$type = isset($adjustment['type']) ? $adjustment['type'] : 'percentage';
+		$value = isset($adjustment['value']) ? floatval($adjustment['value']) : 0;
+
+		// EARLY EXIT: Original type always returns original price
+		if ($type === 'original') {
+			return $original_price;
+		}
+		
+		// EARLY EXIT: No adjustment value
+		if ($value == 0) {
+			return $original_price;
+		}
+
+		$dynamic_price = $original_price;
+
+		// Optimized calculation with single switch
+		switch ($type) {
+			case 'percentage':
+				$dynamic_price = $original_price * (1 + ($value / 100));
+				break;
+			
+			case 'fixed':
+				$dynamic_price = $original_price + $value;
+				break;
+			
+			default:
+				return $original_price; // Unknown type, return original
+		}
+
+		// Ensure price is not negative and round appropriately
+		$dynamic_price = max(0, $this->round_price($dynamic_price));
+
+		return $dynamic_price;
+	}
+
+	/**
+	 * Legacy calculate dynamic price method for backward compatibility.
 	 *
 	 * @param float $original_price Original price.
 	 * @param array $rule Pricing rule.
@@ -627,52 +728,9 @@ class WC_Vibe_Pricing_Engine {
 	 * @return float Calculated dynamic price.
 	 */
 	private function calculate_dynamic_price($original_price, $rule, $product) {
-		// Ensure original_price is a float to prevent type errors
-		$original_price = floatval($original_price);
-		
-		// Validate that we have a valid price
-		if ($original_price <= 0) {
-			$this->log_debug('calculate_dynamic_price: Invalid original price', array(
-				'original_price' => $original_price,
-				'product_id' => $product ? $product->get_id() : 'no_product'
-			));
-			return false;
-		}
-		
-		$adjustment = isset($rule['price_adjustment']) ? $rule['price_adjustment'] : array();
-		$type = isset($adjustment['type']) ? $adjustment['type'] : 'percentage';
-		$value = isset($adjustment['value']) ? floatval($adjustment['value']) : 0;
-
-		$dynamic_price = $original_price;
-
-		switch ($type) {
-			case 'percentage':
-				// Apply percentage adjustment. Positive values INCREASE the price, negative values DECREASE it.
-				if ( $value >= 0 ) {
-					$dynamic_price = $original_price * ( 1 + ( $value / 100 ) );
-				} else {
-					$dynamic_price = $original_price * ( 1 - ( abs( $value ) / 100 ) );
-				}
-				break;
-			
-			case 'fixed':
-				// Apply fixed adjustment. Positive values INCREASE the price, negative values DECREASE it.
-				$dynamic_price = $original_price + $value;
-				break;
-			
-			case 'fixed_price':
-				// Set absolute price (this one was correct)
-				$dynamic_price = $value;
-				break;
-		}
-
-		// Ensure price is not negative
-		$dynamic_price = max(0, $dynamic_price);
-
-		// Apply currency-specific rounding
-		$dynamic_price = $this->round_price($dynamic_price);
-
-		return $dynamic_price;
+		// Delegate to optimized method
+		$result = $this->calculate_dynamic_price_optimized($original_price, $rule, $product);
+		return $result !== false ? $result : $original_price;
 	}
 
 	/**
@@ -930,6 +988,32 @@ class WC_Vibe_Pricing_Engine {
 	 */
 	public function get_cache_manager() {
 		return $this->cache_manager;
+	}
+
+	/**
+	 * Get rule compiler instance.
+	 *
+	 * @return WC_Vibe_Rule_Compiler|null Rule compiler instance or null if not available.
+	 */
+	private function get_rule_compiler() {
+		static $rule_compiler = null;
+		
+		if (null !== $rule_compiler) {
+			return $rule_compiler;
+		}
+
+		try {
+			if (class_exists('WC_Vibe_Rule_Compiler')) {
+				$rule_compiler = new WC_Vibe_Rule_Compiler($this->cache_manager);
+				return $rule_compiler;
+			}
+		} catch (Exception $e) {
+			$this->log_debug('get_rule_compiler: Failed to create compiler', array(
+				'error' => $e->getMessage()
+			));
+		}
+
+		return null;
 	}
 
 	/**

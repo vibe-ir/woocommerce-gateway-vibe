@@ -261,13 +261,7 @@ class WC_Vibe_Admin_Interface
 											echo '<strong>' . __('Price Range', 'woocommerce-gateway-vibe') . '</strong><br>';
 											$min = isset($product_conditions['min_price']) ? $product_conditions['min_price'] : '';
 											$max = isset($product_conditions['max_price']) ? $product_conditions['max_price'] : '';
-											if ($min && $max) {
-												echo '$' . $min . ' - $' . $max;
-											} elseif ($min) {
-												echo '$' . $min . '+';
-											} elseif ($max) {
-												echo 'Up to $' . $max;
-											}
+											echo $this->format_price_range_display($min, $max);
 											break;
 										case 'complex':
 											echo '<strong>' . __('Complex Logic', 'woocommerce-gateway-vibe') . '</strong>';
@@ -284,16 +278,7 @@ class WC_Vibe_Admin_Interface
 									if (!empty($adjustment)) {
 										$type = $adjustment['type'];
 										$value = $adjustment['value'];
-
-										if ($type === 'percentage') {
-											echo $value > 0 ? '+' : '';
-											echo esc_html($value) . '%';
-										} elseif ($type === 'fixed') {
-											echo $value > 0 ? '+' : '';
-											echo '$' . esc_html($value);
-										} elseif ($type === 'fixed_price') {
-											echo '$' . esc_html($value);
-										}
+										echo $this->format_price_adjustment_display($type, $value);
 									}
 									?>
 								</td>
@@ -471,10 +456,15 @@ class WC_Vibe_Admin_Interface
 								$min_price = isset($product_conditions['min_price']) ? $product_conditions['min_price'] : '';
 								$max_price = isset($product_conditions['max_price']) ? $product_conditions['max_price'] : '';
 								?>
-								<label><?php _e('Minimum Price:', 'woocommerce-gateway-vibe'); ?></label>
-								<input type="number" name="min_price" value="<?php echo esc_attr($min_price); ?>" step="0.01" min="0" class="small-text">
-								<label><?php _e('Maximum Price:', 'woocommerce-gateway-vibe'); ?></label>
-								<input type="number" name="max_price" value="<?php echo esc_attr($max_price); ?>" step="0.01" min="0" class="small-text">
+								<?php $currency_symbol = get_woocommerce_currency_symbol(); ?>
+								<label><?php 
+								/* translators: %s: Currency symbol */
+								printf(__('Minimum Price (%s):', 'woocommerce-gateway-vibe'), $currency_symbol); ?></label>
+								<input type="number" name="min_price" value="<?php echo esc_attr($min_price); ?>" step="0.01" min="0" class="small-text" placeholder="0.00">
+								<label><?php 
+								/* translators: %s: Currency symbol */
+								printf(__('Maximum Price (%s):', 'woocommerce-gateway-vibe'), $currency_symbol); ?></label>
+								<input type="number" name="max_price" value="<?php echo esc_attr($max_price); ?>" step="0.01" min="0" class="small-text" placeholder="0.00">
 								<p class="description"><?php _e('Leave empty for no limit. Applies to products within this price range.', 'woocommerce-gateway-vibe'); ?></p>
 							</div>
 							<br>
@@ -485,7 +475,12 @@ class WC_Vibe_Admin_Interface
 							</label>
 							<div class="target-option" data-target="complex" style="margin-left: 25px; margin-top: 10px;">
 								<div id="complex-logic-builder">
-									<p class="description"><?php _e('Build complex conditions like: ((Category A AND Tag X) OR (Category B AND Tag Y)) AND Price > $50', 'woocommerce-gateway-vibe'); ?></p>
+									<?php
+									$currency_symbol = get_woocommerce_currency_symbol();
+									?>
+									<p class="description"><?php 
+									/* translators: %s: Currency symbol */
+									printf(__('Build complex conditions like: ((Category A AND Tag X) OR (Category B AND Tag Y)) AND Price > %s50', 'woocommerce-gateway-vibe'), $currency_symbol); ?></p>
 									<textarea name="complex_logic" rows="4" class="large-text" placeholder="Example: (category:electronics AND tag:sale) OR (price > 100 AND category:clothing)"><?php
 																																																	echo isset($product_conditions['complex_logic']) ? esc_textarea($product_conditions['complex_logic']) : '';
 																																																	?></textarea>
@@ -511,16 +506,31 @@ class WC_Vibe_Admin_Interface
 						<select id="adjustment_type" name="adjustment_type">
 							<option value="percentage" <?php selected($current_type, 'percentage'); ?>><?php _e('Percentage Adjustment', 'woocommerce-gateway-vibe'); ?></option>
 							<option value="fixed" <?php selected($current_type, 'fixed'); ?>><?php _e('Fixed Amount Addition/Subtraction', 'woocommerce-gateway-vibe'); ?></option>
-							<option value="fixed_price" <?php selected($current_type, 'fixed_price'); ?>><?php _e('Fixed Price Override', 'woocommerce-gateway-vibe'); ?></option>
+							<option value="original" <?php selected($current_type, 'original'); ?>><?php _e('Keep Original Price', 'woocommerce-gateway-vibe'); ?></option>
 						</select>
-						<input type="number" id="adjustment_value" name="adjustment_value" value="<?php echo esc_attr($current_value); ?>" step="0.01" class="small-text">
+						<input type="number" id="adjustment_value" name="adjustment_value" value="<?php echo esc_attr($current_value); ?>" step="0.01" class="small-text"<?php echo ($current_type === 'original') ? ' style="display:none;"' : ''; ?>>
+						<span id="adjustment_unit"<?php echo ($current_type === 'original') ? ' style="display:none;"' : ''; ?> data-currency="<?php echo esc_attr(get_woocommerce_currency_symbol()); ?>">
+							<?php
+							$currency_symbol = get_woocommerce_currency_symbol();
+							if ($current_type === 'percentage') {
+								echo '%';
+							} else {
+								echo $currency_symbol;
+							}
+							?>
+						</span>
 
 						<div class="price-adjustment-help" style="margin-top: 10px;">
 							<p><strong><?php _e('Price Adjustment Types:', 'woocommerce-gateway-vibe'); ?></strong></p>
 							<ul style="margin-left: 20px;">
 								<li><strong><?php _e('Percentage:', 'woocommerce-gateway-vibe'); ?></strong> <?php _e('+10 = 10% increase, -5 = 5% decrease from original price', 'woocommerce-gateway-vibe'); ?></li>
-								<li><strong><?php _e('Fixed Amount:', 'woocommerce-gateway-vibe'); ?></strong> <?php _e('+10 = add $10, -5 = subtract $5 from original price', 'woocommerce-gateway-vibe'); ?></li>
-								<li><strong><?php _e('Fixed Price:', 'woocommerce-gateway-vibe'); ?></strong> <?php _e('25 = set price to exactly $25 regardless of original price', 'woocommerce-gateway-vibe'); ?></li>
+								<?php $currency_symbol = get_woocommerce_currency_symbol(); ?>
+								<li><strong><?php _e('Fixed Amount:', 'woocommerce-gateway-vibe'); ?></strong> <?php 
+								/* translators: 1: Currency symbol for addition example, 2: Currency symbol for subtraction example */
+								printf(__('+10 = add %1$s10, -5 = subtract %2$s5 from original price', 'woocommerce-gateway-vibe'), $currency_symbol, $currency_symbol); ?></li>
+								<li><strong><?php _e('Fixed Price:', 'woocommerce-gateway-vibe'); ?></strong> <?php 
+								/* translators: %s: Currency symbol */
+								printf(__('25 = set price to exactly %s25 regardless of original price', 'woocommerce-gateway-vibe'), $currency_symbol); ?></li>
 							</ul>
 						</div>
 					</td>
@@ -576,6 +586,19 @@ class WC_Vibe_Admin_Interface
 						$('.target-option[data-target="' + $(this).val() + '"]').show();
 					}
 				}).trigger('change');
+
+				// Update currency unit display based on adjustment type
+				$('#adjustment_type').change(function() {
+					var adjustmentType = $(this).val();
+					var unitSpan = $('#adjustment_unit');
+					var currencySymbol = '<?php echo esc_js(get_woocommerce_currency_symbol()); ?>';
+
+					if (adjustmentType === 'percentage') {
+						unitSpan.text('%');
+					} else {
+						unitSpan.text(currencySymbol);
+					}
+				});
 			});
 		</script>
 	<?php
@@ -680,7 +703,7 @@ class WC_Vibe_Admin_Interface
 										</select>
 									</div>
 								</div>
-								
+
 								<h4><?php _e('Original Price Styling:', 'woocommerce-gateway-vibe'); ?></h4>
 								<div class="vibe-styling-controls">
 									<div class="vibe-style-row">
@@ -710,13 +733,13 @@ class WC_Vibe_Admin_Interface
 										</select>
 									</div>
 								</div>
-								
+
 								<p class="description">
 									<?php _e('Font Size: Use CSS units (%, px, em, rem). Examples: 100%, 14px, 1.2em, 1rem', 'woocommerce-gateway-vibe'); ?><br>
 									<?php _e('Color: Use hex codes (#000000), color names (black), or CSS color values (rgb(0,0,0))', 'woocommerce-gateway-vibe'); ?>
 								</p>
 							</fieldset>
-							
+
 							<style>
 								.vibe-styling-controls {
 									margin: 10px 0;
@@ -725,20 +748,24 @@ class WC_Vibe_Admin_Interface
 									border: 1px solid #ddd;
 									border-radius: 4px;
 								}
+
 								.vibe-style-row {
 									display: flex;
 									align-items: center;
 									margin-bottom: 8px;
 								}
+
 								.vibe-style-row label {
 									min-width: 100px;
 									margin-right: 10px;
 									font-weight: 500;
 								}
+
 								.vibe-style-row input,
 								.vibe-style-row select {
 									margin-right: 10px;
 								}
+
 								.vibe-color-picker {
 									max-width: 100px;
 								}
@@ -785,23 +812,30 @@ class WC_Vibe_Admin_Interface
 									</div>
 								</div>
 
-								<!-- Preview Section -->
-								<div class="vibe-price-preview-section">
-									<div class="vibe-preview-header">
-										<span class="vibe-preview-icon">👁️</span>
-										<h4><?php _e('Live Preview', 'woocommerce-gateway-vibe'); ?></h4>
+							</div>
+							<p class="description"><?php _e('Customize the text that appears before and after each price.', 'woocommerce-gateway-vibe'); ?></p>
+						</td>
+					</tr>
+
+					<tr>
+						<th scope="row"><?php _e('Live Preview', 'woocommerce-gateway-vibe'); ?></th>
+						<td>
+							<!-- Live Preview Section -->
+							<div class="vibe-price-preview-section">
+								<div class="vibe-preview-header">
+									<span class="vibe-preview-icon">👁️</span>
+									<h4><?php _e('Complete Style Preview', 'woocommerce-gateway-vibe'); ?></h4>
+								</div>
+								<div class="vibe-preview-content">
+									<div class="vibe-preview-price original" id="original-price-preview" style="font-size: <?php echo esc_attr($settings['original_price_font_size']); ?>; color: <?php echo esc_attr($settings['original_price_color']); ?>; font-weight: <?php echo esc_attr($settings['original_price_font_weight']); ?>;">
+										<span class="vibe-preview-prefix" id="original-prefix-preview"><?php echo esc_html($settings['original_price_prefix']); ?></span><span class="vibe-preview-amount">1,000 تومان</span>
 									</div>
-									<div class="vibe-preview-content">
-										<div class="vibe-preview-price dynamic">
-											<span class="vibe-preview-prefix" id="dynamic-prefix-preview"><?php echo esc_html($settings['new_price_prefix']); ?></span><span class="vibe-preview-amount">1,100 تومان</span>
-										</div>
-										<div class="vibe-preview-price original">
-											<span class="vibe-preview-prefix" id="original-prefix-preview"><?php echo esc_html($settings['original_price_prefix']); ?></span><span class="vibe-preview-amount">1,000 تومان</span>
-										</div>
+									<div class="vibe-preview-price dynamic" id="dynamic-price-preview" style="font-size: <?php echo esc_attr($settings['new_price_font_size']); ?>; color: <?php echo esc_attr($settings['new_price_color']); ?>; font-weight: <?php echo esc_attr($settings['new_price_font_weight']); ?>;">
+										<span class="vibe-preview-prefix" id="dynamic-prefix-preview"><?php echo esc_html($settings['new_price_prefix']); ?></span><span class="vibe-preview-amount">1,100 تومان</span>
 									</div>
 								</div>
 							</div>
-							<p class="description"><?php _e('Customize the text that appears before and after each price. The preview shows how prices will appear on your product pages.', 'woocommerce-gateway-vibe'); ?></p>
+							<p class="description"><?php _e('Live preview showing how your price styling (colors, fonts, sizes) and prefixes will appear on product pages.', 'woocommerce-gateway-vibe'); ?></p>
 						</td>
 					</tr>
 				</table>
@@ -909,7 +943,9 @@ class WC_Vibe_Admin_Interface
 				}
 
 				.vibe-price-preview-section {
-					background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+					/* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+					background: #f9f9f9;
+					border: 1px solid #e1e1e1;
 					color: white;
 					border-radius: 6px;
 					padding: 20px;
@@ -929,7 +965,7 @@ class WC_Vibe_Admin_Interface
 
 				.vibe-preview-header h4 {
 					margin: 0;
-					color: white;
+					color: #333;
 					font-size: 16px;
 					font-weight: 600;
 				}
@@ -948,24 +984,38 @@ class WC_Vibe_Admin_Interface
 				}
 
 				.vibe-preview-price.dynamic {
-					background: rgba(255, 255, 255, 0.2);
-					border: 1px solid rgba(255, 255, 255, 0.3);
+					background: #fff;
+					border: 1px solid #e1e1e1;
+					color: #333;
+					box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 				}
 
 				.vibe-preview-price.original {
-					background: rgba(255, 255, 255, 0.1);
-					border: 1px solid rgba(255, 255, 255, 0.2);
-					opacity: 0.8;
+					background: #fff;
+					border: 1px solid #e1e1e1;
+					color: #333;
+					box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 				}
 
 				.vibe-preview-amount {
 					font-weight: bold;
-					color: #fff;
+					color: #333;
 				}
 
 				.vibe-preview-prefix,
 				.vibe-preview-suffix {
-					color: rgba(255, 255, 255, 0.9);
+					color: #333;
+				}
+				
+				/* Override preview colors to allow custom styling */
+				#dynamic-price-preview .vibe-preview-prefix,
+				#dynamic-price-preview .vibe-preview-amount {
+					color: inherit !important;
+				}
+				
+				#original-price-preview .vibe-preview-prefix,
+				#original-price-preview .vibe-preview-amount {
+					color: inherit !important;
 				}
 
 				/* Responsive Design */
@@ -984,13 +1034,35 @@ class WC_Vibe_Admin_Interface
 
 			<script>
 				jQuery(document).ready(function($) {
-					// Live preview updates for prefix/suffix
+					// Live preview updates for prefix/suffix and styling
 					function updatePreview() {
 						var dynamicPrefix = $('input[name="new_price_prefix"]').val();
 						var originalPrefix = $('input[name="original_price_prefix"]').val();
 
 						$('#dynamic-prefix-preview').text(dynamicPrefix);
 						$('#original-prefix-preview').text(originalPrefix);
+
+						// Update style properties for dynamic price
+						var dynamicFontSize = $('input[name="new_price_font_size"]').val() || '100%';
+						var dynamicColor = $('input[name="new_price_color"]').val() || '';
+						var dynamicFontWeight = $('select[name="new_price_font_weight"]').val() || 'bold';
+
+						$('#dynamic-price-preview').css({
+							'font-size': dynamicFontSize,
+							'color': dynamicColor,
+							'font-weight': dynamicFontWeight
+						});
+
+						// Update style properties for original price
+						var originalFontSize = $('input[name="original_price_font_size"]').val() || '85%';
+						var originalColor = $('input[name="original_price_color"]').val() || '#999999';
+						var originalFontWeight = $('select[name="original_price_font_weight"]').val() || 'normal';
+
+						$('#original-price-preview').css({
+							'font-size': originalFontSize,
+							'color': originalColor,
+							'font-weight': originalFontWeight
+						});
 
 						// Update inline previews
 						$('.vibe-prefix-input').each(function() {
@@ -1004,9 +1076,13 @@ class WC_Vibe_Admin_Interface
 					// Bind events for live preview
 					$('input[name="new_price_prefix"], input[name="original_price_prefix"]').on('input keyup', updatePreview);
 
+					// Bind events for style changes
+					$('input[name="new_price_font_size"], input[name="new_price_color"], select[name="new_price_font_weight"]').on('input change', updatePreview);
+					$('input[name="original_price_font_size"], input[name="original_price_color"], select[name="original_price_font_weight"]').on('input change', updatePreview);
+
 					// Initial preview update
 					updatePreview();
-					
+
 					// Initialize WordPress color pickers if available
 					if (typeof jQuery.fn.wpColorPicker !== 'undefined') {
 						jQuery('.vibe-color-picker').wpColorPicker({
@@ -1014,10 +1090,14 @@ class WC_Vibe_Admin_Interface
 								// Update the input field value with the selected color
 								var colorValue = ui.color.toString();
 								jQuery(this).val(colorValue).trigger('change');
+								// Update preview immediately
+								updatePreview();
 							},
 							clear: function() {
 								// Clear the input field value
 								jQuery(this).val('').trigger('change');
+								// Update preview immediately
+								updatePreview();
 							}
 						});
 					} else {
@@ -1555,19 +1635,77 @@ class WC_Vibe_Admin_Interface
 	 * @param string $font_weight Font weight value to sanitize.
 	 * @return string Sanitized font weight.
 	 */
-	private function sanitize_font_weight($font_weight) {
+	private function sanitize_font_weight($font_weight)
+	{
 		$allowed_weights = array(
-			'normal', 'bold', 'bolder', 'lighter',
-			'100', '200', '300', '400', '500', '600', '700', '800', '900'
+			'normal',
+			'bold',
+			'bolder',
+			'lighter',
+			'100',
+			'200',
+			'300',
+			'400',
+			'500',
+			'600',
+			'700',
+			'800',
+			'900'
 		);
-		
+
 		$font_weight = sanitize_text_field($font_weight);
-		
+
 		if (in_array($font_weight, $allowed_weights, true)) {
 			return $font_weight;
 		}
-		
+
 		// Default fallback
 		return 'normal';
+	}
+
+	/**
+	 * Format price adjustment display with proper currency.
+	 *
+	 * @param string $type Adjustment type (percentage, fixed, original).
+	 * @param float $value Adjustment value.
+	 * @return string Formatted adjustment display.
+	 */
+	private function format_price_adjustment_display($type, $value)
+	{
+		switch ($type) {
+			case 'percentage':
+				return ($value > 0 ? '+' : '') . esc_html($value) . '%';
+
+			case 'fixed':
+				$sign = $value > 0 ? '+' : '';
+				$formatted_price = wc_price(abs($value));
+				$discount_text = $value < 0 ? ' ' . __('discount', 'woocommerce-gateway-vibe') : '';
+				return $sign . $formatted_price . $discount_text;
+
+			case 'original':
+				return __('Original Price', 'woocommerce-gateway-vibe');
+
+			default:
+				return '';
+		}
+	}
+
+	/**
+	 * Format price range display with proper currency.
+	 *
+	 * @param string $min Minimum price.
+	 * @param string $max Maximum price.
+	 * @return string Formatted price range display.
+	 */
+	private function format_price_range_display($min, $max)
+	{
+		if ($min && $max) {
+			return wc_price($min) . ' - ' . wc_price($max);
+		} elseif ($min) {
+			return wc_price($min) . '+';
+		} elseif ($max) {
+			return __('Up to', 'woocommerce-gateway-vibe') . ' ' . wc_price($max);
+		}
+		return '';
 	}
 }

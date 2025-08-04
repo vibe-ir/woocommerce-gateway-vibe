@@ -27,7 +27,7 @@ class WC_Vibe_Options {
 	 * Default option values.
 	 */
 	private static $defaults = array(
-		'version' => '1.2.4',
+		'version' => '1.2.5',
 		'activation_pending' => false,
 		'activation_error' => '',
 		'last_heartbeat' => 0,
